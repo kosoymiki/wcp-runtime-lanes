@@ -149,6 +149,7 @@ jobs:
             cmake ninja-build rsync \
             zstd file binutils nasm \
             build-essential gawk bison texinfo \
+            autoconf automake libtool \
             libfreetype-dev fonts-dejavu-core \
             libglib2.0-dev gstreamer1.0-tools \
             libxslt1-dev libxml2-dev \

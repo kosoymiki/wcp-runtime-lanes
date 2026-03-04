@@ -626,6 +626,11 @@ wcp_ensure_configure_script() {
     wcp_log "configure is missing in ${wine_src_dir}; will regenerate autotools files"
   fi
 
+  if [[ -f "${wine_src_dir}/configure" ]] && grep -Fq '"$wine_makedep"$makedep_flags -i' "${wine_src_dir}/configure"; then
+    need_autoreconf=1
+    wcp_log "configure contains legacy makedep -i invocation; will regenerate autotools files"
+  fi
+
   if [[ ! -f "${wine_src_dir}/include/config.h.in" ]]; then
     need_autoreconf=1
     wcp_log "include/config.h.in is missing in ${wine_src_dir}; will regenerate autotools files"
