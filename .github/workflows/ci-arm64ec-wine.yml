@@ -73,6 +73,8 @@ env:
   TOOLCHAIN_DIR: ${{ github.workspace }}/.cache/llvm-mingw
   TARGET_HOST: aarch64-linux-gnu
   WCP_ENABLE_SDL2_RUNTIME: "1"
+  WCP_ENABLE_USB_RUNTIME: "1"
+  WCP_REQUIRE_USB_RUNTIME: "1"
   WCP_BUILD_LOG_FILE: ${{ github.workspace }}/out/freewine11/logs/wine-build.log
   WCP_BUILD_LOG_STDOUT_MODE: quiet
   WCP_BUILD_HEARTBEAT_SEC: "60"
@@ -159,7 +161,8 @@ jobs:
             libgnutls28-dev \
             libxfixes-dev \
             libsmbclient-dev \
-            libsdl2-dev
+            libsdl2-dev \
+            libusb-1.0-0-dev
           mkdir -p "${WCP_OUTPUT_DIR}" "${TOOLCHAIN_DIR}"
 
       - name: Cache llvm-mingw toolchain
@@ -178,7 +181,7 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p "${WCP_OUTPUT_DIR}/logs"
-          bash ci/validation/inspect-wcp-runtime-contract.sh "${WCP_OUTPUT_DIR}/${WCP_NAME}.wcp" --strict-bionic \
+          bash ci/validation/inspect-wcp-runtime-contract.sh "${WCP_OUTPUT_DIR}/${WCP_NAME}.wcp" --strict-bionic --require-usb \
             | tee "${WCP_OUTPUT_DIR}/logs/runtime-contract-inspection.txt"
 
       - name: Verify outputs

@@ -20,7 +20,7 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${LLVM_MINGW_TAG:=${LLVM_MINGW_VER:-20260210}}"
 : "${WCP_NAME:=freewine11-arm64ec}"
 : "${WCP_COMPRESS:=xz}"
-: "${WCP_VERSION_NAME:=11-freewine-arm64ec}"
+: "${WCP_VERSION_NAME:=11.0-arm64ec}"
 : "${WCP_VERSION_CODE:=0}"
 : "${WCP_DESCRIPTION:=FreeWine 11 ARM64EC for Ae.solator}"
 : "${WCP_CHANNEL:=stable}"
@@ -52,6 +52,7 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${FEX_BUILD_TYPE:=Release}"
 : "${STRIP_STAGE:=1}"
 : "${WCP_ENABLE_SDL2_RUNTIME:=1}"
+: "${WCP_ENABLE_USB_RUNTIME:=1}"
 : "${WCP_TARGET_RUNTIME:=winlator-bionic}"
 : "${WCP_RUNTIME_CLASS_TARGET:=bionic-native}"
 : "${WCP_RUNTIME_CLASS_ENFORCE:=1}"
@@ -74,6 +75,7 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${WCP_MAINLINE_BIONIC_ONLY:=1}"
 : "${WCP_MAINLINE_FEX_EXTERNAL_ONLY:=1}"
 : "${WCP_ALLOW_GLIBC_EXPERIMENTAL:=0}"
+: "${WCP_ALLOW_X86_64_HOST:=1}"
 : "${WCP_WRAPPER_POLICY_VERSION:=runtime-v1}"
 : "${WCP_POLICY_SOURCE:=aesolator-mainline}"
 : "${WCP_FALLBACK_SCOPE:=bionic-internal-only}"
@@ -131,9 +133,20 @@ require_bool_flag() {
 check_host_arch() {
   local arch
   arch="$(uname -m)"
-  if [[ "${arch}" != "aarch64" && "${arch}" != "arm64" ]]; then
-    fail "ARM64 host is required (aarch64/arm64). Current arch: ${arch}"
-  fi
+  case "${arch}" in
+    aarch64|arm64)
+      return
+      ;;
+    x86_64|amd64)
+      if [[ "${WCP_ALLOW_X86_64_HOST}" != "1" ]]; then
+        fail "x86_64 host is disabled by WCP_ALLOW_X86_64_HOST=0"
+      fi
+      log "x86_64 host detected; using cross-build mode via llvm-mingw"
+      ;;
+    *)
+      fail "Unsupported host architecture: ${arch}"
+      ;;
+  esac
 }
 
 fetch_wine_sources() {
@@ -167,8 +180,10 @@ fetch_wine_sources() {
 
 build_wine() {
   local make_vulkan_log build_log jobs
+  local -a configure_args
 
   ensure_sdl2_tooling
+  ensure_usb_tooling
   export TARGET_HOST
   # Guarantee prefixPack is available for downstream packaging/validation.
   ensure_prefix_pack "${ROOT_DIR}/prefixPack.txz"
@@ -181,11 +196,19 @@ build_wine() {
   mkdir -p "${BUILD_WINE_DIR}" "${STAGE_DIR}"
 
   pushd "${BUILD_WINE_DIR}" >/dev/null
-  "${WINE_SRC_DIR}/configure" \
-    --prefix=/usr \
-    --disable-tests \
-    --with-mingw=clang \
+  configure_args=(
+    "${WINE_SRC_DIR}/configure"
+    --prefix=/usr
+    --disable-tests
+    --with-mingw=clang
     --enable-archs=arm64ec,aarch64,i386
+  )
+  if [[ "${WCP_ENABLE_USB_RUNTIME}" == "1" ]]; then
+    configure_args+=(--with-usb)
+  else
+    configure_args+=(--without-usb)
+  fi
+  "${configure_args[@]}"
 
   if [[ -f config.log ]] && ! grep -Eq 'arm64ec' config.log; then
     fail "configure did not include ARM64EC target support"
@@ -200,6 +223,7 @@ build_wine() {
     fail "Wine install failed; see ${build_log:-<stdout>}"
   fi
   validate_sdl2_runtime_payload
+  validate_usb_runtime_payload
   popd >/dev/null
 }
 
@@ -357,6 +381,15 @@ ensure_sdl2_tooling() {
   pkg-config --exists sdl2 || fail "SDL2 development files are missing (pkg-config sdl2 failed)"
 }
 
+ensure_usb_tooling() {
+  if [[ "${WCP_ENABLE_USB_RUNTIME}" != "1" ]]; then
+    return
+  fi
+
+  require_cmd pkg-config
+  pkg-config --exists libusb-1.0 || fail "USB runtime check failed: libusb-1.0 development files are missing"
+}
+
 validate_sdl2_runtime_payload() {
   local winebus_module winebus_module_dir strings_cmd
   if [[ "${WCP_ENABLE_SDL2_RUNTIME}" != "1" ]]; then
@@ -384,6 +417,26 @@ validate_sdl2_runtime_payload() {
   fi
 
   log "SDL2 runtime probe is inconclusive for $(basename "${winebus_module}") (no direct linkage/SONAME); continuing with module-present validation"
+}
+
+validate_usb_runtime_payload() {
+  local unix_dir windows64_dir windows32_dir
+  if [[ "${WCP_ENABLE_USB_RUNTIME}" != "1" ]]; then
+    return
+  fi
+
+  unix_dir="${STAGE_DIR}/usr/lib/wine/aarch64-unix"
+  windows64_dir="${STAGE_DIR}/usr/lib/wine/aarch64-windows"
+  windows32_dir="${STAGE_DIR}/usr/lib/wine/i386-windows"
+
+  if [[ ! -f "${unix_dir}/wineusb.so" && ! -f "${unix_dir}/wineusb.sys.so" ]]; then
+    fail "USB runtime check failed: missing ${unix_dir}/wineusb.so (or wineusb.sys.so)"
+  fi
+  [[ -f "${windows64_dir}/wineusb.sys" ]] || fail "USB runtime check failed: missing ${windows64_dir}/wineusb.sys"
+  if [[ ! -f "${windows64_dir}/winusb.dll" && ! -f "${windows32_dir}/winusb.dll" ]]; then
+    fail "USB runtime check failed: missing winusb.dll in aarch64/i386 windows layers"
+  fi
+  log "USB runtime check passed (wineusb + winusb present)"
 }
 
 
@@ -532,7 +585,8 @@ WINETOOLS
     "boxedRuntimeInWcpDetected": false,
     "policyViolationReason": "none",
     "fexExpectationMode": "$(printf '%s' "${WCP_FEX_EXPECTATION_MODE}" | sed 's/"/\\"/g')",
-    "fexBundledInWcp": ${WCP_INCLUDE_FEX_DLLS}
+    "fexBundledInWcp": ${WCP_INCLUDE_FEX_DLLS},
+    "usbRuntimeEnabled": ${WCP_ENABLE_USB_RUNTIME}
   }
 }
 EOF_PROFILE
@@ -594,6 +648,19 @@ validate_wcp_tree() {
       required_unix_modules+=("winebus.sys.so")
     else
       fail "Wine unix module missing: lib/wine/aarch64-unix/winebus.so (or winebus.sys.so)"
+    fi
+  fi
+  if [[ "${WCP_ENABLE_USB_RUNTIME}" == "1" ]]; then
+    if [[ -f "${WCP_ROOT}/lib/wine/aarch64-unix/wineusb.so" ]]; then
+      required_unix_modules+=("wineusb.so")
+    elif [[ -f "${WCP_ROOT}/lib/wine/aarch64-unix/wineusb.sys.so" ]]; then
+      required_unix_modules+=("wineusb.sys.so")
+    else
+      fail "Wine unix module missing: lib/wine/aarch64-unix/wineusb.so (or wineusb.sys.so)"
+    fi
+    [[ -f "${WCP_ROOT}/lib/wine/aarch64-windows/wineusb.sys" ]] || fail "Wine PE module missing: lib/wine/aarch64-windows/wineusb.sys"
+    if [[ ! -f "${WCP_ROOT}/lib/wine/aarch64-windows/winusb.dll" && ! -f "${WCP_ROOT}/lib/wine/i386-windows/winusb.dll" ]]; then
+      fail "Wine PE module missing: winusb.dll (aarch64 or i386 windows layer)"
     fi
   fi
 
@@ -670,12 +737,14 @@ main() {
   require_cmd pkg-config
 
   require_bool_flag WCP_ENABLE_SDL2_RUNTIME "${WCP_ENABLE_SDL2_RUNTIME}"
+  require_bool_flag WCP_ENABLE_USB_RUNTIME "${WCP_ENABLE_USB_RUNTIME}"
   require_bool_flag WCP_RUNTIME_CLASS_ENFORCE "${WCP_RUNTIME_CLASS_ENFORCE}"
   require_bool_flag WCP_PRUNE_EXTERNAL_COMPONENTS "${WCP_PRUNE_EXTERNAL_COMPONENTS}"
   require_bool_flag WCP_INCLUDE_FEX_DLLS "${WCP_INCLUDE_FEX_DLLS}"
   require_bool_flag WCP_MAINLINE_BIONIC_ONLY "${WCP_MAINLINE_BIONIC_ONLY}"
   require_bool_flag WCP_MAINLINE_FEX_EXTERNAL_ONLY "${WCP_MAINLINE_FEX_EXTERNAL_ONLY}"
   require_bool_flag WCP_ALLOW_GLIBC_EXPERIMENTAL "${WCP_ALLOW_GLIBC_EXPERIMENTAL}"
+  require_bool_flag WCP_ALLOW_X86_64_HOST "${WCP_ALLOW_X86_64_HOST}"
   require_bool_flag WCP_BIONIC_SOURCE_MAP_FORCE "${WCP_BIONIC_SOURCE_MAP_FORCE}"
   require_bool_flag WCP_BIONIC_SOURCE_MAP_REQUIRED "${WCP_BIONIC_SOURCE_MAP_REQUIRED}"
   require_bool_flag WCP_GN_PATCHSET_ENABLE "${WCP_GN_PATCHSET_ENABLE}"

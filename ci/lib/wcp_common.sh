@@ -56,6 +56,10 @@ wcp_build_log_file() {
   printf ''
 }
 
+wcp_usb_runtime_enabled() {
+  [[ "${WCP_ENABLE_USB_RUNTIME:-0}" == "1" ]]
+}
+
 wcp_make_logged() {
   local jobs="$1" log_file="$2"
   shift 2
@@ -165,7 +169,6 @@ wcp_configure_profile_args() {
 --with-sdl
 --without-udev
 --without-unwind
---without-usb
 --without-v4l2
 --without-vosk
 --with-vulkan
@@ -182,6 +185,11 @@ wcp_configure_profile_args() {
 --with-xshm
 --without-xxf86vm
 EOF
+      if wcp_usb_runtime_enabled; then
+        printf '%s\n' "--with-usb"
+      else
+        printf '%s\n' "--without-usb"
+      fi
       ;;
     "")
       return 0
@@ -1135,6 +1143,11 @@ wcp_write_forensic_manifest() {
     "lib/wine/aarch64-unix/winevulkan.so"
     "lib/wine/aarch64-unix/winebus.so"
     "lib/wine/aarch64-unix/winebus.sys.so"
+    "lib/wine/aarch64-unix/wineusb.so"
+    "lib/wine/aarch64-unix/wineusb.sys.so"
+    "lib/wine/aarch64-windows/wineusb.sys"
+    "lib/wine/aarch64-windows/winusb.dll"
+    "lib/wine/i386-windows/winusb.dll"
     "lib/wine/wcp-glibc-runtime/ld-linux-aarch64.so.1"
     "lib/wine/wcp-glibc-runtime/libc.so.6"
     "lib/wine/wcp-glibc-runtime/libstdc++.so.6"
@@ -1738,6 +1751,15 @@ validate_wcp_tree_arm64ec() {
   if [[ "${WCP_ENABLE_SDL2_RUNTIME:-1}" == "1" ]]; then
     if [[ ! -f "${wcp_root}/lib/wine/aarch64-unix/winebus.so" && ! -f "${wcp_root}/lib/wine/aarch64-unix/winebus.sys.so" ]]; then
       wcp_fail "Wine unix module missing: lib/wine/aarch64-unix/winebus.so (or winebus.sys.so)"
+    fi
+  fi
+  if wcp_usb_runtime_enabled; then
+    if [[ ! -f "${wcp_root}/lib/wine/aarch64-unix/wineusb.so" && ! -f "${wcp_root}/lib/wine/aarch64-unix/wineusb.sys.so" ]]; then
+      wcp_fail "Wine unix module missing: lib/wine/aarch64-unix/wineusb.so (or wineusb.sys.so)"
+    fi
+    [[ -f "${wcp_root}/lib/wine/aarch64-windows/wineusb.sys" ]] || wcp_fail "Wine PE module missing: lib/wine/aarch64-windows/wineusb.sys"
+    if [[ ! -f "${wcp_root}/lib/wine/aarch64-windows/winusb.dll" && ! -f "${wcp_root}/lib/wine/i386-windows/winusb.dll" ]]; then
+      wcp_fail "Wine PE module missing: winusb.dll (aarch64 or i386 windows layer)"
     fi
   fi
 

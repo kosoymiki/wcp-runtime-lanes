@@ -7,7 +7,7 @@ source "${ROOT_DIR}/ci/lib/winlator-runtime.sh"
 usage() {
   cat <<'EOF'
 Usage:
-  bash ci/validation/inspect-wcp-runtime-contract.sh <path-to.wcp> [--strict-bionic] [--strict-gamenative]
+  bash ci/validation/inspect-wcp-runtime-contract.sh <path-to.wcp> [--strict-bionic] [--strict-gamenative] [--require-usb]
 
 Outputs:
   - runtime class / launcher ABI / unix ABI summary
@@ -65,11 +65,13 @@ main() {
   local wcp_path="${1:-}"
   local strict_bionic=0
   local strict_gamenative=0
+  local require_usb="${WCP_REQUIRE_USB_RUNTIME:-0}"
   local strict_runpath
   local runpath_contract_set runpath_regex_set
   local tmp_dir wcp_root unix_abi_file glibc_hits
   local glibc_row glibc_name allowed opt
   local wine_runpath wineserver_runpath runpath_accept_regex
+  local winebus_module wineusb_module wineusb_driver winusb_dll
   local -a strict_allowed_glibc_modules forensic_glibc_rows blocking_glibc_rows
   local -a missing_gn_symbols
 
@@ -79,6 +81,7 @@ main() {
     case "${1}" in
       --strict-bionic) strict_bionic=1 ;;
       --strict-gamenative) strict_gamenative=1 ;;
+      --require-usb) require_usb=1 ;;
       *)
         usage
         fail "Unknown argument: ${1}"
@@ -100,6 +103,7 @@ main() {
     runpath_accept_regex='^/data/data/com\.termux/files/usr/lib$'
   fi
   [[ "${strict_runpath}" =~ ^[01]$ ]] || fail "WCP_STRICT_RUNPATH_CONTRACT must be 0 or 1"
+  [[ "${require_usb}" =~ ^[01]$ ]] || fail "WCP_REQUIRE_USB_RUNTIME must be 0 or 1"
 
   tmp_dir="$(mktemp -d)"
   trap 'rm -rf "${tmp_dir:-}"' EXIT
@@ -131,6 +135,39 @@ main() {
       fail "Runpath contract failed for bin/wineserver: ${wineserver_runpath}"
     fi
     log "runpath warn: bin/wineserver runpath outside accepted regex (${runpath_accept_regex})"
+  fi
+
+  winebus_module=""
+  if [[ -f "${wcp_root}/lib/wine/aarch64-unix/winebus.so" ]]; then
+    winebus_module="lib/wine/aarch64-unix/winebus.so"
+  elif [[ -f "${wcp_root}/lib/wine/aarch64-unix/winebus.sys.so" ]]; then
+    winebus_module="lib/wine/aarch64-unix/winebus.sys.so"
+  fi
+  wineusb_module=""
+  if [[ -f "${wcp_root}/lib/wine/aarch64-unix/wineusb.so" ]]; then
+    wineusb_module="lib/wine/aarch64-unix/wineusb.so"
+  elif [[ -f "${wcp_root}/lib/wine/aarch64-unix/wineusb.sys.so" ]]; then
+    wineusb_module="lib/wine/aarch64-unix/wineusb.sys.so"
+  fi
+  wineusb_driver=""
+  if [[ -f "${wcp_root}/lib/wine/aarch64-windows/wineusb.sys" ]]; then
+    wineusb_driver="lib/wine/aarch64-windows/wineusb.sys"
+  fi
+  winusb_dll=""
+  if [[ -f "${wcp_root}/lib/wine/aarch64-windows/winusb.dll" ]]; then
+    winusb_dll="lib/wine/aarch64-windows/winusb.dll"
+  elif [[ -f "${wcp_root}/lib/wine/i386-windows/winusb.dll" ]]; then
+    winusb_dll="lib/wine/i386-windows/winusb.dll"
+  fi
+  log "usbWinebusModule=${winebus_module:-ABSENT}"
+  log "usbWineusbModule=${wineusb_module:-ABSENT}"
+  log "usbWineusbDriver=${wineusb_driver:-ABSENT}"
+  log "usbWinusbDll=${winusb_dll:-ABSENT}"
+  if [[ "${require_usb}" == "1" ]]; then
+    [[ -n "${winebus_module}" ]] || fail "USB contract failed: winebus module is missing"
+    [[ -n "${wineusb_module}" ]] || fail "USB contract failed: wineusb unix module is missing"
+    [[ -n "${wineusb_driver}" ]] || fail "USB contract failed: wineusb.sys is missing"
+    [[ -n "${winusb_dll}" ]] || fail "USB contract failed: winusb.dll is missing"
   fi
 
   unix_abi_file="${wcp_root}/share/wcp-forensics/unix-module-abi.tsv"
