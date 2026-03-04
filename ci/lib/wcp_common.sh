@@ -621,6 +621,7 @@ wcp_ensure_configure_script() {
   # Seed from known donor/system locations before configure to avoid vkd3d probe failures.
   wcp_seed_spirv_headers_for_vkd3d "${wine_src_dir}"
   wcp_seed_spirv_tools_headers_for_vkd3d "${wine_src_dir}"
+  wcp_seed_tools_gdbinit_template "${wine_src_dir}"
 
   if [[ ! -x "${wine_src_dir}/configure" ]]; then
     need_autoreconf=1
@@ -713,6 +714,21 @@ wcp_seed_spirv_tools_headers_for_vkd3d() {
   done
 
   wcp_log "SPIRV-Tools headers were not seeded (no donor found for ${target_header})"
+}
+
+wcp_seed_tools_gdbinit_template() {
+  local wine_src_dir="$1"
+  local template_path
+
+  template_path="${wine_src_dir}/tools/gdbinit.py.in"
+  [[ -f "${template_path}" ]] && return 0
+
+  mkdir -p "$(dirname -- "${template_path}")"
+  cat > "${template_path}" <<'EOF'
+# Auto-generated placeholder for FreeWine runtime CI.
+# Full gdb integration templates are optional for WCP packaging.
+EOF
+  wcp_log "Generated placeholder tools/gdbinit.py.in for makedep compatibility"
 }
 
 build_wine_tools_host() {
