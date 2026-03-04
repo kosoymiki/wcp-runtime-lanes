@@ -51,10 +51,23 @@ ensure_llvm_mingw() {
   : "${CACHE_DIR:=${PWD}/.cache}"
   : "${TOOLCHAIN_DIR:=${CACHE_DIR}/toolchain/llvm-mingw-${LLVM_MINGW_TAG}}"
 
-  local tmp_archive extracted cfg_count wrapper_count
+  local tmp_archive extracted cfg_count wrapper_count host_arch asset_regex
 
   mkdir -p "${CACHE_DIR}" "${CACHE_DIR}/toolchain"
   tmp_archive="${CACHE_DIR}/llvm-mingw-${LLVM_MINGW_TAG}.tar.xz"
+
+  host_arch="$(uname -m)"
+  case "${host_arch}" in
+    x86_64|amd64)
+      asset_regex='llvm-mingw-.*-ucrt-ubuntu-.*-(x86_64|amd64)\.tar\.xz$'
+      ;;
+    aarch64|arm64)
+      asset_regex='llvm-mingw-.*-ucrt-ubuntu-.*-(aarch64|arm64)\.tar\.xz$'
+      ;;
+    *)
+      llvm_fail "Unsupported host architecture for llvm-mingw asset resolution: ${host_arch}"
+      ;;
+  esac
 
   if [[ -x "${TOOLCHAIN_DIR}/bin/clang" ]]; then
     llvm_log "Using cached llvm-mingw at ${TOOLCHAIN_DIR}"
@@ -62,7 +75,7 @@ ensure_llvm_mingw() {
     download_release_asset \
       "mstorsjo/llvm-mingw" \
       "${LLVM_MINGW_TAG}" \
-      "llvm-mingw-.*-ucrt-ubuntu-.*-(aarch64|arm64)\\.tar\\.xz$" \
+      "${asset_regex}" \
       "${tmp_archive}"
 
     tar -xJf "${tmp_archive}" -C "${CACHE_DIR}/toolchain" \
