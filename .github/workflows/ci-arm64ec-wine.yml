@@ -164,7 +164,8 @@ jobs:
             libsmbclient-dev \
             libsdl2-dev \
             libusb-1.0-0-dev \
-            spirv-headers
+            spirv-headers \
+            spirv-tools
           mkdir -p "${WCP_OUTPUT_DIR}" "${TOOLCHAIN_DIR}"
 
       - name: Cache llvm-mingw toolchain
