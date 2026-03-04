@@ -700,7 +700,7 @@ winlator_adopt_bionic_unix_core_modules() {
     copied_count=$((copied_count + 1))
 
     # Keep unix<->PE core modules in the same source generation to avoid startup ABI drift
-    # (e.g. ntdll.so from donor + ntdll.dll from local build).
+    # (e.g. ntdll.so from source WCP + ntdll.dll from local build).
     pe_mod=""
     case "${mod}" in
       ntdll.so) pe_mod="ntdll.dll" ;;
@@ -833,7 +833,7 @@ winlator_adopt_bionic_launchers() {
   unix_abi="$(winlator_detect_unix_module_abi "${wcp_root}")"
   if [[ "${unix_abi}" == "glibc-unix" ]]; then
     if winlator_bionic_mainline_strict; then
-      fail "Cannot adopt bionic launchers while unix ABI is glibc-unix in strict mainline mode (source map / donor WCP mismatch)"
+      fail "Cannot adopt bionic launchers while unix ABI is glibc-unix in strict mainline mode (source map / source WCP mismatch)"
     fi
     log "Skipping bionic launcher adoption: unix runtime is glibc-linked (ntdll needs libc.so.6)"
     return 0

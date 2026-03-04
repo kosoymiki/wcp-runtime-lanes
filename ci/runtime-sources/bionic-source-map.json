@@ -12,7 +12,7 @@
         "winebus.so",
         "winebus.sys.so"
       ],
-      "notes": "No donor baseline URLs are used in mainline runtime lane."
+      "notes": "No external baseline URLs are used in mainline runtime lane."
     }
   }
 }

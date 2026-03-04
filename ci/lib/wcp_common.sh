@@ -616,7 +616,7 @@ wcp_ensure_configure_script() {
   local need_autoreconf=0
 
   # Some FreeWine trees miss vendored SPIR-V headers after selective rebases.
-  # Seed from known donor/system locations before configure to avoid vkd3d probe failures.
+  # Seed from known source/system locations before configure to avoid vkd3d probe failures.
   wcp_seed_spirv_headers_for_vkd3d "${wine_src_dir}"
   wcp_seed_spirv_tools_headers_for_vkd3d "${wine_src_dir}"
   wcp_seed_tools_gdbinit_template "${wine_src_dir}"
@@ -662,56 +662,56 @@ wcp_ensure_configure_script() {
 
 wcp_seed_spirv_headers_for_vkd3d() {
   local wine_src_dir="$1"
-  local target_dir target_header donor
-  local -a donor_dirs=()
+  local target_dir target_header source_dir
+  local -a source_dirs=()
 
   target_dir="${wine_src_dir}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
   target_header="${target_dir}/spirv.h"
   [[ -f "${target_header}" ]] && return 0
 
-  donor_dirs+=(
-    "${WCP_LOCAL_ANDRE_WINE11_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
-    "${WCP_LOCAL_WINE11_DONOR_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
+  source_dirs+=(
+    "${WCP_LOCAL_WINE11_ACTIVE_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
+    "${WCP_LOCAL_WINE11_FALLBACK_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
     "/usr/include/spirv/unified1"
   )
 
-  for donor in "${donor_dirs[@]}"; do
-    [[ -n "${donor}" ]] || continue
-    [[ -f "${donor}/spirv.h" ]] || continue
+  for source_dir in "${source_dirs[@]}"; do
+    [[ -n "${source_dir}" ]] || continue
+    [[ -f "${source_dir}/spirv.h" ]] || continue
     mkdir -p "${target_dir}"
-    cp -a "${donor}/." "${target_dir}/"
-    wcp_log "Seeded SPIR-V headers for vkd3d from ${donor}"
+    cp -a "${source_dir}/." "${target_dir}/"
+    wcp_log "Seeded SPIR-V headers for vkd3d from ${source_dir}"
     return 0
   done
 
-  wcp_log "SPIR-V headers were not seeded (no donor found for ${target_header})"
+  wcp_log "SPIR-V headers were not seeded (no source found for ${target_header})"
 }
 
 wcp_seed_spirv_tools_headers_for_vkd3d() {
   local wine_src_dir="$1"
-  local target_dir target_header donor
-  local -a donor_dirs=()
+  local target_dir target_header source_dir
+  local -a source_dirs=()
 
   target_dir="${wine_src_dir}/libs/vkd3d/libs/vkd3d-shader/spirv-tools"
   target_header="${target_dir}/libspirv.h"
   [[ -f "${target_header}" ]] && return 0
 
-  donor_dirs+=(
-    "${WCP_LOCAL_ANDRE_WINE11_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv-tools"
-    "${WCP_LOCAL_WINE11_DONOR_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv-tools"
+  source_dirs+=(
+    "${WCP_LOCAL_WINE11_ACTIVE_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv-tools"
+    "${WCP_LOCAL_WINE11_FALLBACK_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv-tools"
     "/usr/include/spirv-tools"
   )
 
-  for donor in "${donor_dirs[@]}"; do
-    [[ -n "${donor}" ]] || continue
-    [[ -f "${donor}/libspirv.h" ]] || continue
+  for source_dir in "${source_dirs[@]}"; do
+    [[ -n "${source_dir}" ]] || continue
+    [[ -f "${source_dir}/libspirv.h" ]] || continue
     mkdir -p "${target_dir}"
-    cp -a "${donor}/." "${target_dir}/"
-    wcp_log "Seeded SPIRV-Tools headers for vkd3d from ${donor}"
+    cp -a "${source_dir}/." "${target_dir}/"
+    wcp_log "Seeded SPIRV-Tools headers for vkd3d from ${source_dir}"
     return 0
   done
 
-  wcp_log "SPIRV-Tools headers were not seeded (no donor found for ${target_header})"
+  wcp_log "SPIRV-Tools headers were not seeded (no source found for ${target_header})"
 }
 
 wcp_seed_tools_gdbinit_template() {

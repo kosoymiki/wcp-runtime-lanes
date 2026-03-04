@@ -84,7 +84,8 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${WCP_BIONIC_SOURCE_MAP_REQUIRED:=0}"
 : "${WCP_BIONIC_LAUNCHER_SOURCE_WCP_URL:=}"
 : "${WCP_BIONIC_UNIX_SOURCE_WCP_URL:=}"
-: "${WCP_BIONIC_DONOR_PREFLIGHT:=0}"
+: "${WCP_BIONIC_SOURCE_PREFLIGHT:=${WCP_BIONIC_DONOR_PREFLIGHT:-0}}"
+: "${WCP_BIONIC_DONOR_PREFLIGHT:=${WCP_BIONIC_SOURCE_PREFLIGHT}}"
 : "${WCP_BIONIC_UNIX_CORE_ADOPT:=0}"
 : "${WCP_GN_PATCHSET_ENABLE:=0}"
 : "${WCP_FREEWINE_PREFIXPACK_AUTOBUILD:=1}"
@@ -762,8 +763,8 @@ main() {
   wcp_validate_winlator_profile_identifier "${WCP_VERSION_NAME}" "${WCP_VERSION_CODE}"
   wcp_enforce_mainline_bionic_policy
   wcp_enforce_mainline_external_runtime_policy
-  if [[ "${WCP_BIONIC_DONOR_PREFLIGHT}" == "1" ]]; then
-    CHECK_REMOTE="${WCP_BIONIC_DONOR_PREFLIGHT}" source "${ROOT_DIR}/ci/runtime-sources/resolve-bionic-donor.sh" "${WCP_NAME}"
+  if [[ "${WCP_BIONIC_SOURCE_PREFLIGHT}" == "1" ]]; then
+    CHECK_REMOTE="${WCP_BIONIC_SOURCE_PREFLIGHT}" source "${ROOT_DIR}/ci/runtime-sources/resolve-bionic-source.sh" "${WCP_NAME}"
   fi
   winlator_preflight_bionic_source_contract
 

@@ -29,7 +29,7 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
   - builds FreeWine runtime package
   - enforces strict runtime + forensic contract
   - publishes runtime package to WCP Archive releases
-- mainline CI does not depend on donor patch/rebase lanes.
+- mainline CI does not depend on legacy transfer/rebase lanes.
 
 ## CI Secrets
 

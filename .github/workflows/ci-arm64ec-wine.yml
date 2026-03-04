@@ -96,7 +96,7 @@ env:
   WCP_BIONIC_SOURCE_MAP_FILE: ${{ github.workspace }}/ci/runtime-sources/bionic-source-map.json
   WCP_BIONIC_SOURCE_MAP_FORCE: "0"
   WCP_BIONIC_SOURCE_MAP_REQUIRED: "0"
-  WCP_BIONIC_DONOR_PREFLIGHT: "0"
+  WCP_BIONIC_SOURCE_PREFLIGHT: "0"
   WCP_WINE_SOURCE_MODE: freewine-git
   WCP_FREEWINE_REPO_INPUT: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
