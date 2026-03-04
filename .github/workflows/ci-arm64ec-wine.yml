@@ -44,6 +44,7 @@ permissions:
   contents: write
 
 env:
+  AEO_UPLOAD_ARTIFACTS: "0"
   CACHE_DIR: ${{ github.workspace }}/.cache
   WCP_NAME: freewine11-arm64ec
   WCP_OUTPUT_DIR: ${{ github.workspace }}/out/freewine11
@@ -94,7 +95,7 @@ env:
   WCP_BIONIC_SOURCE_MAP_REQUIRED: "0"
   WCP_BIONIC_DONOR_PREFLIGHT: "0"
   WCP_WINE_SOURCE_MODE: freewine-git
-  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL }}
+  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
   WCP_GN_PATCHSET_ENABLE: "0"
   WCP_FREEWINE_PREFIXPACK_AUTOBUILD: "1"
@@ -168,6 +169,7 @@ jobs:
           test -f "${WCP_OUTPUT_DIR}/SHA256SUMS"
 
       - name: Upload WCP artifact
+        if: env.AEO_UPLOAD_ARTIFACTS == '1'
         uses: actions/upload-artifact@v4
         with:
           name: freewine11-arm64ec
@@ -179,7 +181,7 @@ jobs:
           retention-days: 14
 
       - name: Upload diagnostics
-        if: always()
+        if: env.AEO_UPLOAD_ARTIFACTS == '1' && always()
         uses: actions/upload-artifact@v4
         with:
           name: freewine11-diagnostics
