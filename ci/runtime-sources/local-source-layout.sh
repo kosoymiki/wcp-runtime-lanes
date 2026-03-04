@@ -31,27 +31,49 @@ wcp_resolve_wine11_active_dir() {
 
 wcp_clone_from_seed_or_remote() {
   local repo_url="$1" ref="$2" local_seed="$3" dest_dir="$4"
+  local -a clone_opts=(--filter=blob:none --no-checkout)
+  local clone_ok=0
 
   rm -rf "${dest_dir}"
 
   if [[ -n "${local_seed}" ]] && wcp_local_repo_exists "${local_seed}"; then
-    git clone --reference-if-able "${local_seed}" --dissociate --filter=blob:none --no-checkout "${repo_url}" "${dest_dir}" >/dev/null 2>&1
+    if git clone --reference-if-able "${local_seed}" --dissociate "${clone_opts[@]}" "${repo_url}" "${dest_dir}"; then
+      clone_ok=1
+    fi
+    if [[ ${clone_ok} -eq 0 ]]; then
+      rm -rf "${dest_dir}"
+      if git clone --reference-if-able "${local_seed}" --dissociate --no-checkout "${repo_url}" "${dest_dir}"; then
+        clone_ok=1
+      fi
+    fi
   else
-    git clone --filter=blob:none --no-checkout "${repo_url}" "${dest_dir}" >/dev/null 2>&1
+    if git clone "${clone_opts[@]}" "${repo_url}" "${dest_dir}"; then
+      clone_ok=1
+    fi
+    if [[ ${clone_ok} -eq 0 ]]; then
+      rm -rf "${dest_dir}"
+      if git clone --no-checkout "${repo_url}" "${dest_dir}"; then
+        clone_ok=1
+      fi
+    fi
   fi
 
-  if git -C "${dest_dir}" fetch --no-tags origin "${ref}" >/dev/null 2>&1; then
+  if [[ ${clone_ok} -eq 0 ]]; then
+    return 1
+  fi
+
+  if git -C "${dest_dir}" fetch --no-tags origin "${ref}"; then
     :
-  elif git -C "${dest_dir}" fetch origin "refs/tags/${ref}:refs/tags/${ref}" >/dev/null 2>&1; then
+  elif git -C "${dest_dir}" fetch origin "refs/tags/${ref}:refs/tags/${ref}"; then
     :
   else
     return 1
   fi
 
-  if git -C "${dest_dir}" checkout --detach "${ref}" >/dev/null 2>&1; then
+  if git -C "${dest_dir}" checkout --detach "${ref}"; then
     :
   else
-    git -C "${dest_dir}" checkout --detach FETCH_HEAD >/dev/null 2>&1
+    git -C "${dest_dir}" checkout --detach FETCH_HEAD
   fi
 }
 

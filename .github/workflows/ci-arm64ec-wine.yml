@@ -96,7 +96,7 @@ env:
   WCP_BIONIC_SOURCE_MAP_REQUIRED: "0"
   WCP_BIONIC_DONOR_PREFLIGHT: "0"
   WCP_WINE_SOURCE_MODE: freewine-git
-  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || (secrets.AEO_RELEASE_TOKEN != '' && format('https://x-access-token:{0}@github.com/kosoymiki/freewine11.git', secrets.AEO_RELEASE_TOKEN) || 'https://github.com/kosoymiki/freewine11.git') }}
+  WCP_FREEWINE_REPO_INPUT: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
   WCP_GN_PATCHSET_ENABLE: "0"
   WCP_FREEWINE_PREFIXPACK_AUTOBUILD: "1"
@@ -112,6 +112,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve FreeWine clone URL
+        env:
+          AEO_RELEASE_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          input_repo="${WCP_FREEWINE_REPO_INPUT}"
+          if [[ -z "${input_repo}" ]]; then
+            input_repo="https://github.com/kosoymiki/freewine11.git"
+          fi
+
+          resolved_repo="${input_repo}"
+          if [[ "${resolved_repo}" =~ ^https://github\.com/[^/]+/[^/]+(\.git)?$ ]] && [[ "${resolved_repo}" != *"x-access-token:"* ]]; then
+            if [[ -n "${AEO_RELEASE_TOKEN:-}" ]]; then
+              resolved_repo="$(printf '%s' "${resolved_repo}" | sed "s#https://github.com/#https://x-access-token:${AEO_RELEASE_TOKEN}@github.com/#")"
+            fi
+          fi
+
+          if ! git ls-remote --heads "${resolved_repo}" "${WCP_FREEWINE_REF}" >/dev/null 2>&1; then
+            echo "::error::Cannot access FreeWine source ${input_repo} @ ${WCP_FREEWINE_REF}. Configure secret AEO_RELEASE_TOKEN (repo-scoped token with access to kosoymiki/freewine11) or provide workflow input freewine_repo with embedded auth URL."
+            exit 1
+          fi
+
+          echo "WCP_FREEWINE_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
 
       - name: Validate FreeWine source config
         run: |

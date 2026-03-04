@@ -21,6 +21,16 @@ Runtime packaging repository for Aeolator.
   - validates runtime contract,
   - publishes WCP artifact to this repo.
 
+## CI Secrets
+
+- `AEO_RELEASE_TOKEN` (required)
+  - must have read access to `kosoymiki/freewine11` (private source repo),
+  - must have write access to `kosoymiki/wcp-runtime-lanes` releases.
+- `FREEWINE11_REPO_URL` (optional)
+  - override source URL for FreeWine clone if needed.
+- `AEOLATOR_PREFIX_PACK_URL` (optional)
+  - override prefix pack URL for runtime packaging.
+
 ## Local Run
 
 ```bash
