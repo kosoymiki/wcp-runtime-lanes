@@ -1,19 +1,23 @@
-# Mainline Project State (Runtime Lanes)
+# Mainline Project State (WCP Archive)
 
 Snapshot date: 2026-03-04
 
 ## Scope
 
-- This repo owns only FreeWine runtime package lanes.
-- Active lane: `freewine11-arm64ec-latest`.
-- Artifact host: `kosoymiki/wcp-runtime-lanes` releases.
+- This repo is the canonical **WCP Archive** host.
+- Native runtime lane built here: `freewine11-arm64ec-latest`.
+- Additional WCP lanes hosted here from split graphics CI:
+  - `dxvk-gplasync*`
+  - `vkd3d-proton*`
+  - `vulkan-sdk-*`
+  - `dgvoodoo-latest`
 
 ## Current Build Contract
 
 - Runtime source mode: `freewine-git`.
 - Source repository: `kosoymiki/freewine11` (private).
 - Runtime target policy: Android bionic-only.
-- Validation gate: `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic`.
+- Validation gate: `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic --require-usb`.
 
 ## CI Status
 
@@ -37,5 +41,4 @@ Snapshot date: 2026-03-04
 1. Keep `AEO_RELEASE_TOKEN` present in repo secrets; otherwise runtime CI cannot
    read private FreeWine source.
 2. Continue runtime forensic/provenance export evolution in lockstep with
-   `aeolator` issue-bundle schema.
-
+   `aesolator` issue-bundle schema.

@@ -1,35 +1,42 @@
-# WCP Runtime Lanes
+# WCP Archive
 
-Runtime packaging repository for Aeolator.
+Canonical WCP archive repository for Ae.solator package lanes.
+
+Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
 
 ## Scope
 
-- Build FreeWine-based runtime package `freewine11-arm64ec.wcp`.
-- Publish runtime release lane `freewine11-arm64ec-latest`.
-- Keep runtime contract and forensic hooks aligned with Android bionic-only policy.
+- Build and publish FreeWine runtime WCP:
+  - `freewine11-arm64ec.wcp`
+  - release tag `freewine11-arm64ec-latest`
+- Host translation/runtime-support WCP lanes produced by split CI:
+  - DXVK GPLAsync (`dxvk-gplasync*`)
+  - VKD3D-Proton (`vkd3d-proton*`)
+  - Vulkan SDK (`vulkan-sdk-*`)
+  - dgVoodoo (`dgvoodoo-latest`)
+- Keep runtime/forensic contracts strict for bionic-only deployment.
 
-## Inputs / Outputs
+## Ownership Model
 
-- Source input: `kosoymiki/freewine11` (private native source tree).
-- Package output: `kosoymiki/wcp-runtime-lanes` GitHub Releases.
-- Consumer: `kosoymiki/aeolator` app (Contents manager).
+- Source tree: `kosoymiki/freewine11`
+- Archive host: `kosoymiki/wcp-runtime-lanes`
+- App consumer: `kosoymiki/aesolator`
+- Graphics ZIP producer + dgVoodoo build owner: `kosoymiki/wcp-graphics-lanes`
 
 ## Main Workflow
 
 - `.github/workflows/ci-arm64ec-wine.yml`
-  - builds runtime from FreeWine source,
-  - validates runtime contract,
-  - publishes WCP artifact to this repo.
+  - builds FreeWine runtime package
+  - enforces strict runtime + forensic contract
+  - publishes runtime package to WCP Archive releases
 
 ## CI Secrets
 
 - `AEO_RELEASE_TOKEN` (required)
-  - must have read access to `kosoymiki/freewine11` (private source repo),
-  - must have write access to `kosoymiki/wcp-runtime-lanes` releases.
+  - read access to `kosoymiki/freewine11`
+  - write access to `kosoymiki/wcp-runtime-lanes` releases
 - `FREEWINE11_REPO_URL` (optional)
-  - override source URL for FreeWine clone if needed.
 - `AEOLATOR_PREFIX_PACK_URL` (optional)
-  - override prefix pack URL for runtime packaging.
 
 ## Local Run
 

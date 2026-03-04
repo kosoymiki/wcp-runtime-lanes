@@ -908,7 +908,7 @@ compose_wcp_tree_from_stage() {
   : "${WCP_CHANNEL:=stable}"
   : "${WCP_DELIVERY:=remote}"
   : "${WCP_DISPLAY_CATEGORY:=${WCP_PROFILE_TYPE}}"
-  : "${WCP_SOURCE_REPO:=${GITHUB_REPOSITORY:-kosoymiki/winlator-wine-proton-arm64ec-wcp}}"
+  : "${WCP_SOURCE_REPO:=${GITHUB_REPOSITORY:-kosoymiki/wcp-runtime-lanes}}"
   : "${WCP_RELEASE_TAG:=wcp-latest}"
   : "${WCP_SOURCE_TYPE:=github-release}"
   : "${WCP_SOURCE_VERSION:=rolling-latest}"
