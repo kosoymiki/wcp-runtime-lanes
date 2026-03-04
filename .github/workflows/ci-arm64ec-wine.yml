@@ -130,11 +130,6 @@ jobs:
             fi
           fi
 
-          if ! git ls-remote --heads "${resolved_repo}" "${WCP_FREEWINE_REF}" >/dev/null 2>&1; then
-            echo "::error::Cannot access FreeWine source ${input_repo} @ ${WCP_FREEWINE_REF}. Configure secret AEO_RELEASE_TOKEN (repo-scoped token with access to kosoymiki/freewine11) or provide workflow input freewine_repo with embedded auth URL."
-            exit 1
-          fi
-
           echo "WCP_FREEWINE_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
 
       - name: Validate FreeWine source config
