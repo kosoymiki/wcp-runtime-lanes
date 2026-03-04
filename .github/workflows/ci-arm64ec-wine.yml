@@ -53,6 +53,7 @@ env:
   LLVM_MINGW_VER: ${{ github.event.inputs.llvm_mingw_ver || '20260210' }}
   WCP_COMPRESS: ${{ github.event.inputs.compress || 'xz' }}
   WCP_VERSION_CODE: "1"
+  WCP_VERSION_NAME: 11.0-arm64ec
   WCP_CHANNEL: nightly
   WCP_DELIVERY: remote
   WCP_PROFILE_TYPE: Wine
@@ -217,21 +218,13 @@ jobs:
           Workflow run: ${{ github.run_id }}
           EOF_NOTES
 
-      - name: Validate split release token
-        if: github.event_name != 'pull_request'
-        env:
-          AEO_RELEASE_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
-        run: |
-          set -euxo pipefail
-          test -n "${AEO_RELEASE_TOKEN}"
-
       - name: Publish to GitHub Release
         id: publish_release
         if: github.event_name != 'pull_request'
         continue-on-error: true
         uses: ncipollo/release-action@v1
         with:
-          token: ${{ secrets.AEO_RELEASE_TOKEN }}
+          token: ${{ secrets.AEO_RELEASE_TOKEN || github.token }}
           owner: ${{ env.WCP_RELEASE_OWNER }}
           repo: ${{ env.WCP_RELEASE_REPO }}
           tag: freewine11-arm64ec-latest
@@ -246,8 +239,8 @@ jobs:
       - name: Fallback publish to GitHub Release via gh (retry)
         if: github.event_name != 'pull_request' && steps.publish_release.outcome == 'failure'
         env:
-          GH_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
-          RELEASE_REPO: ${{ env.WCP_SOURCE_REPO }}
+          GH_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN || github.token }}
+          RELEASE_REPO: ${{ env.WCP_RELEASE_OWNER }}/${{ env.WCP_RELEASE_REPO }}
         run: |
           set -euxo pipefail
           TAG="freewine11-arm64ec-latest"
