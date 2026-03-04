@@ -1,5 +1,0 @@
-diff --git a/dlls/mshtml/tests/utf8_bom.css b/dlls/mshtml/tests/utf8_bom.css
---- a/dlls/mshtml/tests/utf8_bom.css
-+++ /dev/null
-@@ -1 +0,0 @@
--﻿.snd{} body {background-color: #deadb8;}

@@ -1,7 +1,0 @@
-diff --git a/dlls/sharedgpures.sys/sharedgpures.sys.spec b/dlls/sharedgpures.sys/sharedgpures.sys.spec
-new file mode 100644
-index 0000000..1111111
---- /dev/null
-+++ b/dlls/sharedgpures.sys/sharedgpures.sys.spec
-@@ -0,0 +1 @@
-+# nothing to export

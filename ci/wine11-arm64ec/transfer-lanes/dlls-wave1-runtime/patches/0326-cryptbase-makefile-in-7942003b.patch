@@ -1,9 +1,0 @@
-diff --git a/dlls/cryptbase/Makefile.in b/dlls/cryptbase/Makefile.in
---- a/dlls/cryptbase/Makefile.in
-+++ /dev/null
-@@ -1,5 +0,0 @@
--MODULE    = cryptbase.dll
--
--SOURCES = \
--	cryptbase_main.c \
--	des.c

@@ -1,9 +1,0 @@
-diff --git a/dlls/magnification/magnification.spec b/dlls/magnification/magnification.spec
---- a/dlls/magnification/magnification.spec
-+++ b/dlls/magnification/magnification.spec
-@@ -18,4 +18,4 @@
- @ stub MagSetWindowSource
- @ stub MagSetWindowTransform
- @ stub MagShowSystemCursor
--@ stdcall MagUninitialize()
-+@ stub MagUninitialize

@@ -1,8 +1,0 @@
-diff --git a/dlls/winbrand/Makefile.in b/dlls/winbrand/Makefile.in
---- a/dlls/winbrand/Makefile.in
-+++ /dev/null
-@@ -1,4 +0,0 @@
--MODULE    = winbrand.dll
--
--SOURCES = \
--	main.c

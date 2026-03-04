@@ -1,5 +1,0 @@
-diff --git a/dlls/mshtml/tests/utf8.js b/dlls/mshtml/tests/utf8.js
---- a/dlls/mshtml/tests/utf8.js
-+++ /dev/null
-@@ -1 +0,0 @@
--document.wineTestProp = 1;

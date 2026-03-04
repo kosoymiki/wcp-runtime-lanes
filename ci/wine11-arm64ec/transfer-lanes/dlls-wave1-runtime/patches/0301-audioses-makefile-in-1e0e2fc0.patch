@@ -1,7 +1,0 @@
-diff --git a/dlls/audioses/Makefile.in b/dlls/audioses/Makefile.in
-new file mode 100644
-index 0000000..1111111
---- /dev/null
-+++ b/dlls/audioses/Makefile.in
-@@ -0,0 +1 @@
-+MODULE    = audioses.dll

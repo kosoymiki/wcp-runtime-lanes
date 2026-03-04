@@ -1,6 +1,0 @@
-diff --git a/dlls/profapi/Makefile.in b/dlls/profapi/Makefile.in
---- a/dlls/profapi/Makefile.in
-+++ b/dlls/profapi/Makefile.in
-@@ -1 +1,2 @@
- MODULE    = profapi.dll
-+IMPORTLIB = profapi

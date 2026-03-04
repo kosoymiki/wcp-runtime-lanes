@@ -1,5 +1,0 @@
-nls/
-po/
-programs/
-server/
-tools/

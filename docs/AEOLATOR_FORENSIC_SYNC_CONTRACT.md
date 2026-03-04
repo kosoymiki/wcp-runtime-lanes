@@ -2,7 +2,10 @@
 
 ## Scope
 
-Unified CI forensic capture for `ci/wine11-arm64ec/run-*.sh` and `ci/proton11-ge-arm64ec/run-*.sh`.
+Unified CI forensic capture for mainline runtime build:
+
+- `build.sh` -> `ci/ci-build.sh`
+- native hook scaffold in `ci/forensics/native-hooks/apply-native-forensics.sh`
 
 ## Enable/Disable
 
@@ -58,7 +61,7 @@ Every event includes:
 ```bash
 AEO_FORENSIC_ENABLE=1 \
 AEO_FORENSIC_ROOT=/tmp/aeolator-forensics-smoke \
-bash ci/wine11-arm64ec/run-core-transfer-gates.sh
+bash build.sh
 ```
 
 Then inspect:

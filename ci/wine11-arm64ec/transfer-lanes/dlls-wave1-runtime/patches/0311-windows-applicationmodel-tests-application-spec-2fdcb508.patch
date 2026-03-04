@@ -1,5 +1,0 @@
-diff --git a/dlls/windows.applicationmodel/tests/application.spec b/dlls/windows.applicationmodel/tests/application.spec
---- a/dlls/windows.applicationmodel/tests/application.spec
-+++ /dev/null
-@@ -1 +0,0 @@
--@ stdcall -private DllGetActivationFactory(ptr ptr)

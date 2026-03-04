@@ -19,6 +19,7 @@ Snapshot date: 2026-03-04
 - Source repository: `kosoymiki/freewine11` (private).
 - Runtime target policy: Android bionic-only.
 - Validation gate: `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic --require-usb`.
+- Legacy donor transfer/rebase scripts are removed from mainline runtime lane.
 
 ## CI Status
 

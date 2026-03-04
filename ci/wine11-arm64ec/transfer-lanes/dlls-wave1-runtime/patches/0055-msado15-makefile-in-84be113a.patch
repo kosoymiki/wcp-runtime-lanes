@@ -1,9 +1,0 @@
-diff --git a/dlls/msado15/Makefile.in b/dlls/msado15/Makefile.in
---- a/dlls/msado15/Makefile.in
-+++ b/dlls/msado15/Makefile.in
-@@ -8,5 +8,4 @@
- 	msado15_classes.idl \
- 	msado15_tlb.idl \
- 	recordset.c \
--	rowset.c \
- 	stream.c

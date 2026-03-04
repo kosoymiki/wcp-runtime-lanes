@@ -1,2 +1,0 @@
-include/winternl.h
-dlls/wow64/wow64.spec

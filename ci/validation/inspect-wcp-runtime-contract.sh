@@ -7,7 +7,7 @@ source "${ROOT_DIR}/ci/lib/winlator-runtime.sh"
 usage() {
   cat <<'EOF'
 Usage:
-  bash ci/validation/inspect-wcp-runtime-contract.sh <path-to.wcp> [--strict-bionic] [--strict-gamenative] [--require-usb]
+  bash ci/validation/inspect-wcp-runtime-contract.sh <path-to.wcp> [--strict-bionic] [--require-usb]
 
 Outputs:
   - runtime class / launcher ABI / unix ABI summary
@@ -64,7 +64,6 @@ extract_elf_runpath() {
 main() {
   local wcp_path="${1:-}"
   local strict_bionic=0
-  local strict_gamenative=0
   local require_usb="${WCP_REQUIRE_USB_RUNTIME:-0}"
   local strict_runpath
   local runpath_contract_set runpath_regex_set
@@ -73,14 +72,13 @@ main() {
   local wine_runpath wineserver_runpath runpath_accept_regex
   local winebus_module wineusb_module wineusb_driver winusb_dll
   local -a strict_allowed_glibc_modules forensic_glibc_rows blocking_glibc_rows
-  local -a missing_gn_symbols
+  local -a missing_baseline_symbols
 
   [[ -n "${wcp_path}" ]] || { usage; fail "WCP path is required"; }
   shift || true
   while [[ -n "${1:-}" ]]; do
     case "${1}" in
       --strict-bionic) strict_bionic=1 ;;
-      --strict-gamenative) strict_gamenative=1 ;;
       --require-usb) require_usb=1 ;;
       *)
         usage
@@ -283,39 +281,39 @@ PY
     fail "Strict bionic check failed: bionic-source-entry.json is missing"
   fi
 
-  local llvm_coff_exports_bin
-  local llvm_coff_exports_tool
-  if llvm_coff_exports_bin="$(resolve_tool_path llvm-readobj)"; then
-    llvm_coff_exports_tool="llvm-readobj"
-  elif llvm_coff_exports_bin="$(resolve_tool_path llvm-readelf)"; then
-    llvm_coff_exports_tool="llvm-readelf"
+  local baseline_exports_bin
+  local baseline_exports_tool
+  if baseline_exports_bin="$(resolve_tool_path llvm-readobj)"; then
+    baseline_exports_tool="llvm-readobj"
+  elif baseline_exports_bin="$(resolve_tool_path llvm-readelf)"; then
+    baseline_exports_tool="llvm-readelf"
   else
-    llvm_coff_exports_bin=""
-    llvm_coff_exports_tool=""
+    baseline_exports_bin=""
+    baseline_exports_tool=""
   fi
 
-  if [[ -n "${llvm_coff_exports_bin}" ]]; then
+  if [[ -n "${baseline_exports_bin}" ]]; then
     local ntdll_dll wow64_dll win32u_dll
     ntdll_dll="${wcp_root}/lib/wine/aarch64-windows/ntdll.dll"
     wow64_dll="${wcp_root}/lib/wine/aarch64-windows/wow64.dll"
     win32u_dll="${wcp_root}/lib/wine/aarch64-windows/win32u.dll"
-    missing_gn_symbols=()
-    log "gamenativeBaseline tool=${llvm_coff_exports_tool}"
+    missing_baseline_symbols=()
+    log "runtimeBaseline tool=${baseline_exports_tool}"
 
     check_symbol() {
       local dll="$1" symbol="$2" label="$3"
       local dump
       if [[ ! -f "${dll}" ]]; then
-        missing_gn_symbols+=("${label}:${symbol}:dll-missing")
-        log "gamenativeBaseline warn: ${label} missing (${dll})"
+        missing_baseline_symbols+=("${label}:${symbol}:dll-missing")
+        log "runtimeBaseline warn: ${label} missing (${dll})"
         return
       fi
-      dump="$("${llvm_coff_exports_bin}" --coff-exports "${dll}" 2>/dev/null || true)"
+      dump="$("${baseline_exports_bin}" --coff-exports "${dll}" 2>/dev/null || true)"
       if grep -q "Name: ${symbol}" <<<"${dump}"; then
-        log "gamenativeBaseline ok: ${label} exports ${symbol}"
+        log "runtimeBaseline ok: ${label} exports ${symbol}"
       else
-        missing_gn_symbols+=("${label}:${symbol}:missing-export")
-        log "gamenativeBaseline warn: ${label} missing export ${symbol}"
+        missing_baseline_symbols+=("${label}:${symbol}:missing-export")
+        log "runtimeBaseline warn: ${label} missing export ${symbol}"
       fi
     }
 
@@ -327,14 +325,11 @@ PY
     check_symbol "${win32u_dll}" "NtUserSendInput" "win32u.dll"
     check_symbol "${win32u_dll}" "NtUserGetRawInputData" "win32u.dll"
 
-    if [[ "${strict_gamenative}" == "1" && "${#missing_gn_symbols[@]}" -gt 0 ]]; then
-      fail "Strict gamenative check failed: missing baseline symbols: ${missing_gn_symbols[*]}"
+    if [[ "${#missing_baseline_symbols[@]}" -gt 0 ]]; then
+      log "runtimeBaseline warn: missing baseline symbols: ${missing_baseline_symbols[*]}"
     fi
   else
-    log "gamenativeBaseline skipped: llvm-readobj/readelf unavailable"
-    if [[ "${strict_gamenative}" == "1" ]]; then
-      fail "Strict gamenative check failed: llvm-readobj/readelf unavailable"
-    fi
+    log "runtimeBaseline skipped: llvm-readobj/readelf unavailable"
   fi
 }
 

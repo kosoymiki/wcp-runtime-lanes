@@ -1,5 +1,0 @@
-diff --git a/dlls/winbio/Makefile.in b/dlls/winbio/Makefile.in
---- a/dlls/winbio/Makefile.in
-+++ /dev/null
-@@ -1 +0,0 @@
--MODULE    = winbio.dll

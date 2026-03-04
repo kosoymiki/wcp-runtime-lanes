@@ -1,1 +1,0 @@
-# One relative path per line to skip patch generation (relative to repo root).

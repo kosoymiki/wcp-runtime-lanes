@@ -1,9 +1,0 @@
-diff --git a/dlls/shdocvw/tests/Makefile.in b/dlls/shdocvw/tests/Makefile.in
---- a/dlls/shdocvw/tests/Makefile.in
-+++ b/dlls/shdocvw/tests/Makefile.in
-@@ -2,4 +2,5 @@
- IMPORTS   = shell32 ole32 oleaut32 advapi32
- 
- SOURCES = \
-+	shdocvw.c \
- 	shortcut.c

@@ -1,9 +1,0 @@
-diff --git a/dlls/activeds/Makefile.in b/dlls/activeds/Makefile.in
---- a/dlls/activeds/Makefile.in
-+++ b/dlls/activeds/Makefile.in
-@@ -7,5 +7,4 @@
- SOURCES = \
- 	activeds.idl \
- 	activeds_main.c \
--	dnwithbinary.c \
- 	pathname.c

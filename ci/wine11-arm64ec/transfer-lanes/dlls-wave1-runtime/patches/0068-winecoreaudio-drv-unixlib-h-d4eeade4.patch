@@ -1,9 +1,0 @@
-diff --git a/dlls/winecoreaudio.drv/unixlib.h b/dlls/winecoreaudio.drv/unixlib.h
---- a/dlls/winecoreaudio.drv/unixlib.h
-+++ b/dlls/winecoreaudio.drv/unixlib.h
-@@ -32,3 +32,5 @@
- NTSTATUS unix_wow64_midi_in_message(void *args);
- NTSTATUS unix_wow64_midi_notify_wait(void *args);
- #endif
-+
-+#define UNIX_CALL( func, params ) WINE_UNIX_CALL( func, params )

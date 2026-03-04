@@ -1,2 +1,0 @@
-id	family	kind	rel_path	route	target	mode	status	reason	source_patch	effective_patch
-290	mf_http_support	tkg-patches	mf_http_support/0004-mf-Implement-and-use-HttpSchemePlugin.patch	wine	/home/mikhail/wcp-sources/andre-wine11-arm64ec	dropped	dropped	missing_target_path	/home/mikhail/Загрузки/wine-tkg-git-master(1) (2)/patches/mf_http_support/0004-mf-Implement-and-use-HttpSchemePlugin.patch	/home/mikhail/Загрузки/wine-tkg-git-master(1) (2)/patches/mf_http_support/0004-mf-Implement-and-use-HttpSchemePlugin.patch

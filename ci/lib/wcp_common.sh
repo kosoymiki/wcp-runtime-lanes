@@ -131,7 +131,7 @@ wcp_make_with_serial_retry() {
 wcp_configure_profile_args() {
   local profile="$1"
   case "${profile}" in
-    proton-android-minimal|gamenative-proton10)
+    proton-android-minimal)
       cat <<'EOF'
 --enable-win64
 --disable-win16
@@ -249,8 +249,6 @@ wcp_json_array_from_csv() {
   done
   printf ']'
 }
-
-source "${WCP_COMMON_DIR}/gamenative-patch-base.sh"
 
 wcp_enforce_mainline_bionic_policy() {
   : "${WCP_MAINLINE_BIONIC_ONLY:=1}"

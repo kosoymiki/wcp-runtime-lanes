@@ -1,3 +1,0 @@
-dlls/kernelbase/process.c
-dlls/kernelbase/file.c
-dlls/kernelbase/debug.c

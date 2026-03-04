@@ -1,6 +1,0 @@
-dlls/ntdll/
-dlls/wow64/
-loader/
-server/
-libs/wine/
-tools/winebuild/

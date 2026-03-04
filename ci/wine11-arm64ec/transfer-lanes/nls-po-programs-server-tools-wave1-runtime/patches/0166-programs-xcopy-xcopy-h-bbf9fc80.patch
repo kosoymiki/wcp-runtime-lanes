@@ -1,9 +1,0 @@
-diff --git a/programs/xcopy/xcopy.h b/programs/xcopy/xcopy.h
-index 70b0935ba2c5648df5d07b108de4a46149cd5596..1ed9e20c45b2db6f101bbd0f132733c7b284c995 100644
---- a/programs/xcopy/xcopy.h
-+++ b/programs/xcopy/xcopy.h
-@@ -69,4 +69,3 @@
- #define STRING_FILE_CHAR        115
- #define STRING_DIR_CHAR         116
- #define STRING_HELP             117
--#define STRING_NOCOPYTOSELF     118

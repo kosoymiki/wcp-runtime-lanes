@@ -1,3 +1,0 @@
-server/process.c
-server/thread.c
-server/thread.h

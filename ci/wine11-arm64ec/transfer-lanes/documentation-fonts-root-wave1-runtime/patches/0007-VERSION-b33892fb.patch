@@ -1,7 +1,0 @@
-diff --git a/VERSION b/VERSION
-index 565909bae6a199057dcfe87e708e51765ec027cf..db0f3c510b9678cbbe0eccf6e10e314bc76a1456 100644
---- a/VERSION
-+++ b/VERSION
-@@ -1 +1 @@
--Wine version 11.0
-+Wine version 10.0

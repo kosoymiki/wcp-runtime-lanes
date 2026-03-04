@@ -1,6 +1,0 @@
-diff --git a/dlls/ntdll/tests/testdll.spec b/dlls/ntdll/tests/testdll.spec
---- a/dlls/ntdll/tests/testdll.spec
-+++ /dev/null
-@@ -1,2 +0,0 @@
--@ extern seen_thread_attach
--@ extern seen_thread_detach

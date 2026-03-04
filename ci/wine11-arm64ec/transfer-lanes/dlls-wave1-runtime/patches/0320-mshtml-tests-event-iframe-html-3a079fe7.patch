@@ -1,8 +1,0 @@
-diff --git a/dlls/mshtml/tests/event_iframe.html b/dlls/mshtml/tests/event_iframe.html
---- a/dlls/mshtml/tests/event_iframe.html
-+++ /dev/null
-@@ -1,4 +0,0 @@
--<html><body>
--  <iframe src="http://test.winehq.org/tests/hello.html"></iframe>
--  <iframe src="http://test.winehq.org/tests/hello.html"></iframe>
--</body></html>

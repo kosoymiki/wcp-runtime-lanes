@@ -2,222 +2,40 @@
 
 ## Scope
 
-This contract defines the common behavior boundary for GameNative- and GameHub-derived improvements in Ae.solator mainline.
+Mainline runtime contract for `wcp-runtime-lanes` (WCP Archive) in FreeWine-only mode.
 
 ## Mainline Invariants
 
-1. Runtime class target is `bionic-native`.
-2. Mainline runtime payload is `external-only` for FEX/Box/WoWBox/Vulkan driver assets.
-3. No bundled fallback payload may be introduced by migration patches.
-4. Every fallback path must emit explicit telemetry reason codes.
-5. Bionic donor sources (launcher + unix modules) must be pinned by SHA256 and validated in preflight before long builds.
+1. Runtime source is FreeWine (`WCP_WINE_SOURCE_MODE=freewine-git|freewine-local`).
+2. Target class is Android bionic (`WCP_RUNTIME_CLASS_TARGET=bionic-native`).
+3. CI runtime gate is mandatory before release publish:
+   - `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic --require-usb`.
+4. USB support is mandatory in runtime payload (`WCP_REQUIRE_USB_RUNTIME=1`).
+5. Mainline does not apply donor patchsets during runtime package build (`WCP_GN_PATCHSET_ENABLE=0`).
 
-## Required Runtime Fields
+## Required Provenance Outputs
 
-The package/runtime metadata must expose:
+Every successful runtime build must produce:
 
-- `wrapperPolicyVersion`
-- `policySource`
-- `runtimeClassTarget`
-- `runtimeClassDetected`
-- `wineLauncherAbi`
-- `wineserverLauncherAbi`
-- `runtimeMismatchReason`
-- `fexExpectationMode`
-- `bionicLauncherSourceSha256`
-- `bionicUnixSourceSha256`
-- `bionicLauncherSourceResolvedSha256`
-- `bionicUnixSourceResolvedSha256`
-- `bionicDonorPreflightDone`
+- `${WCP_NAME}.wcp`
+- `SHA256SUMS`
+- `out/freewine11/logs/runtime-provenance.env`
+- `share/wcp-forensics/unix-module-abi.tsv` inside WCP
+- `share/wcp-forensics/bionic-source-entry.json` inside WCP
 
-## Deterministic Fallback Chain
+## Runtime Fallback Rules
 
-### Vulkan path
+1. External translation/runtime layers (FEX/Box) are treated as external-only policy inputs.
+2. Vulkan runtime fallback may move to system Vulkan only on explicit probe/init failure.
+3. Any policy fallback must preserve forensic markers and deterministic reason codes.
 
-1. Try selected custom driver (validated metadata only).
-2. On probe/symbol/init failure fallback to system Vulkan.
-3. If system path fails, abort with explicit init error.
+## Out Of Scope For Mainline
 
-### Wrapper path
+- Proton/GameNative transfer-lane automation.
+- Patch-batch/rebase scaffolds.
+- Donor-baseline diff gates.
 
-1. Resolve runtime profile and translator overlays (Box64/FEX).
-2. Validate bionic donor contract preflight (archive integrity + ABI class).
-3. Apply runtime env atomically.
-4. Abort only on fatal preflight violations; warn on non-fatal mismatch.
-5. CI must run strict artifact inspection (`inspect-wcp-runtime-contract.sh --strict-bionic`) before release upload.
-6. Mainline workflows enforce strict launcher runpath contract (`WCP_STRICT_RUNPATH_CONTRACT=1`) with accepted runpath `/data/data/com.termux/files/usr/lib`.
-7. Optional baseline compatibility check is available with `--strict-gamenative` (exports in `ntdll.dll`, `wow64.dll`, `win32u.dll`), used when comparing against GameNative Proton 10.4 reference behavior.
-8. When `WCP_REQUIRE_USB_RUNTIME=1`, runtime inspection must enforce presence of `winebus` + `wineusb` unix modules and PE-side `wineusb.sys` + `winusb.dll`.
-
-### Unix ABI forensic contract
-
-1. Every WCP must include `share/wcp-forensics/unix-module-abi.tsv`.
-2. Every WCP must include `share/wcp-forensics/bionic-source-entry.json` with source-map and resolved donor hashes.
-3. In strict bionic mode, `lib/wine/aarch64-unix/ntdll.so` must be `bionic-unix`.
-4. In strict bionic mode, any `glibc-unix` entry in `unix-module-abi.tsv` is a hard failure.
-
-## Translator Overlay Migration Rules
-
-1. Runtime profile remains the common policy layer; translator overlays remain mechanism layers.
-2. Legacy preset defaults (`COMPATIBILITY` / `INTERMEDIATE`) are migrated to profile-matched overlays only when runtime profile is explicit (non-`AUTO`).
-3. For `AUTO`, translator defaults stay deterministic: `XAW64_BASELINE` (Box64) and `DEVICE_MID_2026` (FEX).
-4. Forensics must log requested and effective translator presets on launch.
-
-## Conflict Arbitration (GN vs GH)
-
-When signals diverge:
-
-1. Runtime stability and deterministic launch wins.
-2. Mainline policy compliance wins over convenience shortcuts.
-3. Lower-regression path with better forensic observability wins.
-4. Unproven behavior remains in research lane until validated.
-
-## External Signal Bridge
-
-See `docs/EXTERNAL_SIGNAL_CONTRACT.md` for source arbitration across GN/GH/Termux
-lanes. Runtime launcher/export paths must preserve these markers when external
-signals modify effective policy:
-
-- `WINLATOR_SIGNAL_POLICY`
-- `WINLATOR_SIGNAL_SOURCES`
-- `WINLATOR_SIGNAL_DECISION_HASH`
-- `WINLATOR_SIGNAL_DECISION_COUNT`
-
-Launch precheck must also export signal input envelope:
-
-- `WINLATOR_SIGNAL_INPUT_ROUTE`
-- `WINLATOR_SIGNAL_INPUT_LAUNCH_KIND`
-- `WINLATOR_SIGNAL_INPUT_TARGET_EXECUTABLE`
-- `WINLATOR_SIGNAL_INPUT_PRECHECK_REASON`
-- `WINLATOR_SIGNAL_INPUT_PRECHECK_FALLBACK`
-
-## Runtime Env Marker Baseline
-
-These markers are part of the runtime observability baseline and must stay
-documented and deterministic across patch-base folds:
-
-- `WINEDEBUG`
-- `MESA_VK_WSI_PRESENT_MODE`
-- `TU_DEBUG`
-- `WINLATOR_VK_POLICY`
-- `WINLATOR_VK_EFFECTIVE`
-- `vulkanPolicy=force_latest` (default policy contract for new containers)
-- `AEO_BIONIC_ONLY_ACTIVE`
-- `AEO_ARM64_AUTOTUNE_ACTIVE`
-- `AEO_ARM64_SOC_CLASS_DETECTED`
-- `AEO_ARM64_TUNE_PROFILE_REQUESTED`
-- `AEO_ARM64_TUNE_PROFILE_EFFECTIVE`
-- `AEO_ARM64_TUNE_SOURCE`
-- `AEO_ARM64_TUNE_MATRIX_VERSION`
-- `AEO_ARM64_TUNE_SOC_MAP`
-- `AEO_ARM64_TUNE_ENV_KEYS`
-- `AEO_ARM64_CPU_ONLINE`
-- `WINEESYNC`
-- `WINEFSYNC`
-- `DXVK_LOG_LEVEL`
-- `VKD3D_DEBUG`
-- `MESA_SHADER_CACHE_MAX_SIZE`
-- `MESA_SHADER_CACHE_DISABLE`
-- `MESA_DISK_CACHE_SINGLE_FILE`
-- `AERO_TURNIP_PROVIDER`
-- `AERO_TURNIP_CHANNEL`
-- `AERO_TURNIP_BIND_MODE`
-- `AERO_TURNIP_BIND_VERDICT`
-- `AERO_UPSCALE_PROFILE`
-- `AERO_UPSCALE_MEM_POLICY`
-- `AERO_UPSCALE_MEM_POLICY_EFFECTIVE`
-- `AERO_UPSCALE_DX8_POLICY`
-- `AERO_UPSCALE_MODULES_REQUESTED`
-- `AERO_UPSCALE_MODULES_ACTIVE`
-- `AERO_UPSCALE_VKBASALT_REQUESTED`
-- `AERO_UPSCALE_SCREENFX_REQUESTED`
-- `AERO_UPSCALE_SCALEFORCE_REQUESTED`
-- `AERO_UPSCALE_VKBASALT_EFFECT`
-- `AERO_UPSCALE_VKBASALT_REASON`
-- `AERO_UPSCALE_SCREENFX_REASON`
-- `AERO_UPSCALE_SCALEFORCE_REASON`
-- `AERO_UPSCALE_PROTON_FSR_MODE`
-- `AERO_UPSCALE_PROTON_FSR_REQUESTED`
-- `AERO_UPSCALE_PROTON_FSR_STRENGTH`
-- `AERO_UPSCALE_PROTON_FSR_REASON`
-- `AERO_UPSCALE_DX8_ASSIST_REASON`
-- `AERO_DXVK_VERSION_SELECTED`
-- `AERO_DXVK_VERSION_REQUESTED`
-- `AERO_DXVK_VERSION_EFFECTIVE`
-- `AERO_DXVK_CAP_DX8_NATIVE`
-- `AERO_DXVK_CAP_NVAPI`
-- `AERO_DXVK_CAPS`
-- `AERO_DXVK_ARTIFACT_ARCH`
-- `AERO_DXVK_NVAPI_CONFIG`
-- `AERO_DXVK_NVAPI_REQUESTED`
-- `AERO_DXVK_NVAPI_EFFECTIVE`
-- `AERO_DXVK_NVAPI_REASON`
-- `AERO_DXVK_NVAPI_ARCH_GATE`
-- `AERO_DXVK_NVAPI_ARCH_REASON`
-- `AERO_VKD3D_VERSION_SELECTED`
-- `AERO_VKD3D_VERSION_REQUESTED`
-- `AERO_VKD3D_VERSION_EFFECTIVE`
-- `AERO_D8VK_VERSION_SELECTED`
-- `AERO_D8VK_VERSION_REQUESTED`
-- `AERO_D8VK_VERSION_EFFECTIVE`
-- `AERO_DDRAW_WRAPPER_SELECTED`
-- `AERO_DDRAW_WRAPPER_REQUESTED`
-- `AERO_DX_DIRECT_MAP`
-- `AERO_DX_DIRECT_MAP_REQUESTED`
-- `AERO_DX_DIRECT_MAP_EXTENDED`
-- `AERO_RUNTIME_DISTRIBUTION`
-- `AERO_RUNTIME_FLAVOR`
-- `AERO_WINE_ARCH`
-- `AERO_UPSCALE_LAYOUT_MODE`
-- `AERO_UPSCALE_LAYOUT_REASON`
-- `AERO_UPSCALE_LAYOUT_LIBS`
-- `AERO_UPSCALE_LAYOUT_NVAPI`
-- `AERO_UPSCALE_LAYOUT_FSR_COMPAT`
-- `AERO_UPSCALE_LAYOUT_RUNTIME_FLAVOR`
-- `AERO_UPSCALE_LAYOUT_WINEDLLOVERRIDES_SHA256`
-- `AERO_LIBRARY_CONFLICTS`
-- `AERO_LIBRARY_CONFLICT_COUNT`
-- `AERO_LIBRARY_CONFLICT_SHA256`
-- `AERO_LIBRARY_REPRO_ID`
-- `AERO_RUNTIME_EMULATOR`
-- `AERO_RUNTIME_TRANSLATOR_CHAIN`
-- `AERO_RUNTIME_HODLL`
-- `AERO_RUNTIME_SUBSYSTEMS`
-- `AERO_RUNTIME_SUBSYSTEMS_SHA256`
-- `AERO_LIBRARY_COMPONENT_STREAM`
-- `AERO_LIBRARY_COMPONENT_STREAM_SHA256`
-- `AERO_LIBRARY_FASTPATH`
-- `AERO_RUNTIME_LOGGING_MODE`
-- `AERO_RUNTIME_LOGGING_REQUIRED`
-- `AERO_RUNTIME_LOGGING_COVERAGE`
-- `AERO_RUNTIME_LOGGING_COVERAGE_SHA256`
-- `AERO_DX_ROUTE_DX1`
-- `AERO_DX_ROUTE_DX2`
-- `AERO_DX_ROUTE_DX3`
-- `AERO_DX_ROUTE_DX4`
-- `AERO_DX_ROUTE_DX5`
-- `AERO_DX_ROUTE_DX6`
-- `AERO_DX_ROUTE_DX7`
-- `AERO_DX_ROUTE_DX1_7`
-- `AERO_DX_ROUTE_DX8`
-- `AERO_DX_ROUTE_DX9`
-- `AERO_DX_ROUTE_DX10`
-- `AERO_DX_ROUTE_DX11`
-- `AERO_DX_ROUTE_DX12`
-- `AERO_DX_ROUTE_DX1_REQUESTED`
-- `AERO_DX_ROUTE_DX2_REQUESTED`
-- `AERO_DX_ROUTE_DX3_REQUESTED`
-- `AERO_DX_ROUTE_DX4_REQUESTED`
-- `AERO_DX_ROUTE_DX5_REQUESTED`
-- `AERO_DX_ROUTE_DX6_REQUESTED`
-- `AERO_DX_ROUTE_DX7_REQUESTED`
-- `AERO_DX_ROUTE_DX8_REQUESTED`
-- `AERO_DX_ROUTE_DX9_REQUESTED`
-- `AERO_DX_ROUTE_DX10_REQUESTED`
-- `AERO_DX_ROUTE_DX11_REQUESTED`
-- `AERO_DX_ROUTE_DX12_REQUESTED`
-- `AERO_DX8_ASSIST_REQUESTED`
-- `AERO_DX8_ASSIST_EFFECTIVE`
+These belong to archive/research lanes and must not be required for `main` release workflow.
 - `AERO_DX8_D8VK_EXTRACTED`
 - `AERO_DX_POLICY_STACK`
 - `AERO_DX_POLICY_REASON`

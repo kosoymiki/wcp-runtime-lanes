@@ -1,3 +1,0 @@
-dlls/ntdll/signal_arm64.c
-dlls/ntdll/signal_arm64ec.c
-dlls/ntdll/signal_x86_64.c

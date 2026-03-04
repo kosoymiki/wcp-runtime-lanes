@@ -1,6 +1,0 @@
-dlls/kernel32/process.c
-dlls/kernel32/file.c
-dlls/kernel32/sync.c
-dlls/kernel32/path.c
-dlls/kernel32/thread.c
-dlls/kernel32/console.c

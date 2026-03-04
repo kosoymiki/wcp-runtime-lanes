@@ -1,9 +1,0 @@
-diff --git a/dlls/cryptxml/tests/Makefile.in b/dlls/cryptxml/tests/Makefile.in
---- a/dlls/cryptxml/tests/Makefile.in
-+++ /dev/null
-@@ -1,5 +0,0 @@
--TESTDLL = cryptxml.dll
--IMPORTS = cryptxml
--
--SOURCES = \
--	cryptxml.c

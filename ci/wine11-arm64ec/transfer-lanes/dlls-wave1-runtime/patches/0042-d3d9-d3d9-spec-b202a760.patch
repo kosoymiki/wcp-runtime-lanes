@@ -1,8 +1,0 @@
-diff --git a/dlls/d3d9/d3d9.spec b/dlls/d3d9/d3d9.spec
---- a/dlls/d3d9/d3d9.spec
-+++ b/dlls/d3d9/d3d9.spec
-@@ -12,4 +12,3 @@
- @ stdcall DebugSetMute()
- @ stdcall Direct3DCreate9(long)
- @ stdcall Direct3DCreate9Ex(long ptr)
--@ stdcall Direct3DCreate9On12(long ptr long)
