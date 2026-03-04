@@ -1,0 +1,15 @@
+diff --git a/libs/png/LICENSE b/libs/png/LICENSE
+index ea6df986cb6a743738771689876215dfdd81dcc5..25f298f0fcfd8757bbd9a6386d8fcb2d644cfce9 100644
+--- a/libs/png/LICENSE
++++ b/libs/png/LICENSE
+@@ -4,8 +4,8 @@ COPYRIGHT NOTICE, DISCLAIMER, and LICENSE
+ PNG Reference Library License version 2
+ ---------------------------------------
+ 
+- * Copyright (c) 1995-2025 The PNG Reference Library Authors.
+- * Copyright (c) 2018-2025 Cosmin Truta.
++ * Copyright (c) 1995-2024 The PNG Reference Library Authors.
++ * Copyright (c) 2018-2024 Cosmin Truta.
+  * Copyright (c) 2000-2002, 2004, 2006-2018 Glenn Randers-Pehrson.
+  * Copyright (c) 1996-1997 Andreas Dilger.
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.

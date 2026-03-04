@@ -1,0 +1,22 @@
+diff --git a/include/wine/wingdi16.h b/include/wine/wingdi16.h
+index 8480a6e412d18971b236db3b9b44a6f1a99a36bc..c56c7b1d04558890691746fdbd3f094d9e679dce 100644
+--- a/include/wine/wingdi16.h
++++ b/include/wine/wingdi16.h
+@@ -25,7 +25,7 @@
+ #include <wingdi.h>
+ #include <wine/winbase16.h>
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ typedef HANDLE16 HPQ16;
+ typedef HANDLE16 HPJOB16;
+@@ -356,7 +356,7 @@ typedef struct _DRAWPATRECT16
+     WORD	wPattern;
+ } DRAWPATRECT16, *PDRAWPATRECT16;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ 
+ INT16       WINAPI AbortDoc16(HDC16);

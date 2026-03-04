@@ -1,0 +1,11 @@
+diff --git a/dlls/winevulkan/winevulkan.rc b/dlls/winevulkan/winevulkan.rc
+--- a/dlls/winevulkan/winevulkan.rc
++++ b/dlls/winevulkan/winevulkan.rc
+@@ -21,6 +21,7 @@
+ 
+ #define WINE_FILEDESCRIPTION_STR "Wine Vulkan ICD"
+ #define WINE_FILENAME_STR "winevulkan.dll"
++#define WINE_FILEVERSION_STR PACKAGE_VERSION
+ #define WINE_PRODUCTVERSION_STR PACKAGE_VERSION
+ #define WINE_PRODUCTNAME_STR "Wine Vulkan"
+ 

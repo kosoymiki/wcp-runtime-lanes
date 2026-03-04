@@ -1,0 +1,19 @@
+diff --git a/dlls/wow64/system.c b/dlls/wow64/system.c
+--- a/dlls/wow64/system.c
++++ b/dlls/wow64/system.c
+@@ -177,7 +177,6 @@
+             prev = proc32;
+         }
+         outpos += proc_len + proc->ProcessName.MaximumLength;
+-        outpos = (outpos + 7) & ~(ULONG_PTR)7;
+         inpos += proc->NextEntryOffset;
+         if (!proc->NextEntryOffset) break;
+     }
+@@ -332,7 +331,6 @@
+     case SystemCodeIntegrityInformation:  /* SYSTEM_CODEINTEGRITY_INFORMATION */
+     case SystemKernelDebuggerInformationEx:  /* SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX */
+     case SystemCpuSetInformation:  /* SYSTEM_CPU_SET_INFORMATION */
+-    case SystemLeapSecondInformation: /* SYSTEM_LEAP_SECOND_INFORMATION */
+     case SystemProcessorBrandString:  /* char[] */
+     case SystemProcessorFeaturesInformation:  /* SYSTEM_PROCESSOR_FEATURES_INFORMATION */
+     case SystemWineVersionInformation:  /* char[] */

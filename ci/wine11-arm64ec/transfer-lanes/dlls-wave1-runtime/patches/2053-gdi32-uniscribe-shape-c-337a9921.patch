@@ -1,0 +1,412 @@
+diff --git a/dlls/gdi32/uniscribe/shape.c b/dlls/gdi32/uniscribe/shape.c
+--- a/dlls/gdi32/uniscribe/shape.c
++++ b/dlls/gdi32/uniscribe/shape.c
+@@ -32,6 +32,7 @@
+ #include "usp10_internal.h"
+ 
+ #include "wine/debug.h"
++#include "wine/heap.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(uniscribe);
+ 
+@@ -671,7 +672,7 @@
+     int length = NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, 0);
+     if (length != GDI_ERROR)
+     {
+-        GSUB_Table = malloc(length);
++        GSUB_Table = heap_alloc(length);
+         NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'S', 'U', 'B'), 0, GSUB_Table, length);
+         TRACE("Loaded GSUB table of %i bytes\n",length);
+     }
+@@ -684,7 +685,7 @@
+     int length = NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'P', 'O', 'S'), 0, NULL, 0);
+     if (length != GDI_ERROR)
+     {
+-        GPOS_Table = malloc(length);
++        GPOS_Table = heap_alloc(length);
+         NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'P', 'O', 'S'), 0, GPOS_Table, length);
+         TRACE("Loaded GPOS table of %i bytes\n",length);
+     }
+@@ -697,7 +698,7 @@
+     int length = NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'D', 'E', 'F'), 0, NULL, 0);
+     if (length != GDI_ERROR)
+     {
+-        GDEF_Table = malloc(length);
++        GDEF_Table = heap_alloc(length);
+         NtGdiGetFontData(hdc, MS_MAKE_TAG('G', 'D', 'E', 'F'), 0, GDEF_Table, length);
+         TRACE("Loaded GDEF table of %i bytes\n",length);
+     }
+@@ -721,7 +722,7 @@
+     INT glyph_count = count;
+     INT rc;
+ 
+-    glyphs = calloc(count, 2 * sizeof(*glyphs));
++    glyphs = heap_calloc(count, 2 * sizeof(*glyphs));
+     NtGdiGetGlyphIndicesW(hdc, chars, count, glyphs, 0);
+     rc = apply_GSUB_feature_to_glyph(hdc, psa, psc, glyphs, 0, write_dir, &glyph_count, feature);
+     if (rc > GSUB_E_NOGLYPH)
+@@ -729,7 +730,7 @@
+     else
+         rc = 0;
+ 
+-    free(glyphs);
++    heap_free(glyphs);
+     return rc;
+ }
+ 
+@@ -912,7 +913,7 @@
+     WCHAR invalid = 0x25cc;
+     WORD invalid_glyph;
+ 
+-    context_type = malloc(cChars);
++    context_type = heap_alloc(cChars);
+ 
+     /* Mark invalid combinations */
+     for (i = 0; i < cChars; i++)
+@@ -928,7 +929,7 @@
+         }
+     }
+ 
+-    free(context_type);
++    heap_free(context_type);
+ }
+ 
+ static void ContextualShape_Control(HDC hdc, ScriptCache *psc, SCRIPT_ANALYSIS *psa, WCHAR* pwcChars, INT cChars, WORD* pwOutGlyphs, INT* pcGlyphs, INT cMaxGlyphs, WORD *pwLogClust)
+@@ -1082,8 +1083,8 @@
+ 
+     load_ot_tables(hdc, psc);
+ 
+-    context_type = malloc(cChars);
+-    context_shape = malloc(cChars * sizeof(*context_shape));
++    context_type = heap_alloc(cChars);
++    context_shape = heap_alloc(cChars * sizeof(*context_shape));
+ 
+     for (i = 0; i < cChars; i++)
+         context_type[i] = get_table_entry_16( wine_shaping_table, pwcChars[i] );
+@@ -1173,8 +1174,8 @@
+         }
+     }
+ 
+-    free(context_shape);
+-    free(context_type);
++    heap_free(context_shape);
++    heap_free(context_type);
+ 
+     mark_invalid_combinations(hdc, pwcChars, cChars, pwOutGlyphs, pcGlyphs, dirL, pwLogClust, combining_lexical_Arabic);
+ }
+@@ -1341,8 +1342,8 @@
+     if (!psc->GSUB_Table)
+         return;
+ 
+-    context_type = malloc(cChars);
+-    context_shape = malloc(cChars * sizeof(*context_shape));
++    context_type = heap_alloc(cChars);
++    context_shape = heap_alloc(cChars * sizeof(*context_shape));
+ 
+     for (i = 0; i < cChars; i++)
+         context_type[i] = get_table_entry_16( wine_shaping_table, pwcChars[i] );
+@@ -1421,8 +1422,8 @@
+         }
+     }
+ 
+-    free(context_shape);
+-    free(context_type);
++    heap_free(context_shape);
++    heap_free(context_type);
+ 
+     mark_invalid_combinations(hdc, pwcChars, cChars, pwOutGlyphs, pcGlyphs, dirL, pwLogClust, combining_lexical_Syriac);
+ }
+@@ -1503,7 +1504,7 @@
+     if (!psc->GSUB_Table)
+         return;
+ 
+-    context_shape = malloc(cChars * sizeof(*context_shape));
++    context_shape = heap_alloc(cChars * sizeof(*context_shape));
+ 
+     for (i = 0; i < cChars; i++)
+     {
+@@ -1560,7 +1561,7 @@
+         }
+     }
+ 
+-    free(context_shape);
++    heap_free(context_shape);
+ }
+ 
+ static int combining_lexical_Thai(WCHAR c)
+@@ -2298,7 +2299,7 @@
+         return;
+     }
+ 
+-    input = malloc(3 * cChars * sizeof(*input));
++    input = heap_alloc(3 * cChars * sizeof(*input));
+ 
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+@@ -2324,8 +2325,8 @@
+     *pcGlyphs = cCount;
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, sinhala_lex, NULL, TRUE);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int devanagari_lex(WCHAR c)
+@@ -2349,8 +2350,7 @@
+     {{0x0921, 0x093C, 0x00000}, 0x095C},
+     {{0x0922, 0x093C, 0x00000}, 0x095D},
+     {{0x092B, 0x093C, 0x00000}, 0x095E},
+-    {{0x092F, 0x093C, 0x00000}, 0x095F},
+-    {{0x0000, 0x0000, 0x00000}, 0x0000}};
++    {{0x092F, 0x093C, 0x00000}, 0x095F}};
+ 
+ static void ContextualShape_Devanagari(HDC hdc, ScriptCache *psc, SCRIPT_ANALYSIS *psa, WCHAR* pwcChars, INT cChars, WORD* pwOutGlyphs, INT* pcGlyphs, INT cMaxGlyphs, WORD *pwLogClust)
+ {
+@@ -2366,7 +2366,7 @@
+         return;
+     }
+ 
+-    input = malloc(cChars * sizeof(*input));
++    input = heap_alloc(cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Compose Consonant and Nukta */
+@@ -2382,8 +2382,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, devanagari_lex, NULL, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int bengali_lex(WCHAR c)
+@@ -2422,7 +2422,7 @@
+         return;
+     }
+ 
+-    input = malloc(2 * cChars * sizeof(*input));
++    input = heap_alloc(2 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels and Compose Consonants */
+@@ -2452,8 +2452,8 @@
+     /* Step 4: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, bengali_lex, NULL, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int gurmukhi_lex(WCHAR c)
+@@ -2486,7 +2486,7 @@
+         return;
+     }
+ 
+-    input = malloc(cChars * sizeof(*input));
++    input = heap_alloc(cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Compose Consonants */
+@@ -2502,8 +2502,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, gurmukhi_lex, NULL, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int gujarati_lex(WCHAR c)
+@@ -2530,7 +2530,7 @@
+         return;
+     }
+ 
+-    input = malloc(cChars * sizeof(*input));
++    input = heap_alloc(cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Reorder within Syllables */
+@@ -2542,8 +2542,8 @@
+     /* Step 2: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, gujarati_lex, NULL, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int oriya_lex(WCHAR c)
+@@ -2581,7 +2581,7 @@
+         return;
+     }
+ 
+-    input = malloc(2 * cChars * sizeof(*input));
++    input = heap_alloc(2 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels and Compose Consonants */
+@@ -2598,8 +2598,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, oriya_lex, NULL, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int tamil_lex(WCHAR c)
+@@ -2631,7 +2631,7 @@
+         return;
+     }
+ 
+-    input = malloc(2 * cChars * sizeof(*input));
++    input = heap_alloc(2 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels and Compose Consonants */
+@@ -2648,8 +2648,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, tamil_lex, SecondReorder_Like_Tamil, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int telugu_lex(WCHAR c)
+@@ -2681,7 +2681,7 @@
+         return;
+     }
+ 
+-    input = malloc(2 * cChars * sizeof(*input));
++    input = heap_alloc(2 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels */
+@@ -2697,8 +2697,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, telugu_lex, SecondReorder_Like_Telugu, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int kannada_lex(WCHAR c)
+@@ -2733,7 +2733,7 @@
+         return;
+     }
+ 
+-    input = malloc(3 * cChars * sizeof(*input));
++    input = heap_alloc(3 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels */
+@@ -2749,8 +2749,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, kannada_lex, SecondReorder_Like_Telugu, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int malayalam_lex(WCHAR c)
+@@ -2778,7 +2778,7 @@
+         return;
+     }
+ 
+-    input = malloc(2 * cChars * sizeof(*input));
++    input = heap_alloc(2 * cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Decompose Vowels */
+@@ -2794,8 +2794,8 @@
+     /* Step 3: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, malayalam_lex, SecondReorder_Like_Tamil, modern);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static int khmer_lex(WCHAR c)
+@@ -2816,7 +2816,7 @@
+         return;
+     }
+ 
+-    input = malloc(cChars * sizeof(*input));
++    input = heap_alloc(cChars * sizeof(*input));
+     memcpy(input, pwcChars, cChars * sizeof(WCHAR));
+ 
+     /* Step 1: Reorder within Syllables */
+@@ -2828,8 +2828,8 @@
+     /* Step 2: Base Form application to syllables */
+     ShapeIndicSyllables(hdc, psc, psa, input, cChars, syllables, syllable_count, pwOutGlyphs, pcGlyphs, pwLogClust, khmer_lex, NULL, FALSE);
+ 
+-    free(input);
+-    free(syllables);
++    heap_free(input);
++    heap_free(syllables);
+ }
+ 
+ static inline BOOL mongolian_wordbreak(WCHAR chr)
+@@ -2859,7 +2859,7 @@
+     if (!psc->GSUB_Table)
+         return;
+ 
+-    context_shape = malloc(cChars * sizeof(*context_shape));
++    context_shape = heap_alloc(cChars * sizeof(*context_shape));
+ 
+     for (i = 0; i < cChars; i++)
+     {
+@@ -2904,7 +2904,7 @@
+         }
+     }
+ 
+-    free(context_shape);
++    heap_free(context_shape);
+ }
+ 
+ static void ShapeCharGlyphProp_Default( ScriptCache* psc, SCRIPT_ANALYSIS* psa, const WCHAR* pwcChars, const INT cChars, const WORD* pwGlyphs, const INT cGlyphs, WORD* pwLogClust, SCRIPT_CHARPROP* pCharProp, SCRIPT_GLYPHPROP* pGlyphProp)
+@@ -2973,7 +2973,8 @@
+     INT dirR, dirL;
+     BYTE *spaces;
+ 
+-    spaces = calloc(cGlyphs, sizeof(*spaces));
++    spaces = heap_alloc(cGlyphs);
++    memset(spaces,0,cGlyphs);
+ 
+     if (psa->fLogicalOrder && psa->fRTL)
+     {
+@@ -3072,7 +3073,7 @@
+ 
+     OpenType_GDEF_UpdateGlyphProps(psc, pwGlyphs, cGlyphs, pwLogClust, cChars, pGlyphProp);
+     UpdateClustersFromGlyphProp(cGlyphs, cChars, pwLogClust, pGlyphProp);
+-    free(spaces);
++    heap_free(spaces);
+ }
+ 
+ static void ShapeCharGlyphProp_Hebrew( HDC hdc, ScriptCache *psc, SCRIPT_ANALYSIS *psa, const WCHAR* pwcChars, const INT cChars, const WORD* pwGlyphs, const INT cGlyphs, WORD *pwLogClust, SCRIPT_CHARPROP *pCharProp, SCRIPT_GLYPHPROP *pGlyphProp )
+@@ -3320,7 +3321,7 @@
+             }
+         }
+ 
+-        free(syllables);
++        heap_free(syllables);
+     }
+ 
+     UpdateClustersFromGlyphProp(cGlyphs, cChars, pwLogClust, pGlyphProp);

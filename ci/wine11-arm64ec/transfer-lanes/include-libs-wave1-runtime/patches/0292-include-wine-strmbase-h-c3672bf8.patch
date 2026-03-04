@@ -1,0 +1,12 @@
+diff --git a/include/wine/strmbase.h b/include/wine/strmbase.h
+index 978d1c6716028baa3a172417a9ae9f8ac79c7ffc..ae025e78ecfc42bc9e88f6a1c30e9a07b8b6de38 100644
+--- a/include/wine/strmbase.h
++++ b/include/wine/strmbase.h
+@@ -142,6 +142,7 @@ void strmbase_sink_cleanup(struct strmbase_sink *pin);
+ struct strmbase_filter
+ {
+     IBaseFilter IBaseFilter_iface;
++    IPropertyBag IPropertyBag_iface;
+     IUnknown IUnknown_inner;
+     IUnknown *outer_unk;
+     LONG refcount;

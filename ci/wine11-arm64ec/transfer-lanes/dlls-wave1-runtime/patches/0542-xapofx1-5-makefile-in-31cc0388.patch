@@ -1,0 +1,12 @@
+diff --git a/dlls/xapofx1_5/Makefile.in b/dlls/xapofx1_5/Makefile.in
+--- a/dlls/xapofx1_5/Makefile.in
++++ b/dlls/xapofx1_5/Makefile.in
+@@ -4,6 +4,8 @@
+ EXTRAINCL = $(FAUDIO_PE_CFLAGS)
+ PARENTSRC = ../xaudio2_7
+ 
++EXTRADLLFLAGS = -Wb,--prefer-native
++
+ SOURCES = \
+ 	xapo.c \
+ 	xapofx.c \

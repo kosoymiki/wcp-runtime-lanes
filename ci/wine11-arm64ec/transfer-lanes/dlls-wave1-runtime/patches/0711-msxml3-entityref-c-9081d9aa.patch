@@ -1,0 +1,16 @@
+diff --git a/dlls/msxml3/entityref.c b/dlls/msxml3/entityref.c
+--- a/dlls/msxml3/entityref.c
++++ b/dlls/msxml3/entityref.c
+@@ -346,10 +346,11 @@
+     BSTR* p)
+ {
+     entityref *This = impl_from_IXMLDOMEntityReference( iface );
++    static const WCHAR entityreferenceW[] = {'e','n','t','i','t','y','r','e','f','e','r','e','n','c','e',0};
+ 
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"entityreference", p);
++    return return_bstr(entityreferenceW, p);
+ }
+ 
+ static HRESULT WINAPI entityref_get_text(

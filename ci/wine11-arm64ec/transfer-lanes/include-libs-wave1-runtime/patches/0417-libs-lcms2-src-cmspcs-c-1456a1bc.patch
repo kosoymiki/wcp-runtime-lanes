@@ -1,0 +1,20 @@
+diff --git a/libs/lcms2/src/cmspcs.c b/libs/lcms2/src/cmspcs.c
+index 5c2b0280920ea421c9a46f0246a353a7f6055470..e11f87c23a597406f9a57260ae8626afa4f61e2f 100644
+--- a/libs/lcms2/src/cmspcs.c
++++ b/libs/lcms2/src/cmspcs.c
+@@ -1,7 +1,7 @@
+ //---------------------------------------------------------------------------------
+ //
+ //  Little Color Management System
+-//  Copyright (c) 1998-2024 Marti Maria Saguer
++//  Copyright (c) 1998-2023 Marti Maria Saguer
+ //
+ // Permission is hereby granted, free of charge, to any person obtaining
+ // a copy of this software and associated documentation files (the "Software"),
+@@ -947,4 +947,4 @@ cmsUInt32Number CMSEXPORT cmsChannelsOf(cmsColorSpaceSignature ColorSpace)
+     int n = cmsChannelsOfColorSpace(ColorSpace);
+     if (n < 0) return 3;
+     return (cmsUInt32Number)n;
+-}
++}
+\ No newline at end of file

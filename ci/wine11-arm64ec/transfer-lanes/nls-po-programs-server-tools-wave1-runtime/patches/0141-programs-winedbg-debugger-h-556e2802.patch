@@ -1,0 +1,13 @@
+diff --git a/programs/winedbg/debugger.h b/programs/winedbg/debugger.h
+index 45a91e2a6f5ec92765881e51fdca79734ea9f9e1..f3b02e9c5df3571f39b99728b5480421bf380079 100644
+--- a/programs/winedbg/debugger.h
++++ b/programs/winedbg/debugger.h
+@@ -311,6 +311,8 @@ extern	DWORD	                dbg_curr_tid;
+ extern  dbg_ctx_t               dbg_context;
+ extern  BOOL                    dbg_interactiveP;
+ extern  HANDLE                  dbg_houtput;
++extern  HANDLE                  dbg_crash_report_file;
++extern  BOOL                    dbg_use_wine_dbg_output;
+ 
+ struct dbg_internal_var
+ {

@@ -1,0 +1,13 @@
+diff --git a/include/vmrender.idl b/include/vmrender.idl
+index 16c8a870a5ee4312a4fd43ed35bcc5d9c0f24b2f..c81a1acead38ae4f008492be2c675396ce7ceda0 100644
+--- a/include/vmrender.idl
++++ b/include/vmrender.idl
+@@ -257,7 +257,7 @@ interface IVMRMonitorConfig : IUnknown
+ typedef enum _VMRRenderPrefs
+ {
+     RenderPrefs_RestrictToInitialMonitor = 0x00,
+-    RenderPrefs_ForceOffscreen = 0x01,
++    RenderPrefs_ForceOffScreen = 0x01,
+     RenderPrefs_ForceOverlays = 0x02,
+     RenderPrefs_AllowOverlays = 0x00,
+     RenderPrefs_AllowOffscreen = 0x00,

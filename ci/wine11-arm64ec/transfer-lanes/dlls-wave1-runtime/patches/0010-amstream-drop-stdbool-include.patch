@@ -1,0 +1,11 @@
+diff --git a/dlls/amstream/amstream_private.h b/dlls/amstream/amstream_private.h
+--- a/dlls/amstream/amstream_private.h
++++ b/dlls/amstream/amstream_private.h
+@@ -22,7 +22,6 @@
+ #define __AMSTREAM_PRIVATE_INCLUDED__
+ 
+ #include <stdarg.h>
+-#include <stdbool.h>
+ 
+ #include "windef.h"
+ #include "winbase.h"

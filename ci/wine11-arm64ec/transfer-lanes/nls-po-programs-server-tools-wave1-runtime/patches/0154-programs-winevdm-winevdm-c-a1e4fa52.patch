@@ -1,0 +1,22 @@
+diff --git a/programs/winevdm/winevdm.c b/programs/winevdm/winevdm.c
+index b995c1c6c5b9455625d9915c99b9ec989608a20f..87c25f0d191a4faaf59e8e64bfe76519bcb46ee4 100644
+--- a/programs/winevdm/winevdm.c
++++ b/programs/winevdm/winevdm.c
+@@ -36,7 +36,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(winevdm);
+ #define DOSBOX "dosbox"
+ 
+ /*** PIF file structures ***/
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ /* header of a PIF file */
+ typedef struct {
+@@ -101,7 +101,7 @@ typedef struct {
+     CHAR optparams[64];  /* optional params, replaces those in the pif header */
+ } pif386rec_t;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ /***********************************************************************
+  *           start_dosbox

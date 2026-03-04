@@ -1,0 +1,13 @@
+diff --git a/include/winnt.rh b/include/winnt.rh
+index 366196ccb9c891dbb2cee90e4f953ca4b4fab368..38cefd61c5300db427d6350b4998b1af5509dbf5 100644
+--- a/include/winnt.rh
++++ b/include/winnt.rh
+@@ -26,7 +26,7 @@
+ #ifndef WINE_NO_UNICODE_MACROS
+ # ifndef UNICODE
+ #  define __TEXT(string) string
+-# elif defined(WINE_UNICODE_NATIVE) || defined(__MINGW32__) || defined(_MSC_VER)
++# elif defined(WINE_UNICODE_NATIVE)
+ #  define __TEXT(string) L##string
+ # else
+ #  define __TEXT(string) u##string

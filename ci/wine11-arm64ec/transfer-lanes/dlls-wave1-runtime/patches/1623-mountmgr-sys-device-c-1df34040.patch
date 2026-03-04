@@ -1,0 +1,124 @@
+diff --git a/dlls/mountmgr.sys/device.c b/dlls/mountmgr.sys/device.c
+--- a/dlls/mountmgr.sys/device.c
++++ b/dlls/mountmgr.sys/device.c
+@@ -868,18 +868,20 @@
+ 
+     if (MOUNTMGR_CALL( check_device_access, volume->device->unix_device )) return FALSE;
+ 
+-    size = 8 + strlen(unix_device) + 1;
+-    if (!(name = malloc( size * sizeof(WCHAR )))) return FALSE;
+-    wcscpy( name, L"\\\\?\\unix" );
+-    MultiByteToWideChar( CP_UNIXCP, 0, unix_device, -1, name + 8, size - 8 );
++    if (!(name = wine_get_dos_file_name( unix_device )))
++    {
++        ERR("Failed to convert %s to NT, err %lu\n", debugstr_a(unix_device), GetLastError());
++        return FALSE;
++    }
+     handle = CreateFileW( name, GENERIC_READ | SYNCHRONIZE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                           NULL, OPEN_EXISTING, 0, 0 );
+-    free( name );
++    HeapFree( GetProcessHeap(), 0, name );
+     if (handle == INVALID_HANDLE_VALUE)
+     {
+         WARN("Failed to open %s, err %lu\n", debugstr_a(unix_device), GetLastError());
+         return FALSE;
+     }
++
+     if (DeviceIoControl( handle, IOCTL_CDROM_READ_TOC, NULL, 0, &toc, sizeof(toc), &size, 0 ))
+     {
+         if (!(toc.TrackData[0].Control & 0x04))  /* audio track */
+@@ -1912,14 +1914,13 @@
+ 
+ /* create a serial or parallel port */
+ static BOOL create_port_device( DRIVER_OBJECT *driver, int n, const char *unix_path,
+-                                const char *dosdevices_path, HKEY *windows_ports_key )
++                                const char *dosdevices_path, HKEY windows_ports_key )
+ {
+     const WCHAR *dos_name_format, *nt_name_format, *reg_value_format, *symlink_format, *default_device;
+     WCHAR dos_name[7], reg_value[256], nt_buffer[32], symlink_buffer[32];
+     UNICODE_STRING nt_name, symlink_name, default_name;
+     DEVICE_OBJECT *dev_obj;
+     NTSTATUS status;
+-    const WCHAR *windows_ports_key_name;
+     struct set_dosdev_symlink_params params = { dosdevices_path, unix_path };
+ 
+     /* create DOS device */
+@@ -1932,7 +1933,6 @@
+         reg_value_format = L"COM%u";
+         symlink_format = L"\\DosDevices\\COM%u";
+         default_device = L"\\DosDevices\\AUX";
+-        windows_ports_key_name = L"HARDWARE\\DEVICEMAP\\SERIALCOMM";
+     }
+     else
+     {
+@@ -1941,7 +1941,6 @@
+         reg_value_format = L"\\DosDevices\\LPT%u";
+         symlink_format = L"\\DosDevices\\LPT%u";
+         default_device = L"\\DosDevices\\PRN";
+-        windows_ports_key_name = L"HARDWARE\\DEVICEMAP\\PARALLEL PORTS";
+     }
+ 
+     swprintf( dos_name, ARRAY_SIZE(dos_name), dos_name_format, n );
+@@ -1967,12 +1966,8 @@
+     /* TODO: store information about the Unix device in the NT device */
+ 
+     /* create registry entry */
+-    if (!*windows_ports_key)
+-        RegCreateKeyExW( HKEY_LOCAL_MACHINE, windows_ports_key_name, 0, NULL, REG_OPTION_VOLATILE,
+-                         KEY_ALL_ACCESS, NULL, windows_ports_key, NULL );
+-
+     swprintf( reg_value, ARRAY_SIZE(reg_value), reg_value_format, n );
+-    RegSetValueExW( *windows_ports_key, nt_name.Buffer, 0, REG_SZ,
++    RegSetValueExW( windows_ports_key, nt_name.Buffer, 0, REG_SZ,
+                     (BYTE *)reg_value, (lstrlenW( reg_value ) + 1) * sizeof(WCHAR) );
+ 
+     return TRUE;
+@@ -1981,6 +1976,7 @@
+ /* find and create serial or parallel ports */
+ static void create_port_devices( DRIVER_OBJECT *driver, const char *devices )
+ {
++    const WCHAR *windows_ports_key_name;
+     const char *dosdev_fmt;
+     char dosdev[8];
+     HKEY wine_ports_key = NULL, windows_ports_key = NULL;
+@@ -1995,11 +1991,13 @@
+     if (driver == serial_driver)
+     {
+         dosdev_fmt = "com%u";
++        windows_ports_key_name = L"HARDWARE\\DEVICEMAP\\SERIALCOMM";
+         port_prefix = L"COM";
+     }
+     else
+     {
+         dosdev_fmt = "lpt%u";
++        windows_ports_key_name = L"HARDWARE\\DEVICEMAP\\PARALLEL PORTS";
+         port_prefix = L"LPT";
+     }
+ 
+@@ -2007,6 +2005,8 @@
+ 
+     RegCreateKeyExW( HKEY_LOCAL_MACHINE, L"Software\\Wine\\Ports", 0, NULL, 0,
+                      KEY_QUERY_VALUE, NULL, &wine_ports_key, NULL );
++    RegCreateKeyExW( HKEY_LOCAL_MACHINE, windows_ports_key_name, 0, NULL, REG_OPTION_VOLATILE,
++                     KEY_ALL_ACCESS, NULL, &windows_ports_key, NULL );
+ 
+     /* add user-defined serial ports */
+     memset(used, 0, sizeof(used));
+@@ -2030,7 +2030,7 @@
+ 
+         used[n - 1] = TRUE;
+         sprintf( dosdev, dosdev_fmt, n );
+-        create_port_device( driver, n, unix_path, dosdev, &windows_ports_key );
++        create_port_device( driver, n, unix_path, dosdev, windows_ports_key );
+     }
+ 
+     /* look for ports in the usual places */
+@@ -2040,7 +2040,7 @@
+         while (n <= MAX_PORTS && used[n - 1]) n++;
+         if (n > MAX_PORTS) break;
+         sprintf( dosdev, dosdev_fmt, n );
+-        create_port_device( driver, n, devices, dosdev, &windows_ports_key );
++        create_port_device( driver, n, devices, dosdev, windows_ports_key );
+     }
+ 
+     RegCloseKey( wine_ports_key );

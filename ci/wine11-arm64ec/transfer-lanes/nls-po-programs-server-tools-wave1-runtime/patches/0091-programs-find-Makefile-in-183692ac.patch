@@ -1,0 +1,11 @@
+diff --git a/programs/find/Makefile.in b/programs/find/Makefile.in
+index b82198bee7024eb29ffd89d2035888071b9caab0..2d8469f6317aa0142d27b3c20a43dc14b389549c 100644
+--- a/programs/find/Makefile.in
++++ b/programs/find/Makefile.in
+@@ -1,5 +1,5 @@
+ MODULE    = find.exe
+-IMPORTS   = user32 kernelbase
++IMPORTS   = user32
+ 
+ EXTRADLLFLAGS = -mconsole -municode
+ 

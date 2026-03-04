@@ -1,0 +1,21 @@
+diff --git a/dlls/msvideo.dll16/msvideo16.c b/dlls/msvideo.dll16/msvideo16.c
+--- a/dlls/msvideo.dll16/msvideo16.c
++++ b/dlls/msvideo.dll16/msvideo16.c
+@@ -714,7 +714,7 @@
+ 
+ #define MAX_THUNKS      32
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ static struct msvideo_thunk
+ {
+     BYTE        popl_eax;        /* popl  %eax (return address) */
+@@ -725,7 +725,7 @@
+     DWORD       callback;
+     HIC16       hIC16;           /* driver's handle */
+ } *MSVIDEO_Thunks;
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ static CRITICAL_SECTION msvideo_cs;
+ static CRITICAL_SECTION_DEBUG critsect_debug =

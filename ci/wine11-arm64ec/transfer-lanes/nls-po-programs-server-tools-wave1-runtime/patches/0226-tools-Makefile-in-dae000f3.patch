@@ -1,0 +1,21 @@
+diff --git a/tools/Makefile.in b/tools/Makefile.in
+index 97d699149660beffc4ddc9f58521c5e74dd38f7b..39dd237fa998e2b9288f94b359677e22e22e3b84 100644
+--- a/tools/Makefile.in
++++ b/tools/Makefile.in
+@@ -1,13 +1,12 @@
+ PROGRAMS = \
+-	install \
+ 	makedep \
+ 	make_xftmpl
+ 
+ SOURCES = \
+-	install.c \
++	gdbinit.py.in \
+ 	make_xftmpl.c \
+-	makedep.c
++	makedep.c \
++	wineapploader.in
+ 
+-install_OBJS = install.o
+ makedep_OBJS = makedep.o
+ make_xftmpl_OBJS = make_xftmpl.o

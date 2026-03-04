@@ -1,0 +1,22 @@
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -573,11 +573,15 @@ static int exec_wineserver( pid_t *pid, char **argv )
+ {
+     char *path;
+ 
+-    if (!is_win64 && alt_build_dir)  /* look for 64-bit server */
+-        return build_path_and_exec( pid, alt_build_dir, "server/wineserver", argv );
+-
+     if (build_dir)
++    {
++        if (!is_win64)  /* look for 64-bit server */
++        {
++            char *loader = realpath_dirname( build_path( build_dir, "loader/wine64" ));
++            if (loader && !build_path_and_exec( pid, loader, "../server/wineserver", argv )) return 0;
++        }
+         return build_path_and_exec( pid, build_dir, "server/wineserver", argv );
++    }
+ 
+     if (!build_path_and_exec( pid, bin_dir, "wineserver", argv )) return 0;
+     if ((path = getenv( "WINESERVER" )) && !build_path_and_exec( pid, "", path, argv )) return 0;

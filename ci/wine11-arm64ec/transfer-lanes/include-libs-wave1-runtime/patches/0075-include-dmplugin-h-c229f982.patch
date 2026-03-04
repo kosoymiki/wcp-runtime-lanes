@@ -1,0 +1,21 @@
+diff --git a/include/dmplugin.h b/include/dmplugin.h
+index e4df0120283987a12108f2c9f0ecde8210c5b427..88584e884d48c6383ce7bf2957948f0e56fdb56d 100644
+--- a/include/dmplugin.h
++++ b/include/dmplugin.h
+@@ -27,7 +27,7 @@
+ #include <objbase.h>
+ #include <mmsystem.h>
+ #include <dmusici.h>
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -291,6 +291,6 @@ DECLARE_INTERFACE_(IDirectMusicTrack8,IDirectMusicTrack)
+ }
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_DMUSIC_PLUGIN_H */

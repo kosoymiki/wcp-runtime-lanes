@@ -1,0 +1,14 @@
+diff --git a/dlls/urlmon/urlmon_urlmon.idl b/dlls/urlmon/urlmon_urlmon.idl
+--- a/dlls/urlmon/urlmon_urlmon.idl
++++ b/dlls/urlmon/urlmon_urlmon.idl
+@@ -111,10 +111,3 @@
+     uuid(df2fce13-25ec-45bb-9d4c-cecd47c2430c)
+ ]
+ coclass CUri { interface IUri; }
+-
+-[
+-    helpstring("Persistent Zone Identifier"),
+-    threading(both),
+-    uuid(0968e258-16c7-4dba-aa86-462dd61e31a3)
+-]
+-coclass PersistentZoneIdentifier { interface IPersistFile; interface IZoneIdentifier; }

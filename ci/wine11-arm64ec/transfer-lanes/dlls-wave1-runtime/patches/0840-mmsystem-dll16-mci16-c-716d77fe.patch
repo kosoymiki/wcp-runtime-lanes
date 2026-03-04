@@ -1,0 +1,21 @@
+diff --git a/dlls/mmsystem.dll16/mci16.c b/dlls/mmsystem.dll16/mci16.c
+--- a/dlls/mmsystem.dll16/mci16.c
++++ b/dlls/mmsystem.dll16/mci16.c
+@@ -504,7 +504,7 @@
+  * ###################################################
+  */
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ #define MCI_MAX_THUNKS      32
+ 
+ static struct mci_thunk
+@@ -518,7 +518,7 @@
+     MCIDEVICEID id;
+ } *MCI_Thunks;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ static CRITICAL_SECTION mci_cs;
+ static CRITICAL_SECTION_DEBUG mci_critsect_debug =

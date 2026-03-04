@@ -1,0 +1,24 @@
+diff --git a/dlls/mlang/mlang.c b/dlls/mlang/mlang.c
+--- a/dlls/mlang/mlang.c
++++ b/dlls/mlang/mlang.c
+@@ -1327,6 +1327,10 @@
+     UINT charset;
+     struct map_font_enum_data *data = (struct map_font_enum_data *)lParam;
+ 
++    if ((data->charset == GB2312_CHARSET || data->charset == SHIFTJIS_CHARSET)
++            && wcscmp(lf->lfFaceName, L"Microsoft YaHei") != 0)
++        return 1;
++
+     data->src_lf.lfCharSet = lf->lfCharSet;
+     wcscpy(data->src_lf.lfFaceName, lf->lfFaceName);
+ 
+@@ -3478,8 +3482,7 @@
+     GetTextCharsetInfo(hdc, &fontsig, 0);
+     SelectObject(hdc, old_font);
+ 
+-    if (codepages) *codepages = fontsig.fsCsb[0];
+-
++    *codepages = fontsig.fsCsb[0];
+     TRACE("ret 0x%lx\n", fontsig.fsCsb[0]);
+ 
+     return S_OK;

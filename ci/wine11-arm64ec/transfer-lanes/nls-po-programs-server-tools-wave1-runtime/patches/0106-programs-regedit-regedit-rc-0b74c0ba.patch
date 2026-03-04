@@ -1,0 +1,14 @@
+diff --git a/programs/regedit/regedit.rc b/programs/regedit/regedit.rc
+index f4a86253f2c349843645afbf7bc84de2a5d0f126..1b0c15ecc9460f841e4ffd50dfa867b046cb320a 100644
+--- a/programs/regedit/regedit.rc
++++ b/programs/regedit/regedit.rc
+@@ -465,5 +465,9 @@ IDI_REGEDIT ICON regedit.ico
+ #define WINE_FILENAME_STR "REGEDIT.EXE"
+ #define WINE_FILETYPE VFT_APP
+ #define WINE_FILEVERSION 5,2,3790,0
++#define WINE_FILEVERSION_STR "5.2.3790.0"
++
++#define WINE_PRODUCTVERSION 5,2,3790,0
++#define WINE_PRODUCTVERSION_STR "5.2"
+ 
+ #include "wine/wine_common_ver.rc"

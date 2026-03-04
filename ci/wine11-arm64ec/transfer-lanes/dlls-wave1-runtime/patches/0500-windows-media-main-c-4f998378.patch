@@ -1,0 +1,12 @@
+diff --git a/dlls/windows.media/main.c b/dlls/windows.media/main.c
+--- a/dlls/windows.media/main.c
++++ b/dlls/windows.media/main.c
+@@ -40,8 +40,6 @@
+ 
+     if (!wcscmp( buffer, RuntimeClass_Windows_Media_ClosedCaptioning_ClosedCaptionProperties ))
+         IActivationFactory_QueryInterface( captions_factory, &IID_IActivationFactory, (void **)factory );
+-    if (!wcscmp( buffer, RuntimeClass_Windows_Media_Transcoding_MediaTranscoder ))
+-        IActivationFactory_QueryInterface( media_transcoder_factory, &IID_IActivationFactory, (void **)factory );
+ 
+     if (*factory) return S_OK;
+     return CLASS_E_CLASSNOTAVAILABLE;

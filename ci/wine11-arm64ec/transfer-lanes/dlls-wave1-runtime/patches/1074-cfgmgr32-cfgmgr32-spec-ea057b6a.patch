@@ -1,0 +1,35 @@
+diff --git a/dlls/cfgmgr32/cfgmgr32.spec b/dlls/cfgmgr32/cfgmgr32.spec
+--- a/dlls/cfgmgr32/cfgmgr32.spec
++++ b/dlls/cfgmgr32/cfgmgr32.spec
+@@ -71,12 +71,12 @@
+ @ stdcall CM_Get_Device_ID_ExW(ptr ptr long long ptr) setupapi.CM_Get_Device_ID_ExW
+ @ stdcall CM_Get_Device_ID_ListA(str ptr long long) setupapi.CM_Get_Device_ID_ListA
+ @ stdcall CM_Get_Device_ID_ListW(wstr ptr long long) setupapi.CM_Get_Device_ID_ListW
+-@ stdcall CM_Get_Device_ID_List_ExA(str ptr long long ptr) setupapi.CM_Get_Device_ID_List_ExA
+-@ stdcall CM_Get_Device_ID_List_ExW(wstr ptr long long) setupapi.CM_Get_Device_ID_List_ExW
++@ stub CM_Get_Device_ID_List_ExA
++@ stub CM_Get_Device_ID_List_ExW
+ @ stdcall CM_Get_Device_ID_List_SizeA(ptr str long) setupapi.CM_Get_Device_ID_List_SizeA
+ @ stdcall CM_Get_Device_ID_List_SizeW(ptr wstr long) setupapi.CM_Get_Device_ID_List_SizeW
+-@ stdcall CM_Get_Device_ID_List_Size_ExA(ptr str long ptr) setupapi.CM_Get_Device_ID_List_Size_ExA
+-@ stdcall CM_Get_Device_ID_List_Size_ExW(ptr wstr long ptr) setupapi.CM_Get_Device_ID_List_Size_ExW
++@ stub CM_Get_Device_ID_List_Size_ExA
++@ stub CM_Get_Device_ID_List_Size_ExW
+ @ stdcall CM_Get_Device_ID_Size(ptr ptr long) setupapi.CM_Get_Device_ID_Size
+ @ stub CM_Get_Device_ID_Size_Ex
+ @ stdcall CM_Get_Device_Interface_AliasA(str ptr ptr ptr long) setupapi.CM_Get_Device_Interface_AliasA
+@@ -187,14 +187,3 @@
+ @ stub CM_Unregister_Device_InterfaceW
+ @ stub CM_Unregister_Device_Interface_ExA
+ @ stub CM_Unregister_Device_Interface_ExW
+-@ stdcall CM_Unregister_Notification(ptr)
+-@ stdcall DevCloseObjectQuery(ptr)
+-@ stdcall DevCreateObjectQuery(long long long ptr long ptr ptr ptr ptr)
+-@ stdcall DevCreateObjectQueryEx(long long long ptr long ptr long ptr ptr ptr ptr)
+-@ stdcall DevFindProperty(ptr long wstr long ptr)
+-@ stdcall DevFreeObjectProperties(long ptr)
+-@ stdcall DevFreeObjects(long ptr)
+-@ stdcall DevGetObjectProperties(long ptr long long ptr ptr ptr)
+-@ stdcall DevGetObjectPropertiesEx(long ptr long long ptr long ptr ptr ptr)
+-@ stdcall DevGetObjects(long long long ptr long ptr ptr ptr)
+-@ stdcall DevGetObjectsEx(long long long ptr long ptr long ptr ptr ptr)

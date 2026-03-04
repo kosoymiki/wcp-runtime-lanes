@@ -1,0 +1,13 @@
+diff --git a/libs/faudio/src/stb.h b/libs/faudio/src/stb.h
+index f412e0f8ed81ea13b391eae1fe1b3333322efb55..5665cc48b35458df6adb1bddfee0940a56de0cc7 100644
+--- a/libs/faudio/src/stb.h
++++ b/libs/faudio/src/stb.h
+@@ -207,7 +207,7 @@ CREDITS
+  * binding various stdlib functions stb.h uses to FAudio's stdlib.
+  * -flibit
+  */
+-#ifdef STB_MEMCPY_OVERRIDE
++#ifndef NO_MEMCPY_OVERRIDE
+ #ifdef memcpy /* Thanks Apple! */
+ #undef memcpy
+ #endif

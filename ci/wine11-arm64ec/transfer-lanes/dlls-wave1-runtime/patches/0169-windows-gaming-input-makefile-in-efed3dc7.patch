@@ -1,0 +1,11 @@
+diff --git a/dlls/windows.gaming.input/Makefile.in b/dlls/windows.gaming.input/Makefile.in
+--- a/dlls/windows.gaming.input/Makefile.in
++++ b/dlls/windows.gaming.input/Makefile.in
+@@ -3,7 +3,6 @@
+ 
+ SOURCES = \
+ 	async.c \
+-	async_private.idl \
+ 	classes.idl \
+ 	condition_effect.c \
+ 	constant_effect.c \

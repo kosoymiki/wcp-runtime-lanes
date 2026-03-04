@@ -1,0 +1,12 @@
+diff --git a/libs/fluidsynth/Makefile.in b/libs/fluidsynth/Makefile.in
+index dfb48b3b0a4519ac39d41a5d1cc6a0da3000d1e1..c811ba90d1a9e0a8604a5cca05553250768ff911 100644
+--- a/libs/fluidsynth/Makefile.in
++++ b/libs/fluidsynth/Makefile.in
+@@ -11,7 +11,6 @@ EXTRAINCL = -I$(srcdir)/src \
+             $(FLUIDSYNTH_PE_CFLAGS)
+ 
+ SOURCES = \
+-	config.h \
+ 	glib.c \
+ 	src/midi/fluid_midi.c \
+ 	src/rvoice/fluid_adsr_env.c \

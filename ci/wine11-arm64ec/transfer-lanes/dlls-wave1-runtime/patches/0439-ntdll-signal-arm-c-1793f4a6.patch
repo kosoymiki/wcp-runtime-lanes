@@ -1,0 +1,12 @@
+diff --git a/dlls/ntdll/signal_arm.c b/dlls/ntdll/signal_arm.c
+--- a/dlls/ntdll/signal_arm.c
++++ b/dlls/ntdll/signal_arm.c
+@@ -54,7 +54,7 @@
+  *         syscalls
+  */
+ #define SYSCALL_ENTRY(id,name,args) __ASM_SYSCALL_FUNC( id, name, args )
+-ALL_SYSCALLS
++ALL_SYSCALLS32
+ DEFINE_SYSCALL_HELPER32()
+ #undef SYSCALL_ENTRY
+ 

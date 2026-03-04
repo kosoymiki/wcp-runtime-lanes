@@ -1,0 +1,14 @@
+diff --git a/programs/winedbg/gdbproxy.c b/programs/winedbg/gdbproxy.c
+index e937c4edf32687be01f959816e75c579189b4a3e..2d20c6a4f5cb8639005ee02152de2c2b60025ec5 100644
+--- a/programs/winedbg/gdbproxy.c
++++ b/programs/winedbg/gdbproxy.c
+@@ -1631,6 +1631,9 @@ static void packet_query_monitor_mem(struct gdb_context* gdbctx, int len, const
+         packet_reply_add(gdbctx, "O");
+         packet_reply_hex_to_str(gdbctx, buffer);
+         packet_reply_close(gdbctx);
++
++        if (addr + mbi.RegionSize < addr) /* wrap around ? */
++            break;
+         addr += mbi.RegionSize;
+     }
+     packet_reply(gdbctx, "OK");

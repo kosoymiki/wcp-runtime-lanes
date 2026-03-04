@@ -1,0 +1,22 @@
+diff --git a/include/wine/winbase16.h b/include/wine/winbase16.h
+index d734d1c6a9ad87e61fff1a555d2dfcc6ddb12791..28cde59f9b37c2ce52b33579c92c447367b97ea9 100644
+--- a/include/wine/winbase16.h
++++ b/include/wine/winbase16.h
+@@ -26,7 +26,7 @@
+ #include <winternl.h>
+ #include <wine/windef16.h>
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ /* Process database (i.e. a normal DOS PSP) */
+ typedef struct
+@@ -313,7 +313,7 @@ typedef struct
+ #define NE_RSCTYPE_GROUP_ICON         0x800e
+ #define NE_RSCTYPE_SCALABLE_FONTPATH  0x80cc   /* Resource found in .fot files */
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #define __AHSHIFT  3  /* don't change! */
+ #define __AHINCR   (1 << __AHSHIFT)

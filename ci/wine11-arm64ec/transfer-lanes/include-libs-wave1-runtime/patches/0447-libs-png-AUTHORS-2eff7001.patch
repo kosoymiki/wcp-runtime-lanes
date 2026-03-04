@@ -1,0 +1,43 @@
+diff --git a/libs/png/AUTHORS b/libs/png/AUTHORS
+index ebe7c7426994724f319347fcfb744deb18fb67d1..544341694a527f1654f2e4d97bc755d7ace5903a 100644
+--- a/libs/png/AUTHORS
++++ b/libs/png/AUTHORS
+@@ -17,10 +17,8 @@ Authors, for copyright and licensing purposes.
+  * James Yu
+  * John Bowler
+  * Kevin Bracey
+- * Lucas Chollet
+  * Magnus Holmgren
+  * Mandar Sahastrabuddhe
+- * Manfred Schlaegl
+  * Mans Rullgard
+  * Matt Sarett
+  * Mike Klein
+@@ -32,7 +30,6 @@ Authors, for copyright and licensing purposes.
+  * Samuel Williams
+  * Simon-Pierre Cadieux
+  * Tim Wegner
+- * Tobias Stoeckmann
+  * Tom Lane
+  * Tom Tanner
+  * Vadim Barkov
+@@ -42,9 +39,8 @@ Authors, for copyright and licensing purposes.
+     - Zixu Wang (王子旭)
+  * Arm Holdings
+     - Richard Townsend
+- * Google LLC
++ * Google Inc.
+     - Dan Field
+-    - Dragoș Tiselice
+     - Leon Scroggins III
+     - Matt Sarett
+     - Mike Klein
+@@ -54,8 +50,6 @@ Authors, for copyright and licensing purposes.
+     - GuXiWei (顾希伟)
+     - JinBo (金波)
+     - ZhangLixia (张利霞)
+- * Samsung Group
+-    - Filip Wasil
+ 
+ The build projects, the build scripts, the test scripts, and other
+ files in the "projects", "scripts" and "tests" directories, have

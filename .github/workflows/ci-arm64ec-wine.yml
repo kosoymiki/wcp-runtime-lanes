@@ -1,0 +1,267 @@
+name: Build FreeWine 11 ARM64EC (WCP)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "build.sh"
+      - "ci/ci-build.sh"
+      - "ci/lib/**"
+      - "ci/runtime-bundle/**"
+      - "ci/runtime-sources/**"
+      - "ci/wine11-arm64ec/**"
+      - "ci/validation/**"
+      - ".github/workflows/ci-arm64ec-wine.yml"
+      - "docs/**"
+  workflow_dispatch:
+    inputs:
+      freewine_ref:
+        description: "Git ref in private FreeWine repository"
+        required: false
+        default: "main"
+      freewine_repo:
+        description: "Private FreeWine git URL (optional; fallback to secret FREEWINE11_REPO_URL)"
+        required: false
+        default: ""
+      llvm_mingw_ver:
+        description: "llvm-mingw version tag"
+        required: false
+        default: "20260210"
+      compress:
+        description: "Compression: xz or zst"
+        required: false
+        default: "xz"
+      prefix_pack_url:
+        description: "Prefix pack URL (optional; fallback to secret AEOLATOR_PREFIX_PACK_URL)"
+        required: false
+        default: ""
+
+concurrency:
+  group: wcp-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  CACHE_DIR: ${{ github.workspace }}/.cache
+  WCP_NAME: freewine11-arm64ec
+  WCP_OUTPUT_DIR: ${{ github.workspace }}/out/freewine11
+  WCP_RELEASE_OWNER: kosoymiki
+  WCP_RELEASE_REPO: wcp-runtime-lanes
+  LLVM_MINGW_VER: ${{ github.event.inputs.llvm_mingw_ver || '20260210' }}
+  WCP_COMPRESS: ${{ github.event.inputs.compress || 'xz' }}
+  WCP_VERSION_CODE: "1"
+  WCP_CHANNEL: nightly
+  WCP_DELIVERY: remote
+  WCP_PROFILE_TYPE: Wine
+  WCP_DISPLAY_CATEGORY: Wine
+  WCP_SOURCE_REPO: kosoymiki/wcp-runtime-lanes
+  WCP_RELEASE_TAG: freewine11-arm64ec-latest
+  WCP_SOURCE_TYPE: private-freewine-source
+  WCP_SOURCE_VERSION: rolling-latest
+  WCP_EMBED_VULKAN_RUNTIME: "1"
+  WCP_VULKAN_SDK_VERSION: 1.4.341.1
+  WCP_VULKAN_API_LANE: "1.4"
+  WCP_VULKAN_SDK_LANES: "1.1,1.2,1.3,1.4"
+  WCP_VULKAN_SDK_SOURCE_URL: https://vulkan.lunarg.com/sdk/latest/linux.json
+  WCP_VULKAN_TOOLS_CONFIGURE_MODE: enabled
+  WCP_VULKAN_RUNTIME_FLAVOR: bionic-assets
+  WCP_VULKAN_WRAPPER_MODE: embedded-preferred
+  TOOLCHAIN_DIR: ${{ github.workspace }}/.cache/llvm-mingw
+  TARGET_HOST: aarch64-linux-gnu
+  WCP_ENABLE_SDL2_RUNTIME: "1"
+  WCP_BUILD_LOG_FILE: ${{ github.workspace }}/out/freewine11/logs/wine-build.log
+  WCP_BUILD_LOG_STDOUT_MODE: quiet
+  WCP_BUILD_HEARTBEAT_SEC: "60"
+  WCP_RUNTIME_CLASS_TARGET: bionic-native
+  WCP_RUNTIME_CLASS_ENFORCE: "1"
+  WCP_STRICT_RUNPATH_CONTRACT: "1"
+  WCP_RUNPATH_ACCEPT_REGEX: '^/data/data/com\.termux/files/usr/lib$'
+  WCP_PRUNE_EXTERNAL_COMPONENTS: "1"
+  WCP_GLIBC_SOURCE_MODE: host
+  WCP_RUNTIME_BUNDLE_LOCK_MODE: audit
+  WCP_INCLUDE_FEX_DLLS: "0"
+  WCP_FEX_EXPECTATION_MODE: external
+  WCP_MAINLINE_BIONIC_ONLY: "1"
+  WCP_MAINLINE_FEX_EXTERNAL_ONLY: "1"
+  WCP_ALLOW_GLIBC_EXPERIMENTAL: "0"
+  WCP_WRAPPER_POLICY_VERSION: runtime-v1
+  WCP_POLICY_SOURCE: aeolator-freewine-mainline
+  WCP_FALLBACK_SCOPE: bionic-internal-only
+  WCP_BIONIC_SOURCE_MAP_FILE: ${{ github.workspace }}/ci/runtime-sources/bionic-source-map.json
+  WCP_BIONIC_SOURCE_MAP_FORCE: "0"
+  WCP_BIONIC_SOURCE_MAP_REQUIRED: "0"
+  WCP_BIONIC_DONOR_PREFLIGHT: "0"
+  WCP_WINE_SOURCE_MODE: freewine-git
+  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL }}
+  WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
+  WCP_GN_PATCHSET_ENABLE: "0"
+  WCP_FREEWINE_PREFIXPACK_AUTOBUILD: "1"
+  WINE_TOOLS_CONFIGURE_EXTRA_ARGS: --without-x --without-gstreamer --without-wayland
+  WINE_CONFIGURE_PROFILE: proton-android-minimal
+  PREFIX_PACK_URL: ${{ github.event.inputs.prefix_pack_url || secrets.AEOLATOR_PREFIX_PACK_URL }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate FreeWine source config
+        run: |
+          set -euxo pipefail
+          test -n "${WCP_FREEWINE_REPO}"
+          test -n "${WCP_FREEWINE_REF}"
+
+      - name: Bootstrap packages (Ubuntu)
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bash curl git python3 wget unzip tar pkg-config \
+            cmake ninja-build rsync \
+            zstd file binutils nasm \
+            build-essential gawk bison texinfo \
+            libfreetype-dev fonts-dejavu-core \
+            libglib2.0-dev gstreamer1.0-tools \
+            libxslt1-dev libxml2-dev \
+            libpng-dev \
+            liblcms2-dev \
+            libunwind-dev \
+            libvulkan-dev \
+            libgstreamer-plugins-base1.0-dev \
+            libgif-dev \
+            libgnutls28-dev \
+            libxfixes-dev \
+            libsmbclient-dev \
+            libsdl2-dev
+          mkdir -p "${WCP_OUTPUT_DIR}" "${TOOLCHAIN_DIR}"
+
+      - name: Cache llvm-mingw toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TOOLCHAIN_DIR }}
+          key: llvm-mingw-${{ env.LLVM_MINGW_VER }}
+
+      - name: Build FreeWine 11 ARM64EC WCP
+        run: |
+          set -euxo pipefail
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Inspect WCP runtime contract
+        run: |
+          set -euxo pipefail
+          mkdir -p "${WCP_OUTPUT_DIR}/logs"
+          bash ci/validation/inspect-wcp-runtime-contract.sh "${WCP_OUTPUT_DIR}/${WCP_NAME}.wcp" --strict-bionic \
+            | tee "${WCP_OUTPUT_DIR}/logs/runtime-contract-inspection.txt"
+
+      - name: Verify outputs
+        run: |
+          set -euxo pipefail
+          ls -lah "${WCP_OUTPUT_DIR}"
+          test -f "${WCP_OUTPUT_DIR}/${WCP_NAME}.wcp"
+          test -f "${WCP_OUTPUT_DIR}/SHA256SUMS"
+
+      - name: Upload WCP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: freewine11-arm64ec
+          path: |
+            out/freewine11/freewine11-arm64ec.wcp
+            out/freewine11/SHA256SUMS
+            out/freewine11/logs/**
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freewine11-diagnostics
+          path: |
+            out/freewine11/logs/**
+            out/freewine11/SHA256SUMS
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Prepare release notes
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euxo pipefail
+          cp "${WCP_OUTPUT_DIR}/SHA256SUMS" "${WCP_OUTPUT_DIR}/SHA256SUMS-${WCP_NAME}.txt"
+          cat > RELEASE_NOTES.md <<EOF_NOTES
+          FreeWine 11 ARM64EC WCP (rolling nightly)
+
+          RU:
+          - Канал: nightly (freewine11-arm64ec-latest)
+          - Тип в Winlator Contents: Wine
+          - Источник FreeWine: private closed repository (FreeWine-only policy)
+          - Release repo: kosoymiki/wcp-runtime-lanes
+          - Контур CI: только FreeWine + Aeolator
+
+          EN:
+          - Channel: nightly (freewine11-arm64ec-latest)
+          - Winlator Contents display type: Wine
+          - FreeWine source: private closed repository (FreeWine-only policy)
+          - Release repo: kosoymiki/wcp-runtime-lanes
+          - CI scope: FreeWine + Aeolator only
+
+          Commit: ${{ github.sha }}
+          Workflow run: ${{ github.run_id }}
+          EOF_NOTES
+
+      - name: Validate split release token
+        if: github.event_name != 'pull_request'
+        env:
+          AEO_RELEASE_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
+        run: |
+          set -euxo pipefail
+          test -n "${AEO_RELEASE_TOKEN}"
+
+      - name: Publish to GitHub Release
+        id: publish_release
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.AEO_RELEASE_TOKEN }}
+          owner: ${{ env.WCP_RELEASE_OWNER }}
+          repo: ${{ env.WCP_RELEASE_REPO }}
+          tag: freewine11-arm64ec-latest
+          name: FreeWine 11 ARM64EC Latest
+          allowUpdates: true
+          prerelease: true
+          removeArtifacts: true
+          artifacts: out/freewine11/freewine11-arm64ec.wcp,out/freewine11/SHA256SUMS-freewine11-arm64ec.txt
+          artifactErrorsFailBuild: true
+          bodyFile: RELEASE_NOTES.md
+
+      - name: Fallback publish to GitHub Release via gh (retry)
+        if: github.event_name != 'pull_request' && steps.publish_release.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
+          RELEASE_REPO: ${{ env.WCP_SOURCE_REPO }}
+        run: |
+          set -euxo pipefail
+          TAG="freewine11-arm64ec-latest"
+          NAME="FreeWine 11 ARM64EC Latest"
+          ASSET_WCP="out/freewine11/freewine11-arm64ec.wcp"
+          ASSET_SHA="out/freewine11/SHA256SUMS-freewine11-arm64ec.txt"
+          for attempt in 1 2 3 4 5; do
+            if gh release view "${TAG}" --repo "${RELEASE_REPO}" >/dev/null 2>&1; then
+              gh release edit "${TAG}" --repo "${RELEASE_REPO}" --title "${NAME}" --notes-file RELEASE_NOTES.md --prerelease || true
+            else
+              gh release create "${TAG}" --repo "${RELEASE_REPO}" "${ASSET_WCP}" "${ASSET_SHA}" --title "${NAME}" --notes-file RELEASE_NOTES.md --prerelease && exit 0
+            fi
+            if gh release upload "${TAG}" --repo "${RELEASE_REPO}" "${ASSET_WCP}" "${ASSET_SHA}" --clobber; then
+              exit 0
+            fi
+            sleep $((attempt * 10))
+          done
+          echo "Fallback release publish failed after retries" >&2
+          exit 1

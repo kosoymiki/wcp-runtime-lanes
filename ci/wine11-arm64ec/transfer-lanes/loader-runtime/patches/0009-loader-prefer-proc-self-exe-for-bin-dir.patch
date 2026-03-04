@@ -1,0 +1,14 @@
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -539,6 +539,9 @@ static void init_paths( char *argv[] )
+     else
+     {
+         if (!(dll_dir = remove_tail( ntdll_dir, get_so_dir(current_machine) ))) dll_dir = ntdll_dir;
++#if defined(__linux__) && !defined(__ANDROID__)
++        bin_dir = realpath_dirname( "/proc/self/exe" );
++#endif
+-        bin_dir = build_relative_path( dll_dir, LIBDIR "/wine", BINDIR );
++        if (!bin_dir) bin_dir = build_relative_path( dll_dir, LIBDIR "/wine", BINDIR );
+         data_dir = build_relative_path( dll_dir, LIBDIR "/wine", DATADIR "/wine" );
+         wineloader = build_path( ntdll_dir, loader_name );

@@ -1,0 +1,132 @@
+diff --git a/dlls/win32u/defwnd.c b/dlls/win32u/defwnd.c
+--- a/dlls/win32u/defwnd.c
++++ b/dlls/win32u/defwnd.c
+@@ -483,7 +483,7 @@ static LRESULT handle_set_cursor( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ 
+ static LONG handle_window_pos_changing( HWND hwnd, WINDOWPOS *winpos )
+ {
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
+ 
+     if (winpos->flags & SWP_NOSIZE) return 0;
+     if ((style & WS_THICKFRAME) || ((style & (WS_POPUP | WS_CHILD)) == 0))
+@@ -1077,8 +1077,8 @@ static BOOL handle_iconic_repaint( HWND hwnd, RECT *rect )
+     if (is_iconic(hwnd)) get_window_rect( hwnd, rect, get_thread_dpi() );
+     else
+     {
+-        DWORD style = get_window_long( hwnd, GWL_STYLE );
+-        DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++        LONG style = get_window_long( hwnd, GWL_STYLE );
++        LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+ 
+         get_inside_rect( hwnd, COORDS_CLIENT, rect, style, ex_style );
+         rect->right = rect->left + get_system_metrics( SM_CYCAPTION ) - 1;
+@@ -1218,8 +1218,8 @@ static void draw_moving_frame( HWND hwnd, RECT *new_rect )
+     {
+         RECT rect;
+         POINT pt;
+-        DWORD style = get_window_long( hwnd, GWL_STYLE );
+-        DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++        LONG style = get_window_long( hwnd, GWL_STYLE );
++        LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+ 
+         get_inside_rect( hwnd, COORDS_WINDOW, &rect, style, ex_style );
+         pt.x = rect.left + 2;
+@@ -1464,8 +1464,8 @@ static void draw_caption_buttons( HWND hwnd, HDC hdc, BOOL active, BOOL menu, U
+ static void draw_close_button( HWND hwnd, HDC hdc, BOOL down, BOOL grayed )
+ {
+     RECT rect;
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
+-    DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
++    LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+     UINT flags = DFCS_CAPTIONCLOSE;
+ 
+     get_inside_rect( hwnd, COORDS_WINDOW, &rect, style, ex_style );
+@@ -1501,8 +1501,8 @@ static void draw_restore_button( HWND hwnd, HDC hdc, BOOL down, BOOL grayed )
+ {
+     RECT rect;
+     UINT flags;
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
+-    DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
++    LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+ 
+     /* never draw maximize box when window has WS_EX_TOOLWINDOW style */
+     if (ex_style & WS_EX_TOOLWINDOW) return;
+@@ -1524,8 +1524,8 @@ static void draw_max_button( HWND hwnd, HDC hdc, BOOL down, BOOL grayed )
+ {
+     RECT rect;
+     UINT flags;
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
+-    DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
++    LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+ 
+     /* never draw minimize box when window has WS_EX_TOOLWINDOW style */
+     if (ex_style & WS_EX_TOOLWINDOW) return;
+@@ -1645,7 +1645,7 @@ static LRESULT handle_nc_paint( HWND hwnd , HRGN clip )
+     }
+     else
+     {
+-        DWORD style = get_window_long( hwnd, GWL_STYLE );
++        LONG style = get_window_long( hwnd, GWL_STYLE );
+         draw_caption_bar( hdc, &rc, style, flags & DC_ACTIVE, flags & DC_GRADIENT );
+     }
+ 
+@@ -1823,7 +1823,7 @@ static void handle_nc_activate( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ static LRESULT handle_nc_paint( HWND hwnd , HRGN clip )
+ {
+     HWND parent = NtUserGetAncestor( hwnd, GA_PARENT );
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
+ 
+     if (style & WS_VISIBLE)
+     {
+@@ -1862,8 +1862,8 @@ static LRESULT handle_nc_activate( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ static void handle_nc_calc_size( HWND hwnd, WPARAM wparam, RECT *win_rect )
+ {
+     RECT rect = { 0, 0, 0, 0 };
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
+-    DWORD ex_style = get_window_long( hwnd, GWL_EXSTYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
++    LONG ex_style = get_window_long( hwnd, GWL_EXSTYLE );
+ 
+     if (!win_rect) return;
+ 
+@@ -2091,7 +2091,7 @@ static LRESULT handle_nc_button_dbl_click( HWND hwnd, WPARAM wparam, LPARAM lpa
+ static void track_min_max_box( HWND hwnd, WORD wparam )
+ {
+     HDC hdc = NtUserGetWindowDC( hwnd );
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
+     HMENU sys_menu = NtUserGetSystemMenu(hwnd, FALSE);
+     void (*paint_button)( HWND, HDC, BOOL, BOOL );
+     BOOL pressed = TRUE;
+@@ -2190,7 +2190,7 @@ static void track_close_button( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ 
+ static LRESULT handle_nc_lbutton_down( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ {
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
+ 
+     switch (wparam)  /* Hit test */
+     {
+@@ -2384,7 +2384,7 @@ static LRESULT handle_nc_mouse_move( HWND hwnd, WPARAM wparam, LPARAM lparam )
+ 
+ static LRESULT handle_nc_mouse_leave( HWND hwnd )
+ {
+-    DWORD style = get_window_long( hwnd, GWL_STYLE );
++    LONG style = get_window_long( hwnd, GWL_STYLE );
+     POINT pt = {0, 0};
+ 
+     TRACE( "hwnd=%p\n", hwnd );
+@@ -2701,7 +2701,7 @@ LRESULT default_window_proc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam,
+ 
+     case WM_SHOWWINDOW:
+         {
+-            DWORD style = get_window_long( hwnd, GWL_STYLE );
++            LONG style = get_window_long( hwnd, GWL_STYLE );
+             WND *win;
+             if (!lparam) break; /* sent from ShowWindow */
+             if ((style & WS_VISIBLE) && wparam) break;

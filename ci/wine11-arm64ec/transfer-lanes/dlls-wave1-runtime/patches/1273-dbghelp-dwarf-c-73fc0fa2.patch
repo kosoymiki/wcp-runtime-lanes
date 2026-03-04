@@ -1,0 +1,57 @@
+diff --git a/dlls/dbghelp/dwarf.c b/dlls/dbghelp/dwarf.c
+--- a/dlls/dbghelp/dwarf.c
++++ b/dlls/dbghelp/dwarf.c
+@@ -3050,9 +3050,12 @@
+             struct attribute            language;
+             char                       *tmp;
+ 
+-            if (!dwarf2_find_attribute(di, DW_AT_name, &name) ||
+-                !dwarf2_find_attribute(di, DW_AT_comp_dir, &comp_dir))
+-                goto failure;
++            if (!dwarf2_find_attribute(di, DW_AT_name, &name))
++                name.u.string = NULL;
++
++            /* get working directory of current compilation unit */
++            if (!dwarf2_find_attribute(di, DW_AT_comp_dir, &comp_dir))
++                comp_dir.u.string = NULL;
+ 
+             if (!dwarf2_find_attribute(di, DW_AT_low_pc, &low_pc))
+                 low_pc.u.uvalue = 0;
+@@ -3084,7 +3087,6 @@
+         }
+         else FIXME("Should have a compilation unit here %Iu\n", di->abbrev->tag);
+     }
+-failure:
+     if (ctx->status == UNIT_BEINGLOADED) ctx->status = UNIT_LOADED_FAIL;
+     return ret;
+ }
+@@ -4317,6 +4319,11 @@
+     struct module_format* dwarf2_modfmt;
+     dwarf2_parse_module_context_t module_ctx;
+ 
++/* Our DWARF parser has been known to crash winedbg in some cases. Since
++ * probably no concerned parties are going to be using plain winedbg, just don't
++ * bother parsing anything. */
++return FALSE;
++
+     if (!dwarf2_init_section(&eh_frame,                fmap, ".eh_frame",     NULL,             &eh_frame_sect))
+         /* lld produces .eh_fram to avoid generating a long name */
+         dwarf2_init_section(&eh_frame,                fmap, ".eh_fram",      NULL,             &eh_frame_sect);
+@@ -4380,7 +4387,7 @@
+         dwarf2_modfmt->module->module.SourceIndexed = TRUE;
+         dwarf2_modfmt->module->module.Publics = TRUE;
+     }
+-    else ret = FALSE;
++
+     dwarf2_unload_CU_module(&module_ctx);
+ leave:
+ 
+@@ -4395,7 +4402,7 @@
+     image_unmap_section(&debug_str_sect);
+     image_unmap_section(&debug_line_sect);
+     image_unmap_section(&debug_ranges_sect);
+-    if (!module->format_info[DFI_DWARF]) image_unmap_section(&eh_frame_sect);
++    if (!ret) image_unmap_section(&eh_frame_sect);
+ 
+     return ret;
+ }

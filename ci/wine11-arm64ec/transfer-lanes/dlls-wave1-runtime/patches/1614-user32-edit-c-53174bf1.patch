@@ -1,0 +1,122 @@
+diff --git a/dlls/user32/edit.c b/dlls/user32/edit.c
+--- a/dlls/user32/edit.c
++++ b/dlls/user32/edit.c
+@@ -188,7 +188,7 @@
+  * applications with an expected version 0f 4.0 or higher.
+  *
+  */
+-DWORD get_app_version(void)
++static DWORD get_app_version(void)
+ {
+     static DWORD version;
+     if (!version)
+@@ -387,17 +387,10 @@
+ 		tabdef.pTabStops = es->tabs;
+ 		tabdef.iTabOrigin = 0;
+ 
+-		if (es->style & ES_PASSWORD)
+-			hr = ScriptStringAnalyse(udc, &es->password_char, line_def->net_length,
+-                                                  (1.5*line_def->net_length+16), -1,
+-                                                  SSA_LINK|SSA_FALLBACK|SSA_GLYPHS|SSA_TAB|SSA_PASSWORD, -1,
+-                                                  NULL, NULL, NULL, &tabdef, NULL, &line_def->ssa);
+-		else
+-			hr = ScriptStringAnalyse(udc, &es->text[index], line_def->net_length,
+-                                                  (1.5*line_def->net_length+16), -1,
+-                                                  SSA_LINK|SSA_FALLBACK|SSA_GLYPHS|SSA_TAB, -1,
+-                                                  NULL, NULL, NULL, &tabdef, NULL, &line_def->ssa);
+-
++		hr = ScriptStringAnalyse(udc, &es->text[index], line_def->net_length,
++                                         (1.5*line_def->net_length+16), -1,
++                                         SSA_LINK|SSA_FALLBACK|SSA_GLYPHS|SSA_TAB, -1,
++                                         NULL, NULL, NULL, &tabdef, NULL, &line_def->ssa);
+ 		if (FAILED(hr))
+ 		{
+ 			WARN("ScriptStringAnalyse failed (%lx)\n",hr);
+@@ -1811,7 +1804,7 @@
+ 	{
+ 		res = EDIT_EM_PosFromChar(es, pos, after_wrap);
+ 		TRACE("%d - %dx%d\n", pos, (short)LOWORD(res), (short)HIWORD(res));
+-		NtUserSetCaretPos((short)LOWORD(res), (short)HIWORD(res));
++		SetCaretPos((short)LOWORD(res), (short)HIWORD(res));
+ 		EDIT_UpdateImmCompositionWindow(es, (short)LOWORD(res), (short)HIWORD(res));
+ 	}
+ }
+@@ -2967,12 +2960,15 @@
+  *	EM_SETPASSWORDCHAR
+  *
+  */
+-static BOOL EDIT_EM_SetPasswordChar(EDITSTATE *es, WCHAR c)
++static void EDIT_EM_SetPasswordChar(EDITSTATE *es, WCHAR c)
+ {
+ 	LONG style;
+ 
++	if (es->style & ES_MULTILINE)
++		return;
++
+ 	if (es->password_char == c)
+-		return TRUE;
++		return;
+ 
+         style = GetWindowLongW( es->hwndSelf, GWL_STYLE );
+ 	es->password_char = c;
+@@ -2985,7 +2981,6 @@
+ 	}
+ 	EDIT_InvalidateUniscribeData(es);
+ 	EDIT_UpdateText(es, NULL, TRUE);
+-	return TRUE;
+ }
+ 
+ 
+@@ -3182,9 +3177,6 @@
+ static LRESULT EDIT_WM_Char(EDITSTATE *es, WCHAR c)
+ {
+         BOOL control;
+-
+-	if (es->bCaptureState)
+-		return 1;
+ 
+ 	control = NtUserGetKeyState(VK_CONTROL) & 0x8000;
+ 
+@@ -3457,9 +3449,6 @@
+ {
+ 	BOOL shift;
+ 	BOOL control;
+-
+-	if (es->bCaptureState)
+-		return 1;
+ 
+ 	if (NtUserGetKeyState(VK_MENU) & 0x8000)
+ 		return 0;
+@@ -4749,7 +4738,7 @@
+ 		    MultiByteToWideChar(CP_ACP, 0, &charA, 1, &charW, 1);
+ 		}
+ 
+-		result = EDIT_EM_SetPasswordChar(es, charW);
++		EDIT_EM_SetPasswordChar(es, charW);
+ 		break;
+ 	}
+ 
+@@ -5069,10 +5058,6 @@
+ 		result = EDIT_WM_VScroll(es, LOWORD(wParam), (short)HIWORD(wParam));
+ 		break;
+ 
+-        case WM_CAPTURECHANGED:
+-            es->bCaptureState = FALSE;
+-            break;
+-
+         case WM_MOUSEWHEEL:
+                 {
+                     int wheelDelta;
+@@ -5142,6 +5127,12 @@
+ 		}
+ 		break;
+ 
++        case WM_GETOBJECT:
++                if (lParam == (DWORD)OBJID_QUERYCLASSNAMEIDX)
++                    result = 0x10004;
++
++                break;
++
+ 	default:
+ 		result = DefWindowProcT(hwnd, msg, wParam, lParam, unicode);
+ 		break;

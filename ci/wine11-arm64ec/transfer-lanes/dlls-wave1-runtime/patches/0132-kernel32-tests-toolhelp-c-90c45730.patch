@@ -1,0 +1,11 @@
+diff --git a/dlls/kernel32/tests/toolhelp.c b/dlls/kernel32/tests/toolhelp.c
+--- a/dlls/kernel32/tests/toolhelp.c
++++ b/dlls/kernel32/tests/toolhelp.c
+@@ -505,5 +505,5 @@
+     test_module(info.dwProcessId, sub_expected_modules, ARRAY_SIZE(sub_expected_modules));
+ 
+     SetEvent(ev2);
+-    wait_child_process( &info );
+-}
++    wait_child_process( info.hProcess );
++}

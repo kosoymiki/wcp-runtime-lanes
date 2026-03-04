@@ -1,0 +1,12 @@
+diff --git a/include/windows.perception.idl b/include/windows.perception.idl
+index b1677456deafae5a1e4e7284480ebb4e73526148..e13195c39a11f26c9d311356386cf8f95fe5d645 100644
+--- a/include/windows.perception.idl
++++ b/include/windows.perception.idl
+@@ -17,7 +17,6 @@
+  */
+ 
+ #ifdef __WIDL__
+-#pragma makedep header install winmd
+ #pragma winrt ns_prefix
+ #endif
+ 

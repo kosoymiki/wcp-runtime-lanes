@@ -1,0 +1,54 @@
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -511,24 +511,37 @@
+     }
+ }
+ 
+-static void init_paths(void)
++static void init_paths( char *argv[] )
+ {
+     Dl_info info;
++    const char *loader_name = "wine";
++    const char *slash;
++    char *loader_dir, *wow64_loader;
++
++    if (argv && argv[0] && argv[0][0])
++    {
++        slash = strrchr( argv[0], '/' );
++        loader_name = slash ? slash + 1 : argv[0];
++    }
+ 
+     if (!dladdr( init_paths, &info ) || !(ntdll_dir = realpath_dirname( info.dli_fname )))
+         fatal_error( "cannot get path to ntdll.so\n" );
+ 
+     if ((build_dir = remove_tail( ntdll_dir, "/dlls/ntdll" )))
+     {
+-        wineloader = build_path( build_dir, "loader/wine" );
+-        alt_build_dir = realpath_dirname( build_path( build_dir, "loader-wow64" ));
++        loader_dir = build_path( build_dir, "loader" );
++        wineloader = build_path( loader_dir, loader_name );
++        free( loader_dir );
++        wow64_loader = build_path( build_dir, "loader-wow64" );
++        alt_build_dir = realpath_dirname( wow64_loader );
++        free( wow64_loader );
+     }
+     else
+     {
+         if (!(dll_dir = remove_tail( ntdll_dir, get_so_dir(current_machine) ))) dll_dir = ntdll_dir;
+         bin_dir = build_relative_path( dll_dir, LIBDIR "/wine", BINDIR );
+         data_dir = build_relative_path( dll_dir, LIBDIR "/wine", DATADIR "/wine" );
+-        wineloader = build_path( ntdll_dir, "wine" );
++        wineloader = build_path( ntdll_dir, loader_name );
+     }
+ 
+     set_dll_path();
+@@ -2124,7 +2137,7 @@
+     main_argc = argc;
+     main_argv = argv;
+ 
+-    init_paths();
++    init_paths( argv );
+     virtual_init();
+     init_environment();
+ 

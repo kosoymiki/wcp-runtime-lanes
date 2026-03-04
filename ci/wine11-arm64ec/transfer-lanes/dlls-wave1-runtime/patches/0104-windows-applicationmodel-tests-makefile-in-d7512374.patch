@@ -1,0 +1,10 @@
+diff --git a/dlls/windows.applicationmodel/tests/Makefile.in b/dlls/windows.applicationmodel/tests/Makefile.in
+--- a/dlls/windows.applicationmodel/tests/Makefile.in
++++ b/dlls/windows.applicationmodel/tests/Makefile.in
+@@ -5,6 +5,5 @@
+ 
+ SOURCES = \
+ 	application.c \
+-	application.spec \
+ 	model.c \
+ 	resource.rc

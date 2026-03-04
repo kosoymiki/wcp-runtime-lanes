@@ -1,0 +1,10 @@
+diff --git a/dlls/vccorlib140/tests/Makefile.in b/dlls/vccorlib140/tests/Makefile.in
+--- a/dlls/vccorlib140/tests/Makefile.in
++++ b/dlls/vccorlib140/tests/Makefile.in
+@@ -1,5 +1,5 @@
+ TESTDLL = vccorlib140.dll
+-IMPORTS = combase ole32 oleaut32 user32 uuid
++IMPORTS = combase ole32 uuid
+ 
+ SOURCES = \
+ 	vccorlib.c

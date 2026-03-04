@@ -1,0 +1,21 @@
+diff --git a/dlls/imm32/imm32.spec b/dlls/imm32/imm32.spec
+--- a/dlls/imm32/imm32.spec
++++ b/dlls/imm32/imm32.spec
+@@ -7,7 +7,7 @@
+ @ stub CtfImmGetGuidAtom
+ @ stub CtfImmGetIMEFileName
+ @ stub CtfImmGetTMAEFlags
+-@ stdcall CtfImmHideToolbarWnd()
++@ stub CtfImmHideToolbarWnd
+ @ stdcall CtfImmIsCiceroEnabled()
+ @ stub CtfImmIsCiceroStartedInThread
+ @ stub CtfImmIsGuidMapEnable
+@@ -15,7 +15,7 @@
+ @ stub CtfImmLastEnabledWndDestroy
+ @ stub CtfImmLeaveCoInitCountSkipMode
+ @ stub CtfImmNotify
+-@ stdcall CtfImmRestoreToolbarWnd(long)
++@ stub CtfImmRestoreToolbarWnd
+ @ stub CtfImmSetAppCompatFlags
+ @ stub CtfImmSetCiceroStartInThread
+ @ stub CtfImmSetDefaultRemoteKeyboardLayout

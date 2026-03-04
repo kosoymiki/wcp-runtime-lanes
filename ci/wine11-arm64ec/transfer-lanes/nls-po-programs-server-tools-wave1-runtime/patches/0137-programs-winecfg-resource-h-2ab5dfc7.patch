@@ -1,0 +1,12 @@
+diff --git a/programs/winecfg/resource.h b/programs/winecfg/resource.h
+index b7b237221b0da59448cf0d4500face4fb261ce5d..cd7eaaf711ecdd4184d8f4e804d31ba37410ab4f 100644
+--- a/programs/winecfg/resource.h
++++ b/programs/winecfg/resource.h
+@@ -156,7 +156,6 @@
+ #define IDS_AUDIO_SPEAKER_MONO          1317
+ #define IDC_LIST_AUDIO_DEVICES          1318
+ #define IDS_AUDIO_SPEAKER_CONFIG        1319
+-#define IDC_MIDI_DEVICE                 1320
+ 
+ /* desktop integration tab */
+ #define IDC_THEME_COLORCOMBO            1401

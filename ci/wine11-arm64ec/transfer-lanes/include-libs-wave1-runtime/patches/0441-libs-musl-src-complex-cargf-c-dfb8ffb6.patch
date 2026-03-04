@@ -1,0 +1,12 @@
+diff --git a/libs/musl/src/complex/cargf.c b/libs/musl/src/complex/cargf.c
+deleted file mode 100644
+index 947da7530736f40b175051b46581055755cca1a7..0000000000000000000000000000000000000000
+--- a/libs/musl/src/complex/cargf.c
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#include "complex_impl.h"
+-
+-float cargf(_Fcomplex z)
+-{
+-	return atan2f(cimagf(z), crealf(z));
+-}

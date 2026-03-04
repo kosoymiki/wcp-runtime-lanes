@@ -1,0 +1,45 @@
+diff --git a/dlls/ntdll/version.c b/dlls/ntdll/version.c
+--- a/dlls/ntdll/version.c
++++ b/dlls/ntdll/version.c
+@@ -264,7 +264,12 @@
+     BOOL ret = FALSE;
+     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)tmp;
+ 
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     RtlInitUnicodeString( &nameW, L"\\Registry\\Machine\\Software\\Microsoft\\Windows NT\\CurrentVersion" );
+ 
+     if (NtOpenKey( &hkey, KEY_ALL_ACCESS, &attr )) return FALSE;
+@@ -386,7 +391,12 @@
+     BOOL ret = FALSE;
+     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)tmp;
+ 
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     RtlInitUnicodeString( &nameW, L"\\Registry\\Machine\\Software\\Microsoft\\Windows\\CurrentVersion" );
+ 
+     if (NtOpenKey( &hkey, KEY_ALL_ACCESS, &attr )) return FALSE;
+@@ -484,7 +494,12 @@
+     current_version = &VersionData[WIN10];
+ 
+     RtlOpenCurrentUser( KEY_ALL_ACCESS, &root );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, root, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = root;
++    attr.ObjectName = &nameW;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     RtlInitUnicodeString( &nameW, L"Software\\Wine" );
+ 
+     /* @@ Wine registry key: HKCU\Software\Wine */

@@ -1,0 +1,12 @@
+diff --git a/include/msvcrt/float.h b/include/msvcrt/float.h
+index 89a062866a5ee9677eb2d4363d8540900c85e0b6..c24ac3c3aee2cccb93c5e0789f99c2ec4b1bde0d 100644
+--- a/include/msvcrt/float.h
++++ b/include/msvcrt/float.h
+@@ -153,7 +153,6 @@ _ACRTIMP double __cdecl _nextafter(double, double);
+ _ACRTIMP int    __cdecl _finite(double);
+ _ACRTIMP int    __cdecl _isnan(double);
+ _ACRTIMP int    __cdecl _fpclass(double);
+-_ACRTIMP int *  __cdecl __fpecode(void);
+ 
+ #ifdef __x86_64__
+ _ACRTIMP float __cdecl _scalbf(float, __msvcrt_long);

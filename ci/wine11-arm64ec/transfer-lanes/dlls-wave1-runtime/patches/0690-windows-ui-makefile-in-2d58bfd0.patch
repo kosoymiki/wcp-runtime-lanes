@@ -1,0 +1,15 @@
+diff --git a/dlls/windows.ui/Makefile.in b/dlls/windows.ui/Makefile.in
+--- a/dlls/windows.ui/Makefile.in
++++ b/dlls/windows.ui/Makefile.in
+@@ -2,10 +2,8 @@
+ IMPORTS = combase advapi32 user32
+ 
+ SOURCES = \
+-	accessibilitysettings.c \
+ 	classes.idl \
+ 	inputpane.c \
+ 	main.c \
+ 	uisettings.c \
+-	uiviewsettings.c \
+-	weakref.c
++	uiviewsettings.c

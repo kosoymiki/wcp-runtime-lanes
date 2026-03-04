@@ -1,0 +1,15 @@
+diff --git a/dlls/gdiplus/brush.c b/dlls/gdiplus/brush.c
+--- a/dlls/gdiplus/brush.c
++++ b/dlls/gdiplus/brush.c
+@@ -1060,9 +1060,9 @@
+     if(count < brush->blendcount)
+         return InsufficientBuffer;
+ 
+-    memcpy(blend, brush->blendfac, brush->blendcount*sizeof(REAL));
++    memcpy(blend, brush->blendfac, count*sizeof(REAL));
+     if(brush->blendcount > 1){
+-        memcpy(positions, brush->blendpos, brush->blendcount*sizeof(REAL));
++        memcpy(positions, brush->blendpos, count*sizeof(REAL));
+     }
+ 
+     return Ok;

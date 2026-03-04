@@ -1,0 +1,21 @@
+diff --git a/dlls/dinput/tests/driver_bus.c b/dlls/dinput/tests/driver_bus.c
+--- a/dlls/dinput/tests/driver_bus.c
++++ b/dlls/dinput/tests/driver_bus.c
+@@ -198,7 +198,7 @@
+     if (queue->pending_wait) return STATUS_INVALID_PARAMETER;
+ 
+     IoSetCancelRoutine( irp, wait_cancel_routine );
+-    if (irp->Cancel && IoSetCancelRoutine( irp, NULL ))
++    if (irp->Cancel && !IoSetCancelRoutine( irp, NULL ))
+         return STATUS_CANCELLED;
+ 
+     irp->Tail.Overlay.DriverContext[0] = queue;
+@@ -563,7 +563,7 @@
+     for (i = 0; i < impl->devices->Count; ++i)
+         if (impl->devices->Objects[i] == device) break;
+     if (i == impl->devices->Count) status = STATUS_NOT_FOUND;
+-    else impl->devices->Objects[i] = impl->devices->Objects[impl->devices->Count--];
++    else impl->devices->Objects[i] = impl->devices->Objects[--impl->devices->Count];
+     KeReleaseSpinLock( &impl->base.lock, irql );
+ 
+     return status;

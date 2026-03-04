@@ -1,0 +1,11 @@
+diff --git a/dlls/windows.web/private.h b/dlls/windows.web/private.h
+--- a/dlls/windows.web/private.h
++++ b/dlls/windows.web/private.h
+@@ -21,7 +21,6 @@
+ #define __WINE_WINDOWS_WEB_PRIVATE_H
+ 
+ #include <stdarg.h>
+-#include <errno.h>
+ 
+ #define COBJMACROS
+ #include "windef.h"

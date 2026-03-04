@@ -1,0 +1,13 @@
+diff --git a/include/sqltypes.h b/include/sqltypes.h
+index 44c1d4f4efc2306a56891f22c613c40f408502a2..70315c271c40e7a278e4b52f31805937d9ea1e9a 100644
+--- a/include/sqltypes.h
++++ b/include/sqltypes.h
+@@ -28,7 +28,7 @@ extern "C" {
+ #endif
+ 
+ typedef unsigned char   SQLCHAR;
+-#if defined(WINE_UNICODE_NATIVE) || ((defined(__MINGW32__) || defined(_MSC_VER)) && defined(_WCHAR_T_DEFINED))
++#if defined(WINE_UNICODE_NATIVE)
+ typedef wchar_t         SQLWCHAR;
+ #elif __cpp_unicode_literals >= 200710
+ typedef char16_t        SQLWCHAR;

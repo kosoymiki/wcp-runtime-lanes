@@ -1,0 +1,21 @@
+diff --git a/include/wine/mmsystem16.h b/include/wine/mmsystem16.h
+index 9c880d07bdc49e71cd751c1c1fcb3f36e94c2506..05c11be8af17def290d21ccae9bca2025259a815 100644
+--- a/include/wine/mmsystem16.h
++++ b/include/wine/mmsystem16.h
+@@ -25,7 +25,7 @@
+ #include <wine/windef16.h>
+ #include <mmddk.h>
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ typedef UINT16	MMVERSION16;
+ typedef UINT16	MCIDEVICEID16;
+@@ -808,6 +808,6 @@ typedef struct {
+     SEGPTR  lpstrText;
+ } MCI_DGV_WINDOW_PARMS16, *LPMCI_DGV_WINDOW_PARMS16;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif  /* __WINE_WINE_MMSYSTEM16_H */

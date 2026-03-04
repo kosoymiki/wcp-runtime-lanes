@@ -1,0 +1,9 @@
+diff --git a/dlls/kernelbase/tests/Makefile.in b/dlls/kernelbase/tests/Makefile.in
+--- a/dlls/kernelbase/tests/Makefile.in
++++ b/dlls/kernelbase/tests/Makefile.in
+@@ -6,5 +6,4 @@
+ 	path.c \
+ 	process.c \
+ 	rsrc.rc \
+-	security.c \
+ 	sync.c

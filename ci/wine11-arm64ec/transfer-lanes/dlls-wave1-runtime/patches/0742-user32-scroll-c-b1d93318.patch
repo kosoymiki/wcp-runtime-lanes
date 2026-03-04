@@ -1,0 +1,17 @@
+diff --git a/dlls/user32/scroll.c b/dlls/user32/scroll.c
+--- a/dlls/user32/scroll.c
++++ b/dlls/user32/scroll.c
+@@ -224,11 +224,11 @@
+     {
+         if (!vertical)
+         {
+-            NtUserSetCaretPos(thumbPos + 1, rect->top + 1);
++            SetCaretPos(thumbPos + 1, rect->top + 1);
+         }
+         else
+         {
+-            NtUserSetCaretPos(rect->top + 1, thumbPos + 1);
++            SetCaretPos(rect->top + 1, thumbPos + 1);
+         }
+     }
+ }

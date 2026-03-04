@@ -1,0 +1,11 @@
+diff --git a/dlls/cfgmgr32/Makefile.in b/dlls/cfgmgr32/Makefile.in
+--- a/dlls/cfgmgr32/Makefile.in
++++ b/dlls/cfgmgr32/Makefile.in
+@@ -1,6 +1,6 @@
+ MODULE    = cfgmgr32.dll
+ IMPORTLIB = cfgmgr32
+-IMPORTS   = advapi32 rpcrt4 sechost setupapi
++IMPORTS   = setupapi
+ 
+ SOURCES = \
+ 	main.c

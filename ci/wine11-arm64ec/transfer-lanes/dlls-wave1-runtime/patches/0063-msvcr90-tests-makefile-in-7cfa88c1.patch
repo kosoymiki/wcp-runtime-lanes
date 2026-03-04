@@ -1,0 +1,9 @@
+diff --git a/dlls/msvcr90/tests/Makefile.in b/dlls/msvcr90/tests/Makefile.in
+--- a/dlls/msvcr90/tests/Makefile.in
++++ b/dlls/msvcr90/tests/Makefile.in
+@@ -1,5 +1,4 @@
+ TESTDLL   = msvcr90.dll
+-IMPORTS   = msvcr90
+ 
+ SOURCES = \
+ 	msvcr90.c \

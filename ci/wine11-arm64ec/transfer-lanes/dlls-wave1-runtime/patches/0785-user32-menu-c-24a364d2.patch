@@ -1,0 +1,19 @@
+diff --git a/dlls/user32/menu.c b/dlls/user32/menu.c
+--- a/dlls/user32/menu.c
++++ b/dlls/user32/menu.c
+@@ -545,6 +545,15 @@
+ }
+ 
+ 
++/**********************************************************************
++ *         DrawMenuBar    (USER32.@)
++ */
++BOOL WINAPI DrawMenuBar( HWND hwnd )
++{
++    return NtUserDrawMenuBar( hwnd );
++}
++
++
+ /*****************************************************************
+  *        LoadMenuA   (USER32.@)
+  */

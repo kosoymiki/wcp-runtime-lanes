@@ -1,0 +1,14 @@
+diff --git a/dlls/coremessaging/Makefile.in b/dlls/coremessaging/Makefile.in
+--- a/dlls/coremessaging/Makefile.in
++++ b/dlls/coremessaging/Makefile.in
+@@ -1,9 +1,4 @@
+-MODULE    = coremessaging.dll
+-IMPORTS   = combase
+-IMPORTLIB = coremessaging
++MODULE = coremessaging.dll
+ 
+ SOURCES = \
+-	async.c \
+-	async_private.idl \
+-	classes.idl \
+ 	main.c

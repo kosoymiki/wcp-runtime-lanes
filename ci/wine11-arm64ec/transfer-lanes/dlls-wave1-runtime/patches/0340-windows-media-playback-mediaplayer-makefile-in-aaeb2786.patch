@@ -1,0 +1,10 @@
+diff --git a/dlls/windows.media.playback.mediaplayer/Makefile.in b/dlls/windows.media.playback.mediaplayer/Makefile.in
+--- a/dlls/windows.media.playback.mediaplayer/Makefile.in
++++ /dev/null
+@@ -1,6 +0,0 @@
+-MODULE  = windows.media.playback.mediaplayer.dll
+-IMPORTS = combase user32
+-
+-SOURCES = \
+-	classes.idl \
+-	main.c

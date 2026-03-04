@@ -1,0 +1,21 @@
+diff --git a/include/xact3wb.h b/include/xact3wb.h
+index e9ac13f7c7307297414c2ee952916fc0306a1099..834b3e1ef54ebfc3eadb19c2d8f018e1e15f9e0e 100644
+--- a/include/xact3wb.h
++++ b/include/xact3wb.h
+@@ -19,7 +19,7 @@
+ #ifndef __XACT3WB_H__
+ #define __XACT3WB_H__
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ typedef DWORD WAVEBANKOFFSET;
+ 
+@@ -149,6 +149,6 @@ typedef struct WAVEBANKDATA
+ } WAVEBANKDATA, *LPWAVEBANKDATA;
+ typedef const WAVEBANKDATA *LPCWAVEBANKDATA;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __XACT3WB_H__ */

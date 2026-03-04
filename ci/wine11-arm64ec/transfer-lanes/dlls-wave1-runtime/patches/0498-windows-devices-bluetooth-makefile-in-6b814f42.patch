@@ -1,0 +1,12 @@
+diff --git a/dlls/windows.devices.bluetooth/Makefile.in b/dlls/windows.devices.bluetooth/Makefile.in
+--- a/dlls/windows.devices.bluetooth/Makefile.in
++++ b/dlls/windows.devices.bluetooth/Makefile.in
+@@ -2,8 +2,6 @@
+ IMPORTS = combase
+ 
+ SOURCES = \
+-	advertisement.c \
+ 	bluetoothadapter.c \
+-	bluetoothdevice.c \
+ 	classes.idl \
+ 	main.c

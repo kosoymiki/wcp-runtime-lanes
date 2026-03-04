@@ -1,0 +1,12 @@
+diff --git a/libs/mpg123/Makefile.in b/libs/mpg123/Makefile.in
+index c5cc6f21b4c2aa933aa1b328944d20c593652519..4eadcbc3355d75c8ba9f3fc57dbf1bb916113821 100644
+--- a/libs/mpg123/Makefile.in
++++ b/libs/mpg123/Makefile.in
+@@ -3,7 +3,6 @@ EXTRAINCL = -I$(srcdir)/src -I$(srcdir)/src/compat $(MPG123_PE_CFLAGS)
+ EXTRADEFS = -DOPT_GENERIC_DITHER -DREAL_IS_FLOAT -DNO_CATCHSIGNAL
+ 
+ SOURCES = \
+-	config.h \
+ 	src/compat/compat.c \
+ 	src/compat/compat_str.c \
+ 	src/libmpg123/dct64.c \

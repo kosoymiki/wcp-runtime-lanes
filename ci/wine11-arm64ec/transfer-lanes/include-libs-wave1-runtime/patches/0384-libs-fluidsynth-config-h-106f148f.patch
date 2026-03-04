@@ -1,0 +1,12 @@
+diff --git a/libs/fluidsynth/config.h b/libs/fluidsynth/config.h
+index 0d6d99c17092632fb643f0969a0e02026cb408cc..2170ad098edb168e44a6fc235bd67078a8205da2 100644
+--- a/libs/fluidsynth/config.h
++++ b/libs/fluidsynth/config.h
+@@ -218,7 +218,6 @@
+ /* #undef TEST_SOUNDFONT_UTF8_1 */
+ /* #undef TEST_SOUNDFONT_UTF8_2 */
+ /* #undef TEST_MIDI_UTF8 */
+-/* #undef TEST_WAV_UTF8 */
+ 
+ /* SF3 Soundfont to load for unit testing */
+ /* #undef TEST_SOUNDFONT_SF3 */

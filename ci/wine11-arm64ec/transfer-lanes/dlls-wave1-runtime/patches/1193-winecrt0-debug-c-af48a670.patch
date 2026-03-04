@@ -1,0 +1,46 @@
+diff --git a/dlls/winecrt0/debug.c b/dlls/winecrt0/debug.c
+--- a/dlls/winecrt0/debug.c
++++ b/dlls/winecrt0/debug.c
+@@ -26,9 +26,11 @@
+ #include "windef.h"
+ #include "winbase.h"
+ #include "wine/debug.h"
++#include "wine/heap.h"
+ 
+ WINE_DECLARE_DEBUG_CHANNEL(pid);
+ WINE_DECLARE_DEBUG_CHANNEL(timestamp);
++WINE_DECLARE_DEBUG_CHANNEL(microsecs);
+ 
+ static const char * (__cdecl *p__wine_dbg_strdup)( const char *str );
+ static int (__cdecl *p__wine_dbg_output)( const char *str );
+@@ -86,11 +88,7 @@
+     if (nb_debug_options >= options_size)
+     {
+         options_size = max( options_size * 2, 16 );
+-        if (!debug_options)
+-            debug_options = HeapAlloc( GetProcessHeap(), 0, options_size * sizeof(debug_options[0]) );
+-        else
+-            debug_options = HeapReAlloc( GetProcessHeap(), 0, debug_options,
+-                                         options_size * sizeof(debug_options[0]) );
++        debug_options = heap_realloc( debug_options, options_size * sizeof(debug_options[0]) );
+     }
+ 
+     pos = min;
+@@ -192,7 +190,16 @@
+     /* skip header if partial line and no other thread came in between */
+     if (partial_line_tid == GetCurrentThreadId()) return 0;
+ 
+-    if (TRACE_ON(timestamp))
++    if (TRACE_ON(microsecs))
++    {
++        static LARGE_INTEGER frequency;
++        LARGE_INTEGER counter, microsecs;
++        if (!frequency.QuadPart) QueryPerformanceFrequency(&frequency);
++        QueryPerformanceCounter(&counter);
++        microsecs.QuadPart = counter.QuadPart * 1000000 / frequency.QuadPart;
++        pos += sprintf( pos, "%3u.%06u:", (unsigned int)(microsecs.QuadPart / 1000000), (unsigned int)(microsecs.QuadPart % 1000000) );
++    }
++    else if (TRACE_ON(timestamp))
+     {
+         UINT ticks = GetTickCount();
+         pos += sprintf( pos, "%3u.%03u:", ticks / 1000, ticks % 1000 );

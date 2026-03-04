@@ -1,0 +1,13 @@
+diff --git a/dlls/comctl32/comboex.c b/dlls/comctl32/comboex.c
+--- a/dlls/comctl32/comboex.c
++++ b/dlls/comctl32/comboex.c
+@@ -2173,3 +2173,9 @@
+ 
+     RegisterClassW (&wndClass);
+ }
++
++
++void COMBOEX_Unregister (void)
++{
++    UnregisterClassW (WC_COMBOBOXEXW, NULL);
++}

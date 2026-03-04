@@ -1,0 +1,11 @@
+diff --git a/dlls/amdxc64/amdxc64.spec b/dlls/amdxc64/amdxc64.spec
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/dlls/amdxc64/amdxc64.spec
+@@ -0,0 +1,5 @@
++@ cdecl AmdExtD3DCreateInterface(ptr ptr ptr)
++@ stdcall AmdGetDxcModuleHandle()
++@ stub GetSettingsBlobsAll
++@ stub OpenAdapter12
++@ stub OpenShimInterface

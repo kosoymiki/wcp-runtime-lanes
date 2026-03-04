@@ -1,0 +1,12 @@
+diff --git a/dlls/shell32/shfldr_fs.c b/dlls/shell32/shfldr_fs.c
+--- a/dlls/shell32/shfldr_fs.c
++++ b/dlls/shell32/shfldr_fs.c
+@@ -813,7 +813,7 @@
+             if ((res = wine_get_dos_file_name( buffer )))
+             {
+                 lstrcpynW( dest, res, MAX_PATH );
+-                HeapFree( GetProcessHeap(), 0, res );
++                heap_free( res );
+             }
+         }
+         else lstrcpynW( dest, path + 8, MAX_PATH );

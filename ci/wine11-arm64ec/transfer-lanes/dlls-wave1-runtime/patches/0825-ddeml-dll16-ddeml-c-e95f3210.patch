@@ -1,0 +1,21 @@
+diff --git a/dlls/ddeml.dll16/ddeml.c b/dlls/ddeml.dll16/ddeml.c
+--- a/dlls/ddeml.dll16/ddeml.c
++++ b/dlls/ddeml.dll16/ddeml.c
+@@ -154,7 +154,7 @@
+  * WDML_InvokeCallback16.
+  * The code below is mainly to create the thunks themselves
+  */
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ static struct ddeml_thunk
+ {
+     BYTE        popl_eax;        /* popl  %eax (return address) */
+@@ -165,7 +165,7 @@
+     DWORD       callback;
+     DWORD       instId;          /* instance ID */
+ } *DDEML16_Thunks;
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ static CRITICAL_SECTION ddeml_cs;
+ static CRITICAL_SECTION_DEBUG critsect_debug =

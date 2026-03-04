@@ -1,0 +1,22 @@
+diff --git a/include/wine/windef16.h b/include/wine/windef16.h
+index 406281c5aebe74d858a93e543a1cedcaec8ee9e3..2d6536fd46e6b75788976fd0ab58b2f9c1a1bb4b 100644
+--- a/include/wine/windef16.h
++++ b/include/wine/windef16.h
+@@ -116,7 +116,7 @@ typedef HANDLE16 HGDIOBJ16;
+ typedef HANDLE16 HGLOBAL16;
+ typedef HANDLE16 HLOCAL16;
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ /* The SIZE structure */
+ 
+@@ -144,7 +144,7 @@ typedef struct
+     INT16  bottom;
+ } RECT16, *LPRECT16;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ /* Callback function pointers types */
+ 

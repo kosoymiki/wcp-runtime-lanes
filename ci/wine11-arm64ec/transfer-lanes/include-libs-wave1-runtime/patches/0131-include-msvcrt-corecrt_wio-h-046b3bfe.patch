@@ -1,0 +1,28 @@
+diff --git a/include/msvcrt/corecrt_wio.h b/include/msvcrt/corecrt_wio.h
+index d3b31f28dfdf7d1d42c0bd31611ee6f59d881ca4..a7982eb4d1185d5c746504d57379eae6e8107fcd 100644
+--- a/include/msvcrt/corecrt_wio.h
++++ b/include/msvcrt/corecrt_wio.h
+@@ -8,7 +8,7 @@
+ 
+ #include <corecrt.h>
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ typedef __msvcrt_ulong _fsize_t;
+ 
+@@ -101,13 +101,12 @@ _ACRTIMP wchar_t* __cdecl _wmktemp(wchar_t*);
+ _ACRTIMP int      __cdecl _wopen(const wchar_t*,int,...);
+ _ACRTIMP int      __cdecl _wrename(const wchar_t*,const wchar_t*);
+ _ACRTIMP int      __cdecl _wsopen(const wchar_t*,int,int,...);
+-_ACRTIMP errno_t  __cdecl _wsopen_s(int*,const wchar_t*,int,int,int);
+ _ACRTIMP int      __cdecl _wunlink(const wchar_t*);
+ 
+ #ifdef __cplusplus
+ }
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* _WIO_DEFINED */

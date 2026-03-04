@@ -1,0 +1,40 @@
+diff --git a/server/Makefile.in b/server/Makefile.in
+index 84a6bd74d9dfef5a4fe69398d48d455f8812faa4..4e2008a761f216bbb3bcf5751a93d8fd3c48e4b9 100644
+--- a/server/Makefile.in
++++ b/server/Makefile.in
+@@ -8,16 +8,16 @@ SOURCES = \
+ 	clipboard.c \
+ 	completion.c \
+ 	console.c \
+-	d3dkmt.c \
+ 	debugger.c \
+ 	device.c \
+ 	directory.c \
++	esync.c \
+ 	event.c \
+ 	fd.c \
+ 	file.c \
++	fsync.c \
+ 	handle.c \
+ 	hook.c \
+-	inproc_sync.c \
+ 	mach.c \
+ 	mailslot.c \
+ 	main.c \
+@@ -32,7 +32,6 @@ SOURCES = \
+ 	region.c \
+ 	registry.c \
+ 	request.c \
+-	security.h \
+ 	semaphore.c \
+ 	serial.c \
+ 	signal.c \
+@@ -50,7 +49,6 @@ SOURCES = \
+ 	wineserver.man.in \
+ 	winstation.c
+ 
+-UNIX_CFLAGS = $(INOTIFY_CFLAGS)
+-UNIX_LIBS   = $(LDEXECFLAGS) $(RT_LIBS) $(INOTIFY_LIBS) $(PROCSTAT_LIBS)
++UNIX_LIBS = $(LDEXECFLAGS) $(RT_LIBS) $(INOTIFY_LIBS) $(PROCSTAT_LIBS)
+ 
+ unicode_EXTRADEFS = -DBINDIR="\"${bindir}\"" -DDATADIR="\"${datadir}\""

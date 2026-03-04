@@ -1,0 +1,11 @@
+diff --git a/dlls/msvcrt/tests/locale.c b/dlls/msvcrt/tests/locale.c
+--- a/dlls/msvcrt/tests/locale.c
++++ b/dlls/msvcrt/tests/locale.c
+@@ -31,6 +31,7 @@
+ static _locale_t(__cdecl *p_create_locale)(int, const char*);
+ static void(__cdecl *p_free_locale)(_locale_t);
+ static int (__cdecl *p_wcsicmp_l)(const wchar_t*, const wchar_t*, _locale_t);
++void* __cdecl _Gettnames(void);
+ 
+ static void init(void)
+ {

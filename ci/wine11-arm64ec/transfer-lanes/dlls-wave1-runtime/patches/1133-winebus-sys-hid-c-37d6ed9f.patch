@@ -1,0 +1,39 @@
+diff --git a/dlls/winebus.sys/hid.c b/dlls/winebus.sys/hid.c
+--- a/dlls/winebus.sys/hid.c
++++ b/dlls/winebus.sys/hid.c
+@@ -364,7 +364,7 @@
+     return TRUE;
+ }
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ struct hid_haptics_intensity
+ {
+     UINT16 rumble_intensity;
+@@ -372,7 +372,7 @@
+     UINT16 left_intensity;
+     UINT16 right_intensity;
+ };
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ BOOL hid_device_add_haptics(struct unix_device *iface)
+ {
+@@ -476,7 +476,7 @@
+     return TRUE;
+ }
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ struct pid_device_control
+ {
+     BYTE control_index;
+@@ -575,7 +575,7 @@
+     BYTE flags;
+     BYTE index;
+ };
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ static BOOL hid_descriptor_add_axes_enable(struct unix_device *iface, USHORT axes_count)
+ {

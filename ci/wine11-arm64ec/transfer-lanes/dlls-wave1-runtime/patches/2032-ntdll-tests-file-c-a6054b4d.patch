@@ -1,0 +1,387 @@
+diff --git a/dlls/ntdll/tests/file.c b/dlls/ntdll/tests/file.c
+--- a/dlls/ntdll/tests/file.c
++++ b/dlls/ntdll/tests/file.c
+@@ -139,28 +139,57 @@
+ 
+ static void create_file_test(void)
+ {
++    static const WCHAR notepadW[] = {'n','o','t','e','p','a','d','.','e','x','e',0};
+     static const WCHAR systemrootW[] = {'\\','S','y','s','t','e','m','R','o','o','t',
+                                         '\\','f','a','i','l','i','n','g',0};
++    static const WCHAR systemrootExplorerW[] = {'\\','S','y','s','t','e','m','R','o','o','t',
++                                               '\\','e','x','p','l','o','r','e','r','.','e','x','e',0};
+     static const WCHAR questionmarkInvalidNameW[] = {'a','f','i','l','e','?',0};
+     static const WCHAR pipeInvalidNameW[]  = {'a','|','b',0};
+     static const WCHAR pathInvalidNtW[] = {'\\','\\','?','\\',0};
+     static const WCHAR pathInvalidNt2W[] = {'\\','?','?','\\',0};
+     static const WCHAR pathInvalidDosW[] = {'\\','D','o','s','D','e','v','i','c','e','s','\\',0};
+     static const char testdata[] = "Hello World";
++    static const WCHAR sepW[] = {'\\',0};
+     FILE_NETWORK_OPEN_INFORMATION info;
++    UNICODE_STRING nameW, null_string;
+     NTSTATUS status;
+     HANDLE dir, file;
+-    WCHAR path[MAX_PATH];
++    WCHAR path[MAX_PATH], temp[MAX_PATH];
+     OBJECT_ATTRIBUTES attr;
+     IO_STATUS_BLOCK io;
+-    UNICODE_STRING nameW;
+     LARGE_INTEGER offset;
+     char buf[32];
+     DWORD ret;
+ 
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = NULL;
++    attr.ObjectName = &null_string;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
++
++    null_string.Buffer = NULL;
++    null_string.Length = 256;
++
++    /* try various open modes and options on directories */
++    status = pNtCreateFile( &dir, GENERIC_READ|GENERIC_WRITE, &attr, &io, NULL, 0,
++                            FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_OPEN, FILE_DIRECTORY_FILE, NULL, 0 );
++    ok( status == STATUS_ACCESS_VIOLATION, "Got unexpected status %#x.\n",  status );
++
++    null_string.Length = 0;
++    status = pNtCreateFile( &dir, GENERIC_READ|GENERIC_WRITE, &attr, &io, NULL, 0,
++                            FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_OPEN, FILE_DIRECTORY_FILE, NULL, 0 );
++    ok( status == STATUS_OBJECT_PATH_SYNTAX_BAD, "Got unexpected status %#x.\n",  status );
++
+     GetCurrentDirectoryW( MAX_PATH, path );
+     pRtlDosPathNameToNtPathName_U( path, &nameW, NULL, NULL );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+ 
+     /* try various open modes and options on directories */
+     status = pNtCreateFile( &dir, GENERIC_READ|GENERIC_WRITE, &attr, &io, NULL, 0,
+@@ -249,7 +278,12 @@
+     pRtlFreeUnicodeString( &nameW );
+ 
+     pRtlInitUnicodeString( &nameW, systemrootW );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = NULL;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     dir = NULL;
+     status = pNtCreateFile( &dir, FILE_APPEND_DATA, &attr, &io, NULL, FILE_ATTRIBUTE_NORMAL, 0,
+                             FILE_OPEN_IF, FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0 );
+@@ -319,6 +353,25 @@
+ 
+     status = pNtQueryFullAttributesFile( &attr, &info );
+     ok( status == STATUS_OBJECT_NAME_INVALID,
++        "query %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
++
++    GetWindowsDirectoryW( path, MAX_PATH );
++    path[2] = 0;
++    ok( QueryDosDeviceW( path, temp, MAX_PATH ),
++        "QueryDosDeviceW failed with error %lx\n", GetLastError() );
++    lstrcatW( temp, sepW );
++    lstrcatW( temp, path+3 );
++    lstrcatW( temp, sepW );
++    lstrcatW( temp, notepadW );
++
++    pRtlInitUnicodeString( &nameW, temp );
++    status = pNtQueryFullAttributesFile( &attr, &info );
++    ok( status == STATUS_SUCCESS,
++        "query %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
++
++    pRtlInitUnicodeString( &nameW, systemrootExplorerW );
++    status = pNtQueryFullAttributesFile( &attr, &info );
++    ok( status == STATUS_SUCCESS,
+         "query %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
+ }
+ 
+@@ -340,7 +393,12 @@
+ 
+     len = GetWindowsDirectoryW( path, MAX_PATH );
+     pRtlDosPathNameToNtPathName_U( path, &nameW, NULL, NULL );
+-    InitializeObjectAttributes( &attr, &nameW, 0, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     status = pNtOpenFile( &dir, SYNCHRONIZE|FILE_LIST_DIRECTORY, &attr, &io,
+                           FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_DIRECTORY_FILE|FILE_SYNCHRONOUS_IO_NONALERT );
+     ok( !status, "open %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
+@@ -504,7 +562,12 @@
+     CloseHandle( root );
+ 
+     pRtlDosPathNameToNtPathName_U( tmpfile, &nameW, NULL, NULL );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+     status = pNtOpenFile( &file, SYNCHRONIZE|FILE_LIST_DIRECTORY, &attr, &io,
+                          FILE_SHARE_READ, FILE_SYNCHRONOUS_IO_NONALERT );
+     ok( !status, "open %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
+@@ -591,7 +654,12 @@
+ 	return;
+     }
+ 
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.ObjectName = &nameW;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+ 
+     /* test NtDeleteFile on an empty directory */
+     ret = pNtDeleteFile(&attr);
+@@ -733,10 +801,7 @@
+     CloseHandle( handle );
+ 
+     if (!(handle = create_temp_file(FILE_FLAG_OVERLAPPED | FILE_FLAG_NO_BUFFERING)))
+-    {
+-        CloseHandle(event);
+         return;
+-    }
+ 
+     apc_count = 0;
+     offset.QuadPart = 0;
+@@ -1025,11 +1090,6 @@
+     }
+ 
+     count = 0xdeadbeef;
+-    res = pNtRemoveIoCompletionEx( h, info, 0, &count, &timeout, FALSE );
+-    ok( res == STATUS_INVALID_PARAMETER, "NtRemoveIoCompletionEx failed: %#lx\n", res );
+-    ok( count == 0xdeadbeef, "wrong count %lu\n", count );
+-
+-    count = 0xdeadbeef;
+     res = pNtRemoveIoCompletionEx( h, info, 2, &count, &timeout, FALSE );
+     ok( res == STATUS_TIMEOUT, "NtRemoveIoCompletionEx failed: %#lx\n", res );
+     ok( count <= 1, "wrong count %lu\n", count );
+@@ -1373,13 +1433,14 @@
+ 
+     /* FileFsFullSizeInformationEx is supported on Windows 10 build 1809 and later */
+     res = pNtQueryVolumeInformationFile(h, &io, &ffsie, sizeof ffsie, FileFsFullSizeInformationEx);
+-    if (res == STATUS_NOT_IMPLEMENTED || res == STATUS_INVALID_PARAMETER || res == STATUS_INVALID_INFO_CLASS)
++    ok(res == STATUS_INVALID_PARAMETER || res == STATUS_SUCCESS, "cannot get attributes, res %lx\n", res);
++
++    if (res == STATUS_NOT_IMPLEMENTED || res == STATUS_INVALID_PARAMETER)
+     {
+         win_skip( "FileFsFullSizeInformationEx not supported.\n" );
+         CloseHandle( h );
+         return;
+     }
+-    ok(res == STATUS_SUCCESS, "cannot get attributes, res %lx\n", res);
+ 
+     expected = ffsie.ActualAvailableAllocationUnits + ffsie.ActualPoolUnavailableAllocationUnits
+             + ffsie.UsedAllocationUnits + ffsie.TotalReservedAllocationUnits;
+@@ -3280,7 +3341,13 @@
+     if (!pRtlDosPathNameToNtPathName_U( nameW, &nt_name, NULL, NULL ))
+         return STATUS_UNSUCCESSFUL;
+ 
+-    InitializeObjectAttributes( &attr, &nt_name, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.ObjectName = &nt_name;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
++
+     status = pNtQueryAttributesFile( &attr, &info );
+     pRtlFreeUnicodeString( &nt_name );
+ 
+@@ -4763,9 +4830,15 @@
+     mountmgr_dev_name.Length = sizeof(mountmgr_devW);
+     mountmgr_dev_name.MaximumLength = sizeof(mountmgr_devW);
+ 
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
++
+     for (i = 0; i < ARRAY_SIZE(option_tests); i++)
+     {
+-        InitializeObjectAttributes( &attr, option_tests[i].file_name, OBJ_CASE_INSENSITIVE, 0, NULL );
++        attr.ObjectName = option_tests[i].file_name;
+         access = SYNCHRONIZE;
+ 
+         if (option_tests[i].file_name == &file_name)
+@@ -4806,7 +4879,12 @@
+ 
+     GetWindowsDirectoryW( path, MAX_PATH );
+     pRtlDosPathNameToNtPathName_U( path, &nameW, NULL, NULL );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+ 
+     status = pNtOpenFile( &dir, SYNCHRONIZE|FILE_LIST_DIRECTORY, &attr, &io,
+                           FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_DIRECTORY_FILE|FILE_SYNCHRONOUS_IO_NONALERT );
+@@ -4851,7 +4929,13 @@
+ 
+     GetWindowsDirectoryW( path, MAX_PATH );
+     pRtlDosPathNameToNtPathName_U( path, &nameW, NULL, NULL );
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = 0;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
++
+     status = pNtOpenFile( &dir, SYNCHRONIZE|FILE_LIST_DIRECTORY, &attr, &io,
+                           FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_DIRECTORY_FILE|FILE_SYNCHRONOUS_IO_NONALERT );
+     ok( !status, "open %s failed %lx\n", wine_dbgstr_w(nameW.Buffer), status );
+@@ -4918,7 +5002,13 @@
+     GetTempFileNameW(path, fooW, 0, path);
+     DeleteFileW(path);
+     pRtlDosPathNameToNtPathName_U(path, &nameW, NULL, NULL);
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = NULL;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+ 
+     for (i = 0; i < ARRAY_SIZE(td); i++)
+     {
+@@ -4963,13 +5053,11 @@
+ 
+     status = pNtCreateFile( &handle, GENERIC_READ, &attr, &io, NULL,
+                             0, FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_CREATE, 0, NULL, 0);
+-    ok( status == STATUS_OBJECT_NAME_INVALID || status == STATUS_NOT_A_DIRECTORY,
+-        "failed %s %lx\n", debugstr_w(nameW.Buffer), status );
++    ok( status == STATUS_OBJECT_NAME_INVALID, "failed %s %lx\n", debugstr_w(nameW.Buffer), status );
+     status = pNtCreateFile( &handle, GENERIC_READ, &attr, &io, NULL,
+                             0, FILE_SHARE_READ|FILE_SHARE_WRITE, FILE_CREATE,
+                             FILE_DIRECTORY_FILE, NULL, 0);
+     ok( !status, "failed %s %lx\n", debugstr_w(nameW.Buffer), status );
+-    pRtlFreeUnicodeString( &nameW );
+     RemoveDirectoryW( path );
+ }
+ 
+@@ -5025,17 +5113,17 @@
+     iob.Information = -1;
+     status = pNtWriteFile(hfile, 0, NULL, NULL, &iob, NULL, sizeof(contents), NULL, NULL);
+     ok(status == STATUS_INVALID_USER_BUFFER, "expected STATUS_INVALID_USER_BUFFER, got %#lx\n", status);
+-    ok(iob.Status == -1 || iob.Status == STATUS_INVALID_USER_BUFFER, "got %#lx\n", iob.Status);
+-    ok(iob.Information == (iob.Status == -1 ? -1 : 0), "got %Iu\n", iob.Information);
++    ok(iob.Status == -1, "expected -1, got %#lx\n", iob.Status);
++    ok(iob.Information == -1, "expected -1, got %Iu\n", iob.Information);
+ 
+     iob.Status = -1;
+     iob.Information = -1;
+     SetEvent(event);
+     status = pNtWriteFile(hfile, event, NULL, NULL, &iob, NULL, sizeof(contents), NULL, NULL);
+     ok(status == STATUS_INVALID_USER_BUFFER, "expected STATUS_INVALID_USER_BUFFER, got %#lx\n", status);
+-    ok(iob.Status == -1 || iob.Status == STATUS_INVALID_USER_BUFFER, "got %#lx\n", iob.Status);
+-    ok(iob.Information == (iob.Status == -1 ? -1 : 0), "got %Iu\n", iob.Information);
+-    ok(!is_signaled(event) == !(iob.Status == STATUS_INVALID_USER_BUFFER), "event is not signaled\n");
++    ok(iob.Status == -1, "expected -1, got %#lx\n", iob.Status);
++    ok(iob.Information == -1, "expected -1, got %Iu\n", iob.Information);
++    ok(!is_signaled(event), "event is not signaled\n");
+ 
+     iob.Status = -1;
+     iob.Information = -1;
+@@ -5925,7 +6013,14 @@
+     GetTempFileNameW(path, fooW, 0, path);
+     DeleteFileW(path);
+     pRtlDosPathNameToNtPathName_U(path, &nameW, NULL, NULL);
+-    InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
++
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = NULL;
++    attr.ObjectName = &nameW;
++    attr.Attributes = OBJ_CASE_INSENSITIVE;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
++
+     status = pNtCreateFile(&handle, FILE_GENERIC_WRITE, &attr, &io, NULL, FILE_ATTRIBUTE_READONLY, default_sharing,
+                            FILE_CREATE, 0, NULL, 0);
+     ok(status == STATUS_SUCCESS, "expected STATUS_SUCCESS, got %#lx.\n", status);
+@@ -7278,64 +7373,6 @@
+     CloseHandle(apc_reserve);
+     CloseHandle(completion_reserve);
+     CloseHandle(completion);
+-}
+-
+-static void test_file_map_large_size(void)
+-{
+-    char temp_path[MAX_PATH], source[MAX_PATH];
+-    HANDLE hfile, hmapfile;
+-    NTSTATUS status;
+-    SIZE_T size;
+-    void *addr;
+-    DWORD ret;
+-
+-    ret = GetTempPathA(MAX_PATH, temp_path);
+-    ok(!!ret, "GetTempPath() failed error %ld\n", GetLastError());
+-
+-    ret = GetTempFileNameA(temp_path, "pfx", 0, source);
+-    ok(!!ret, "GetTempFileName() failed %ld\n", GetLastError());
+-
+-    hfile = CreateFileA(source, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, 0 );
+-    ok(hfile != INVALID_HANDLE_VALUE, "Failed to create a test file.\n");
+-
+-    SetFilePointer(hfile, 0x400, NULL, FILE_BEGIN);
+-    SetEndOfFile(hfile);
+-
+-    status = NtCreateSection(&hmapfile, SECTION_MAP_READ, NULL, NULL, PAGE_READWRITE, SEC_RESERVE, hfile);
+-    ok(!status, "Failed to create a section %#lx.\n", status);
+-
+-    size = 0x10000;
+-    addr = 0;
+-    status = NtMapViewOfSection(hmapfile, GetCurrentProcess(), &addr, 0, 0, NULL, &size,
+-            ViewUnmap, 0, PAGE_READONLY);
+-    ok(status == STATUS_INVALID_VIEW_SIZE, "Failed to map the section %#lx.\n", status);
+-
+-    status = NtMapViewOfSection(hmapfile, GetCurrentProcess(), &addr, 0, 0, NULL, &size,
+-            ViewUnmap, MEM_RESERVE, PAGE_READONLY);
+-    todo_wine
+-    ok(!status, "Failed to map the section %#lx.\n", status);
+-
+-    ret = GetFileSize(hfile, NULL);
+-    ok(ret == 0x400, "Unexpected size %lu.\n", ret);
+-
+-    addr = VirtualAlloc(addr, 0x500, MEM_COMMIT, PAGE_READONLY);
+-    ok(!!addr, "Failed to resize, error %ld.\n", GetLastError());
+-
+-    ret = GetFileSize(hfile, NULL);
+-    todo_wine
+-    ok(ret == 0x1000, "Unexpected size %lu.\n", ret);
+-
+-    addr = VirtualAlloc(addr, 0x1100, MEM_COMMIT, PAGE_READONLY);
+-    todo_wine
+-    ok(!!addr, "Failed to resize, error %ld.\n", GetLastError());
+-
+-    ret = GetFileSize(hfile, NULL);
+-    todo_wine
+-    ok(ret == 0x2000, "Unexpected size %lu.\n", ret);
+-
+-    CloseHandle(hmapfile);
+-    CloseHandle(hfile);
+-    DeleteFileA(source);
+ }
+ 
+ START_TEST(file)
+@@ -7421,5 +7458,4 @@
+     test_flush_buffers_file();
+     test_mailslot_name();
+     test_reparse_points();
+-    test_file_map_large_size();
+ }

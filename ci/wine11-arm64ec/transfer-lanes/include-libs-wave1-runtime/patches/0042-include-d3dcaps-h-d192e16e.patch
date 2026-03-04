@@ -1,0 +1,22 @@
+diff --git a/include/d3dcaps.h b/include/d3dcaps.h
+index 93990a6c158316889b9a79a226f8dfac7b5516d5..4fc76ba5253d4b14bbc2bdb27e1c53630a822dda 100644
+--- a/include/d3dcaps.h
++++ b/include/d3dcaps.h
+@@ -22,7 +22,7 @@
+ #include <ddraw.h>
+ 
+ #ifdef __i386__
+-#pragma pack(push,4)
++#include <pshpack4.h>
+ #endif
+ 
+ typedef struct _D3DTRANSFORMCAPS {
+@@ -433,7 +433,7 @@ typedef struct _D3DDEVINFO_TEXTURING {
+ } D3DDEVINFO_TEXTURING, *LPD3DDEVINFO_TEXTURING;
+ 
+ #ifdef __i386__
+-#pragma pack(pop)
++#include <poppack.h>
+ #endif
+ 
+ #endif

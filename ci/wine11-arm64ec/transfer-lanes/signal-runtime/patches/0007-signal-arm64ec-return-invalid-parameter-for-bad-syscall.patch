@@ -1,0 +1,12 @@
+diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
+--- a/dlls/ntdll/signal_arm64ec.c
++++ b/dlls/ntdll/signal_arm64ec.c
+@@ -1271,6 +1271,6 @@ static void dispatch_syscall( ARM64_NT_CONTEXT *context )
+         context->X4 = context->Pc;  /* and save return address to syscall thunk */
+         context->Pc = (ULONG_PTR)invoke_arm64ec_syscall;
+     }
+-    else context->X8 = STATUS_INVALID_SYSTEM_SERVICE;  /* set return value in rax */
++    else context->X8 = STATUS_INVALID_PARAMETER;  /* set return value in rax */
+ 
+     /* return to x64 code so that the syscall entry thunk is invoked properly */
+     dispatch_emulation( context );

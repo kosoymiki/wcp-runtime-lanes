@@ -1,0 +1,23 @@
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -510,7 +510,7 @@ static void set_config_dir(void)
+ static void init_paths( char *argv[] )
+ {
+     Dl_info info;
+-    const char *loader_name = "wine";
++    const char *loader_name = "wine";
+     const char *slash;
+-    char *loader_dir, *wow64_loader;
++    char *loader_dir, *wow64_loader, *env;
+ 
+@@ -540,6 +540,9 @@ static void init_paths( char *argv[] )
+         wineloader = build_path( ntdll_dir, loader_name );
+     }
+ 
++    asprintf( &env, "WINELOADER=%s", wineloader );
++    putenv( env );
++
+     set_dll_path();
+     set_system_dll_path();
+     set_home_dir();

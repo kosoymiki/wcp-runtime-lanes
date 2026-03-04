@@ -1,0 +1,11 @@
+diff --git a/dlls/twinapi.appcore/Makefile.in b/dlls/twinapi.appcore/Makefile.in
+--- a/dlls/twinapi.appcore/Makefile.in
++++ b/dlls/twinapi.appcore/Makefile.in
+@@ -5,7 +5,6 @@
+ SOURCES = \
+ 	advertising_manager.c \
+ 	analytics_info.c \
+-	application_view.c \
+ 	classes.idl \
+ 	client_device_information.c \
+ 	main.c

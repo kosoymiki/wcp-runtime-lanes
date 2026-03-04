@@ -1,0 +1,12 @@
+diff --git a/dlls/msvcr100/msvcr100.spec b/dlls/msvcr100/msvcr100.spec
+--- a/dlls/msvcr100/msvcr100.spec
++++ b/dlls/msvcr100/msvcr100.spec
+@@ -712,7 +712,7 @@
+ @ cdecl __AdjustPointer(ptr ptr)
+ @ stub __BuildCatchObject
+ @ stub __BuildCatchObjectHelper
+-@ stdcall -arch=!i386 __C_specific_handler(ptr long ptr ptr)
++@ stdcall -arch=!i386 __C_specific_handler(ptr long ptr ptr) ntdll.__C_specific_handler
+ @ cdecl __CppXcptFilter(long ptr)
+ @ stub __CxxCallUnwindDelDtor
+ @ stub __CxxCallUnwindDtor

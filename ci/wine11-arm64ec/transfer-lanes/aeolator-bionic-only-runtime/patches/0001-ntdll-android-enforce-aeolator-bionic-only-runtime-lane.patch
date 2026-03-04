@@ -1,0 +1,142 @@
+From 37d3235ebe2cf6fb53c0acbcb60d45f58d138068 Mon Sep 17 00:00:00 2001
+From: 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 <kizya200272@gmail.com>
+Date: Wed, 4 Mar 2026 11:43:06 +0300
+Subject: [PATCH] ntdll/android: enforce aeolator bionic-only runtime lane
+
+---
+ dlls/ntdll/unix/loader.c | 112 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
+
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+index 087ca83025..7112978e5a 100644
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -2431,6 +2431,116 @@ JavaVM *java_vm = NULL;
+ jobject java_object = 0;
+ unsigned short java_gdt_sel = 0;
+ 
++static int aeolator_is_truthy( const char *value )
++{
++    if (!value || !*value) return 0;
++    if (!strcmp( value, "1" ) || !strcmp( value, "true" ) || !strcmp( value, "TRUE" ) ||
++        !strcmp( value, "yes" ) || !strcmp( value, "YES" ) || !strcmp( value, "on" ) ||
++        !strcmp( value, "ON" ))
++        return 1;
++    return 0;
++}
++
++static int aeolator_is_falsey( const char *value )
++{
++    if (!value || !*value) return 0;
++    if (!strcmp( value, "0" ) || !strcmp( value, "false" ) || !strcmp( value, "FALSE" ) ||
++        !strcmp( value, "no" ) || !strcmp( value, "NO" ) || !strcmp( value, "off" ) ||
++        !strcmp( value, "OFF" ))
++        return 1;
++    return 0;
++}
++
++static int aeolator_is_glibc_runtime_path( const char *entry )
++{
++    return strstr( entry, "wcp-glibc-runtime" ) ||
++           strstr( entry, "/glibc" ) ||
++           strstr( entry, "ld-linux" ) ||
++           strstr( entry, "libc.so.6" );
++}
++
++static char *aeolator_filter_ld_library_path( const char *value )
++{
++    char *scan, *next, *dup, *out;
++    size_t out_len = 0;
++    int first = 1;
++
++    if (!value || !*value) return NULL;
++    if (!(dup = strdup( value ))) return NULL;
++    if (!(out = malloc( strlen( value ) + 1 )))
++    {
++        free( dup );
++        return NULL;
++    }
++
++    for (scan = dup; scan; scan = next)
++    {
++        size_t len;
++
++        next = strchr( scan, ':' );
++        if (next) *next++ = 0;
++        if (!*scan) continue;
++        if (aeolator_is_glibc_runtime_path( scan )) continue;
++
++        len = strlen( scan );
++        if (!first) out[out_len++] = ':';
++        memcpy( out + out_len, scan, len );
++        out_len += len;
++        first = 0;
++    }
++
++    out[out_len] = 0;
++    free( dup );
++    return out;
++}
++
++static void aeolator_enforce_bionic_only_env(void)
++{
++    const char *flag = getenv( "AEO_BIONIC_ONLY" );
++    const char *ld_preload = getenv( "LD_PRELOAD" );
++    const char *ld_library_path = getenv( "LD_LIBRARY_PATH" );
++    char *filtered = NULL;
++
++    if (aeolator_is_falsey( flag )) return;
++    if (flag && !aeolator_is_truthy( flag ))
++        WARN( "AEO bionic-only: unknown AEO_BIONIC_ONLY value '%s', enforcing by default\n", flag );
++
++    setenv( "AEO_BIONIC_ONLY_ACTIVE", "1", 1 );
++    setenv( "AEO_FORENSIC_RUNTIME_CLASS", "bionic-native", 1 );
++    setenv( "WCP_RUNTIME_CLASS_TARGET", "bionic-native", 1 );
++    setenv( "WCP_MAINLINE_BIONIC_ONLY", "1", 1 );
++    setenv( "WCP_ALLOW_GLIBC_EXPERIMENTAL", "0", 1 );
++    setenv( "WCP_FALLBACK_SCOPE", "bionic-internal-only", 1 );
++
++    if (ld_preload && aeolator_is_glibc_runtime_path( ld_preload ))
++    {
++        WARN( "AEO bionic-only: dropping LD_PRELOAD glibc payload '%s'\n", ld_preload );
++        unsetenv( "LD_PRELOAD" );
++    }
++
++    if (ld_library_path && *ld_library_path)
++    {
++        void (*update_func)( const char * ) = dlsym( RTLD_DEFAULT, "android_update_LD_LIBRARY_PATH" );
++
++        filtered = aeolator_filter_ld_library_path( ld_library_path );
++        if (filtered && strcmp( filtered, ld_library_path ))
++        {
++            WARN( "AEO bionic-only: sanitizing LD_LIBRARY_PATH for native runtime class\n" );
++            if (*filtered)
++            {
++                setenv( "LD_LIBRARY_PATH", filtered, 1 );
++                if (update_func) update_func( filtered );
++            }
++            else
++            {
++                unsetenv( "LD_LIBRARY_PATH" );
++                if (update_func) update_func( "" );
++            }
++        }
++        free( filtered );
++    }
++}
++
+ /* main Wine initialisation */
+ static jstring wine_init_jni( JNIEnv *env, jobject obj, jobjectArray cmdline, jobjectArray environment )
+ {
+@@ -2500,6 +2610,8 @@ static jstring wine_init_jni( JNIEnv *env, jobject obj, jobjectArray cmdline, jo
+         }
+     }
+ 
++    aeolator_enforce_bionic_only_env();
++
+     java_object = (*env)->NewGlobalRef( env, obj );
+ 
+     main_argc = argc;
+-- 
+2.43.0
+

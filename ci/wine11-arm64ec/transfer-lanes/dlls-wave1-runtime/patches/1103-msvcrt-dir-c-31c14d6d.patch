@@ -1,0 +1,37 @@
+diff --git a/dlls/msvcrt/dir.c b/dlls/msvcrt/dir.c
+--- a/dlls/msvcrt/dir.c
++++ b/dlls/msvcrt/dir.c
+@@ -753,14 +753,10 @@
+ 
+     if (!_wgetcwd(dirW, ARRAY_SIZE(dirW))) return NULL;
+ 
++    if (!buf) return astrdupw_utf8(dirW);
+     len = convert_wcs_to_acp_utf8(dirW, NULL, 0);
+     if (!len) return NULL;
+-    if (!buf)
+-    {
+-        if (size < len) size = len;
+-        if (!(buf = malloc(size))) return NULL;
+-    }
+-    else if (len > size)
++    if (len > size)
+     {
+         *_errno() = ERANGE;
+         return NULL;
+@@ -839,14 +835,10 @@
+ 
+     if (!_wgetdcwd(drive, dirW, ARRAY_SIZE(dirW))) return NULL;
+ 
++    if (!buf) return astrdupw_utf8(dirW);
+     len = convert_wcs_to_acp_utf8(dirW, NULL, 0);
+     if (!len) return NULL;
+-    if (!buf)
+-    {
+-        if (size < len) size = len;
+-        if (!(buf = malloc(size))) return NULL;
+-    }
+-    else if (len > size)
++    if (len > size)
+     {
+         *_errno() = ERANGE;
+         return NULL;

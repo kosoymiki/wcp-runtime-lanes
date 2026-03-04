@@ -1,0 +1,15 @@
+diff --git a/dlls/graphicscapture/classes.idl b/dlls/graphicscapture/classes.idl
+--- a/dlls/graphicscapture/classes.idl
++++ b/dlls/graphicscapture/classes.idl
+@@ -19,10 +19,5 @@
+  */
+ 
+ #pragma makedep register
+-#pragma winrt ns_prefix
+ 
+-import "windows.graphics.capture.idl";
+-
+-namespace Windows.Graphics.Capture {
+-    runtimeclass GraphicsCaptureSession;
+-}
++#include "windows.graphics.capture.idl"

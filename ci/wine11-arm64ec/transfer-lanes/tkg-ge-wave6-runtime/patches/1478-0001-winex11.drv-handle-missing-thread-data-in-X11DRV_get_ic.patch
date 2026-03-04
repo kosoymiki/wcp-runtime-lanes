@@ -1,0 +1,70 @@
+diff --git a/dlls/winemac.drv/macdrv.h b/dlls/winemac.drv/macdrv.h
+index b6eeb4ecb8..d6178b7f19 100644
+--- a/dlls/winemac.drv/macdrv.h
++++ b/dlls/winemac.drv/macdrv.h
+@@ -43,6 +43,7 @@
+ extern BOOL allow_vsync;
+ extern BOOL allow_set_gamma;
+ extern BOOL allow_software_rendering;
++extern BOOL force_backing_store;
+ 
+ extern UINT64 app_icon_callback;
+ extern UINT64 app_quit_request_callback;
+diff --git a/dlls/winemac.drv/macdrv_main.c b/dlls/winemac.drv/macdrv_main.c
+index 24f6ac973d..0960c2846a 100644
+--- a/dlls/winemac.drv/macdrv_main.c
++++ b/dlls/winemac.drv/macdrv_main.c
+@@ -57,8 +57,14 @@ int use_confinement_cursor_clipping = TRUE;
+ int cursor_clipping_locks_windows = TRUE;
+ int use_precise_scrolling = TRUE;
+ int gl_surface_mode = GL_SURFACE_IN_FRONT_OPAQUE;
++<<<<<<< ours
+ int retina_enabled = FALSE;
+ int enable_app_nap = FALSE;
++=======
++bool retina_enabled = false;
++bool enable_app_nap = false;
++BOOL force_backing_store = FALSE;
++>>>>>>> theirs
+ 
+ UINT64 app_icon_callback = 0;
+ UINT64 app_quit_request_callback = 0;
+@@ -376,6 +382,9 @@ static void setup_options(void)
+     if (!get_config_key(hkey, appkey, "EnableAppNap", buffer, sizeof(buffer)))
+         enable_app_nap = IS_OPTION_TRUE(buffer[0]);
+ 
++    if (!get_config_key(hkey, appkey, "ForceOpenGLBackingStore", buffer, sizeof(buffer)))
++        force_backing_store = IS_OPTION_TRUE(buffer[0]);
++
+     /* Don't use appkey.  The DPI and monitor sizes should be consistent for all
+        processes in the prefix. */
+     if (!get_config_key(hkey, NULL, "RetinaMode", buffer, sizeof(buffer)))
+diff --git a/dlls/winemac.drv/opengl.c b/dlls/winemac.drv/opengl.c
+index ac87cfc131..68de39f49c 100644
+--- a/dlls/winemac.drv/opengl.c
++++ b/dlls/winemac.drv/opengl.c
+@@ -1451,7 +1451,7 @@ static BOOL create_context(struct wgl_context *context, CGLContextObj share, uns
+         attribs[n++] = pf->samples;
+     }
+ 
+-    if (pf->backing_store)
++    if (force_backing_store || pf->backing_store)
+         attribs[n++] = kCGLPFABackingStore;
+ 
+     if (core)
+diff --git a/dlls/winex11.drv/xim.c b/dlls/winex11.drv/xim.c
+index f09067f232..ca67fc3bca 100644
+--- a/dlls/winex11.drv/xim.c
++++ b/dlls/winex11.drv/xim.c
+@@ -472,6 +472,11 @@ XIC X11DRV_get_ic( HWND hwnd )
+     XIM xim;
+     XIC ret;
+ 
++    if (!x11drv_thread_data())
++    {
++        release_win_data( data );
++        return NULL;
++    }
+     if (!(data = get_win_data( hwnd ))) return 0;
+     x11drv_init_thread_data()->last_xic_hwnd = hwnd;
+     if (!(ret = data->xic) && (xim = x11drv_thread_data()->xim))

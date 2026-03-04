@@ -1,0 +1,45 @@
+diff --git a/dlls/d3d11/buffer.c b/dlls/d3d11/buffer.c
+--- a/dlls/d3d11/buffer.c
++++ b/dlls/d3d11/buffer.c
+@@ -72,7 +72,7 @@
+ 
+     if (refcount == 1)
+     {
+-        ID3D11Device5_AddRef(buffer->device);
++        ID3D11Device2_AddRef(buffer->device);
+         wined3d_buffer_incref(buffer->wined3d_buffer);
+     }
+ 
+@@ -88,12 +88,12 @@
+ 
+     if (!refcount)
+     {
+-        ID3D11Device5 *device = buffer->device;
++        ID3D11Device2 *device = buffer->device;
+ 
+         wined3d_buffer_decref(buffer->wined3d_buffer);
+         /* Release the device last, it may cause the wined3d device to be
+          * destroyed. */
+-        ID3D11Device5_Release(device);
++        ID3D11Device2_Release(device);
+     }
+ 
+     return refcount;
+@@ -263,7 +263,7 @@
+ 
+     TRACE("iface %p, device %p.\n", iface, device);
+ 
+-    ID3D11Device5_QueryInterface(buffer->device, &IID_ID3D10Device, (void **)device);
++    ID3D11Device2_QueryInterface(buffer->device, &IID_ID3D10Device, (void **)device);
+ }
+ 
+ static HRESULT STDMETHODCALLTYPE d3d10_buffer_GetPrivateData(ID3D10Buffer *iface,
+@@ -496,7 +496,7 @@
+     }
+     wined3d_mutex_unlock();
+ 
+-    ID3D11Device5_AddRef(buffer->device = &device->ID3D11Device5_iface);
++    ID3D11Device2_AddRef(buffer->device = &device->ID3D11Device2_iface);
+ 
+     return S_OK;
+ }

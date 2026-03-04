@@ -1,0 +1,919 @@
+diff --git a/libs/faudio/src/FACT.c b/libs/faudio/src/FACT.c
+index e1006cb63fa93b2e1efd130ec24df972d9575296..013cea36b5b32ac7e55968e2ae91b35550597914 100644
+--- a/libs/faudio/src/FACT.c
++++ b/libs/faudio/src/FACT.c
+@@ -54,7 +54,7 @@ uint32_t FACTCreateEngineWithCustomAllocatorEXT(
+ 	*ppEngine = (FACTAudioEngine*) customMalloc(sizeof(FACTAudioEngine));
+ 	if (*ppEngine == NULL)
+ 	{
+-		return FAUDIO_E_OUT_OF_MEMORY;
++		return -1; /* TODO: E_OUTOFMEMORY */
+ 	}
+ 	FAudio_zero(*ppEngine, sizeof(FACTAudioEngine));
+ 	(*ppEngine)->sbLock = FAudio_PlatformCreateMutex();
+@@ -188,7 +188,7 @@ uint32_t FACTAudioEngine_Initialize(
+ 		pEngine->categories[0].instanceLimit = 255;
+ 		pEngine->categories[0].fadeInMS = 0;
+ 		pEngine->categories[0].fadeOutMS = 0;
+-		pEngine->categories[0].maxInstanceBehavior = MAX_INSTANCE_BEHAVIOR_FAIL;
++		pEngine->categories[0].maxInstanceBehavior = 0;
+ 		pEngine->categories[0].parentCategory = -1;
+ 		pEngine->categories[0].volume = 1.0f;
+ 		pEngine->categories[0].visibility = 1;
+@@ -200,7 +200,7 @@ uint32_t FACTAudioEngine_Initialize(
+ 		pEngine->categories[1].instanceLimit = 255;
+ 		pEngine->categories[1].fadeInMS = 0;
+ 		pEngine->categories[1].fadeOutMS = 0;
+-		pEngine->categories[1].maxInstanceBehavior = MAX_INSTANCE_BEHAVIOR_FAIL;
++		pEngine->categories[1].maxInstanceBehavior = 0;
+ 		pEngine->categories[1].parentCategory = 0;
+ 		pEngine->categories[1].volume = 1.0f;
+ 		pEngine->categories[1].visibility = 1;
+@@ -212,7 +212,7 @@ uint32_t FACTAudioEngine_Initialize(
+ 		pEngine->categories[2].instanceLimit = 255;
+ 		pEngine->categories[2].fadeInMS = 0;
+ 		pEngine->categories[2].fadeOutMS = 0;
+-		pEngine->categories[2].maxInstanceBehavior = MAX_INSTANCE_BEHAVIOR_FAIL;
++		pEngine->categories[2].maxInstanceBehavior = 0;
+ 		pEngine->categories[2].parentCategory = 0;
+ 		pEngine->categories[2].volume = 1.0f;
+ 		pEngine->categories[2].visibility = 1;
+@@ -323,7 +323,7 @@ uint32_t FACTAudioEngine_Initialize(
+ 		FAPOBase_Release((FAPOBase*) reverbDesc.pEffect);
+ 	}
+ 
+-	pEngine->initialized = true;
++	pEngine->initialized = 1;
+ 	pEngine->apiThread = FAudio_PlatformCreateThread(
+ 		FACT_INTERNAL_APIThread,
+ 		"FACT Thread",
+@@ -343,7 +343,7 @@ uint32_t FACTAudioEngine_ShutDown(FACTAudioEngine *pEngine)
+ 	FAudioReallocFunc pRealloc;
+ 
+ 	/* Close thread, then lock ASAP */
+-	pEngine->initialized = false;
++	pEngine->initialized = 0;
+ 	FAudio_PlatformWaitThread(pEngine->apiThread, NULL);
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
+ 
+@@ -353,10 +353,13 @@ uint32_t FACTAudioEngine_ShutDown(FACTAudioEngine *pEngine)
+ 		FAudio_StopEngine(pEngine->audio);
+ 	}
+ 
+-	for (size_t i = 0; i < pEngine->wavebank_notification_count; ++i)
+-		pEngine->notificationCallback(&pEngine->wavebank_notifications[i]);
+-	pEngine->wavebank_notification_count = 0;
+-	pEngine->pFree(pEngine->wavebank_notifications);
++	/* Purge All pending notifactions */
++	while (pEngine->wb_notifications_list)
++	{
++		FACTNotification *note = (FACTNotification*) pEngine->wb_notifications_list->entry;
++		pEngine->notificationCallback(note);
++		LinkedList_RemoveEntry(&pEngine->wb_notifications_list, note, pEngine->apiLock, pEngine->pFree);
++	}
+ 
+ 	pEngine->notifications = 0;
+ 
+@@ -445,9 +448,12 @@ uint32_t FACTAudioEngine_DoWork(FACTAudioEngine *pEngine)
+ 
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
+ 
+-	for (size_t i = 0; i < pEngine->wavebank_notification_count; ++i)
+-		pEngine->notificationCallback(&pEngine->wavebank_notifications[i]);
+-	pEngine->wavebank_notification_count = 0;
++	while (pEngine->wb_notifications_list)
++	{
++		note = (FACTNotification*) pEngine->wb_notifications_list->entry;
++		pEngine->notificationCallback(note);
++		LinkedList_RemoveEntry(&pEngine->wb_notifications_list, note, pEngine->apiLock, pEngine->pFree);
++	}
+ 
+ 	list = pEngine->sbList;
+ 	while (list != NULL)
+@@ -518,21 +524,16 @@ uint32_t FACTAudioEngine_CreateInMemoryWaveBank(
+ 		0,
+ 		FACT_INTERNAL_DefaultReadFile,
+ 		FACT_INTERNAL_DefaultGetOverlappedResult,
+-		false,
++		0,
+ 		ppWaveBank
+ 	);
+-	if (pEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEBANKPREPARED))
++	if (pEngine->notifications & NOTIFY_WAVEBANKPREPARED)
+ 	{
+-		if (pEngine->wavebank_notification_count == pEngine->wavebank_notifications_capacity)
+-		{
+-			pEngine->wavebank_notifications_capacity = FAudio_max(pEngine->wavebank_notifications_capacity * 2, 8);
+-			pEngine->wavebank_notifications = pEngine->pRealloc(pEngine->wavebank_notifications,
+-				pEngine->wavebank_notifications_capacity * sizeof(FACTNotification));
+-		}
+-		note = &pEngine->wavebank_notifications[pEngine->wavebank_notification_count++];
++		note = (FACTNotification*) pEngine->pMalloc(sizeof(FACTNotification));
+ 		note->type = FACTNOTIFICATIONTYPE_WAVEBANKPREPARED;
+ 		note->waveBank.pWaveBank = *ppWaveBank;
+ 		note->pvContext = pEngine->wb_context;
++		LinkedList_AddEntry(&pEngine->wb_notifications_list, note, pEngine->apiLock, pEngine->pMalloc);
+ 	}
+ 	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 	return retval;
+@@ -563,21 +564,16 @@ uint32_t FACTAudioEngine_CreateStreamingWaveBank(
+ 		packetSize,
+ 		pEngine->pReadFile,
+ 		pEngine->pGetOverlappedResult,
+-		true,
++		1,
+ 		ppWaveBank
+ 	);
+-	if (pEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEBANKPREPARED))
++	if (pEngine->notifications & NOTIFY_WAVEBANKPREPARED)
+ 	{
+-		if (pEngine->wavebank_notification_count == pEngine->wavebank_notifications_capacity)
+-		{
+-			pEngine->wavebank_notifications_capacity = FAudio_max(pEngine->wavebank_notifications_capacity * 2, 8);
+-			pEngine->wavebank_notifications = pEngine->pRealloc(pEngine->wavebank_notifications,
+-				pEngine->wavebank_notifications_capacity * sizeof(FACTNotification));
+-		}
+-		note = &pEngine->wavebank_notifications[pEngine->wavebank_notification_count++];
++		note = (FACTNotification*) pEngine->pMalloc(sizeof(FACTNotification));
+ 		note->type = FACTNOTIFICATIONTYPE_WAVEBANKPREPARED;
+ 		note->waveBank.pWaveBank = *ppWaveBank;
+ 		note->pvContext = pEngine->wb_context;
++		LinkedList_AddEntry(&pEngine->wb_notifications_list, note, pEngine->apiLock, pEngine->pMalloc);
+ 	}
+ 	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 	return retval;
+@@ -631,28 +627,18 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	FACTAudioEngine *pEngine,
+ 	const FACTNotificationDescription *pNotificationDescription
+ ) {
+-	if (!pNotificationDescription)
+-		return FAUDIO_E_INVALID_ARG;
+-
+ 	FAudio_assert(pEngine != NULL);
+-
+-	if (!pEngine->notificationCallback)
+-		return FACTENGINE_E_NONOTIFICATIONCALLBACK;
+-
+-	if (pNotificationDescription->type == 0 ||
+-		pNotificationDescription->type > FACTNOTIFICATIONTYPE_WAVEBANKSTREAMING_INVALIDCONTENT)
+-		return FAUDIO_E_INVALID_ARG;
++	FAudio_assert(pNotificationDescription != NULL);
++	FAudio_assert(pEngine->notificationCallback != NULL);
+ 
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
+ 
+-	if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+-		pEngine->notifications |= (1u << pNotificationDescription->type);
+-
+ 	#define HANDLE_PERSIST(nt) \
+ 		if (pNotificationDescription->type == FACTNOTIFICATIONTYPE_##nt) \
+ 		{ \
+ 			if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST) \
+ 			{ \
++				pEngine->notifications |= NOTIFY_##nt; \
+ 				PERSIST_ACTION \
+ 			} \
+ 			else \
+@@ -670,11 +656,12 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications |= NOTIFY_CUEDESTROY;
+ 			pEngine->cue_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pCue->notifyOnDestroy = true;
++			pNotificationDescription->pCue->notifyOnDestroy = 1;
+ 			pNotificationDescription->pCue->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -690,11 +677,12 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications |= NOTIFY_SOUNDBANKDESTROY;
+ 			pEngine->sb_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pSoundBank->notifyOnDestroy = true;
++			pNotificationDescription->pSoundBank->notifyOnDestroy = 1;
+ 			pNotificationDescription->pSoundBank->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -702,11 +690,12 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications |= NOTIFY_WAVEBANKDESTROY;
+ 			pEngine->wb_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pWaveBank->notifyOnDestroy = true;
++			pNotificationDescription->pWaveBank->notifyOnDestroy = 1;
+ 			pNotificationDescription->pWaveBank->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -729,11 +718,12 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications |= NOTIFY_WAVEDESTROY;
+ 			pEngine->wave_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pWave->notifyOnDestroy = true;
++			pNotificationDescription->pWave->notifyOnDestroy = 1;
+ 			pNotificationDescription->pWave->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -745,6 +735,12 @@ uint32_t FACTAudioEngine_RegisterNotification(
+ 	else HANDLE_PERSIST(WAVEBANKSTREAMING_INVALIDCONTENT)
+ 	#undef PERSIST_ACTION
+ 
++	/* Anything else? */
++	else
++	{
++		FAudio_assert(0 && "TODO: Unimplemented notification!");
++	}
++
+ 	#undef HANDLE_PERSIST
+ 
+ 	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+@@ -755,27 +751,18 @@ uint32_t FACTAudioEngine_UnRegisterNotification(
+ 	FACTAudioEngine *pEngine,
+ 	const FACTNotificationDescription *pNotificationDescription
+ ) {
+-	if (!pNotificationDescription)
+-	{
+-		FAudio_Log("Unregistration of all notifications is not implemented.\n");
+-		return FAUDIO_E_INVALID_CALL;
+-	}
+-
+ 	FAudio_assert(pEngine != NULL);
+-
+-	if (!pEngine->notificationCallback)
+-		return FACTENGINE_E_NONOTIFICATIONCALLBACK;
++	FAudio_assert(pNotificationDescription != NULL);
++	FAudio_assert(pEngine->notificationCallback != NULL);
+ 
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
+ 
+-	if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+-		pEngine->notifications &= ~(1u << pNotificationDescription->type);
+-
+ 	#define HANDLE_PERSIST(nt) \
+ 		if (pNotificationDescription->type == FACTNOTIFICATIONTYPE_##nt) \
+ 		{ \
+ 			if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST) \
+ 			{ \
++				pEngine->notifications &= ~NOTIFY_##nt; \
+ 				PERSIST_ACTION \
+ 			} \
+ 			else \
+@@ -793,11 +780,12 @@ uint32_t FACTAudioEngine_UnRegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications &= ~NOTIFY_CUEDESTROY;
+ 			pEngine->cue_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pCue->notifyOnDestroy = false;
++			pNotificationDescription->pCue->notifyOnDestroy = 0;
+ 			pNotificationDescription->pCue->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -813,11 +801,12 @@ uint32_t FACTAudioEngine_UnRegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications &= ~NOTIFY_SOUNDBANKDESTROY;
+ 			pEngine->sb_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pSoundBank->notifyOnDestroy = false;
++			pNotificationDescription->pSoundBank->notifyOnDestroy = 0;
+ 			pNotificationDescription->pSoundBank->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -825,11 +814,12 @@ uint32_t FACTAudioEngine_UnRegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications &= ~NOTIFY_WAVEBANKDESTROY;
+ 			pEngine->wb_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pWaveBank->notifyOnDestroy = false;
++			pNotificationDescription->pWaveBank->notifyOnDestroy = 0;
+ 			pNotificationDescription->pWaveBank->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -852,11 +842,12 @@ uint32_t FACTAudioEngine_UnRegisterNotification(
+ 	{
+ 		if (pNotificationDescription->flags & FACT_FLAG_NOTIFICATION_PERSIST)
+ 		{
++			pEngine->notifications &= ~NOTIFY_WAVEDESTROY;
+ 			pEngine->wave_context = pNotificationDescription->pvContext;
+ 		}
+ 		else
+ 		{
+-			pNotificationDescription->pWave->notifyOnDestroy = false;
++			pNotificationDescription->pWave->notifyOnDestroy = 0;
+ 			pNotificationDescription->pWave->usercontext = pNotificationDescription->pvContext;
+ 		}
+ 	}
+@@ -898,7 +889,7 @@ uint16_t FACTAudioEngine_GetCategory(
+ 	return FACTCATEGORY_INVALID;
+ }
+ 
+-bool FACT_INTERNAL_IsInCategory(
++uint8_t FACT_INTERNAL_IsInCategory(
+ 	FACTAudioEngine *engine,
+ 	uint16_t target,
+ 	uint16_t category
+@@ -908,7 +899,7 @@ bool FACT_INTERNAL_IsInCategory(
+ 	/* Same category, no need to go on a crazy hunt */
+ 	if (category == target)
+ 	{
+-		return true;
++		return 1;
+ 	}
+ 
+ 	/* Right, on with the crazy hunt */
+@@ -917,11 +908,11 @@ bool FACT_INTERNAL_IsInCategory(
+ 	{
+ 		if (cat->parentCategory == target)
+ 		{
+-			return true;
++			return 1;
+ 		}
+ 		cat = &engine->categories[cat->parentCategory];
+ 	}
+-	return false;
++	return 0;
+ }
+ 
+ uint32_t FACTAudioEngine_Stop(
+@@ -1035,13 +1026,17 @@ uint16_t FACTAudioEngine_GetGlobalVariableIndex(
+ 	const char *szFriendlyName
+ ) {
+ 	uint16_t i;
++	FAudio_PlatformLockMutex(pEngine->apiLock);
+ 	for (i = 0; i < pEngine->variableCount; i += 1)
+ 	{
+-		if (!FAudio_strcmp(szFriendlyName, pEngine->variableNames[i]) &&
+-			!(pEngine->variables[i].accessibility & ACCESSIBILITY_CUE) &&
+-			(pEngine->variables[i].accessibility & ACCESSIBILITY_PUBLIC))
++		if (	FAudio_strcmp(szFriendlyName, pEngine->variableNames[i]) == 0 &&
++			!(pEngine->variables[i].accessibility & 0x04)	)
++		{
++			FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 			return i;
++		}
+ 	}
++	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 	return FACTVARIABLEINDEX_INVALID;
+ }
+ 
+@@ -1052,19 +1047,18 @@ uint32_t FACTAudioEngine_SetGlobalVariable(
+ ) {
+ 	FACTVariable *var;
+ 
+-	if (nIndex >= pEngine->variableCount)
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-	var = &pEngine->variables[nIndex];
+-	if (!(var->accessibility & ACCESSIBILITY_PUBLIC) || (var->accessibility & ACCESSIBILITY_CUE)
+-			|| (var->accessibility & ACCESSIBILITY_READONLY))
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
++
++	var = &pEngine->variables[nIndex];
++	FAudio_assert(var->accessibility & 0x01);
++	FAudio_assert(!(var->accessibility & 0x02));
++	FAudio_assert(!(var->accessibility & 0x04));
+ 	pEngine->globalVariableValues[nIndex] = FAudio_clamp(
+ 		nValue,
+ 		var->minValue,
+ 		var->maxValue
+ 	);
++
+ 	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 	return 0;
+ }
+@@ -1076,14 +1070,13 @@ uint32_t FACTAudioEngine_GetGlobalVariable(
+ ) {
+ 	FACTVariable *var;
+ 
+-	if (nIndex >= pEngine->variableCount)
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-	var = &pEngine->variables[nIndex];
+-	if (!(var->accessibility & ACCESSIBILITY_PUBLIC) || (var->accessibility & ACCESSIBILITY_CUE))
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-
+ 	FAudio_PlatformLockMutex(pEngine->apiLock);
++
++	var = &pEngine->variables[nIndex];
++	FAudio_assert(var->accessibility & 0x01);
++	FAudio_assert(!(var->accessibility & 0x04));
+ 	*pnValue = pEngine->globalVariableValues[nIndex];
++
+ 	FAudio_PlatformUnlockMutex(pEngine->apiLock);
+ 	return 0;
+ }
+@@ -1157,7 +1150,7 @@ uint32_t FACTSoundBank_GetCueProperties(
+ 			0xFF
+ 		);
+ 	}
+-	if (!(pSoundBank->cues[nCueIndex].flags & CUE_FLAG_SINGLE_SOUND))
++	if (!(pSoundBank->cues[nCueIndex].flags & 0x04))
+ 	{
+ 		for (i = 0; i < pSoundBank->variationCount; i += 1)
+ 		{
+@@ -1169,7 +1162,7 @@ uint32_t FACTSoundBank_GetCueProperties(
+ 
+ 		FAudio_assert(i < pSoundBank->variationCount && "Variation table not found!");
+ 
+-		if (pSoundBank->variations[i].type == VARIATION_TABLE_TYPE_INTERACTIVE)
++		if (pSoundBank->variations[i].flags == 3)
+ 		{
+ 			pProperties->interactive = 1;
+ 			pProperties->iaVariableIndex = pSoundBank->variations[i].variable;
+@@ -1218,14 +1211,14 @@ uint32_t FACTSoundBank_Prepare(
+ 	/* Engine references */
+ 	(*ppCue)->parentBank = pSoundBank;
+ 	(*ppCue)->next = NULL;
+-	(*ppCue)->managed = false;
++	(*ppCue)->managed = 0;
+ 	(*ppCue)->index = nCueIndex;
+-	(*ppCue)->notifyOnDestroy = false;
++	(*ppCue)->notifyOnDestroy = 0;
+ 	(*ppCue)->usercontext = NULL;
+ 
+ 	/* Sound data */
+ 	(*ppCue)->data = &pSoundBank->cues[nCueIndex];
+-	if ((*ppCue)->data->flags & CUE_FLAG_SINGLE_SOUND)
++	if ((*ppCue)->data->flags & 0x04)
+ 	{
+ 		for (i = 0; i < pSoundBank->soundCount; i += 1)
+ 		{
+@@ -1246,7 +1239,7 @@ uint32_t FACTSoundBank_Prepare(
+ 				break;
+ 			}
+ 		}
+-		if ((*ppCue)->variation && (*ppCue)->variation->type == VARIATION_TABLE_TYPE_INTERACTIVE)
++		if ((*ppCue)->variation && (*ppCue)->variation->flags == 3)
+ 		{
+ 			(*ppCue)->interactive = pSoundBank->parentEngine->variables[
+ 				(*ppCue)->variation->variable
+@@ -1319,7 +1312,7 @@ uint32_t FACTSoundBank_Play(
+ 	else
+ 	{
+ 		/* AKA we get to Destroy() this ourselves */
+-		result->managed = true;
++		result->managed = 1;
+ 	}
+ 	FACTCue_Play(result);
+ 
+@@ -1361,7 +1354,7 @@ uint32_t FACTSoundBank_Play3D(
+ 	else
+ 	{
+ 		/* AKA we get to Destroy() this ourselves */
+-		result->managed = true;
++		result->managed = 1;
+ 	}
+ 	FACT3DApply(pDSPSettings, result);
+ 	FACTCue_Play(result);
+@@ -1521,11 +1514,11 @@ uint32_t FACTSoundBank_Destroy(FACTSoundBank *pSoundBank)
+ 	}
+ 
+ 	/* Finally. */
+-	if (pSoundBank->notifyOnDestroy || (pSoundBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_SOUNDBANKDESTROYED)))
++	if (pSoundBank->notifyOnDestroy || pSoundBank->parentEngine->notifications & NOTIFY_SOUNDBANKDESTROY)
+ 	{
+ 		note.type = FACTNOTIFICATIONTYPE_SOUNDBANKDESTROYED;
+ 		note.soundBank.pSoundBank = pSoundBank;
+-		if (pSoundBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_SOUNDBANKDESTROYED))
++		if (pSoundBank->parentEngine->notifications & NOTIFY_SOUNDBANKDESTROY)
+ 		{
+ 			note.pvContext = pSoundBank->parentEngine->sb_context;
+ 		}
+@@ -1637,11 +1630,11 @@ uint32_t FACTWaveBank_Destroy(FACTWaveBank *pWaveBank)
+ 	{
+ 		pWaveBank->parentEngine->pFree(pWaveBank->packetBuffer);
+ 	}
+-	if (pWaveBank->notifyOnDestroy || (pWaveBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEBANKDESTROYED)))
++	if (pWaveBank->notifyOnDestroy || pWaveBank->parentEngine->notifications & NOTIFY_WAVEBANKDESTROY)
+ 	{
+ 		note.type = FACTNOTIFICATIONTYPE_WAVEBANKDESTROYED;
+ 		note.waveBank.pWaveBank = pWaveBank;
+-		if (pWaveBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEBANKDESTROYED))
++		if (pWaveBank->parentEngine->notifications & NOTIFY_WAVEBANKDESTROY)
+ 		{
+ 			note.pvContext = pWaveBank->parentEngine->wb_context;
+ 		}
+@@ -1768,12 +1761,12 @@ uint32_t FACTWaveBank_GetWaveProperties(
+ 
+ 	pWaveProperties->format = entry->Format;
+ 	pWaveProperties->durationInSamples = entry->PlayRegion.dwLength;
+-	if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_PCM)
++	if (entry->Format.wFormatTag == 0)
+ 	{
+ 		pWaveProperties->durationInSamples /= (8 << entry->Format.wBitsPerSample) / 8;
+ 		pWaveProperties->durationInSamples /= entry->Format.nChannels;
+ 	}
+-	else if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_ADPCM)
++	else if (entry->Format.wFormatTag == FAUDIO_FORMAT_MSADPCM)
+ 	{
+ 		pWaveProperties->durationInSamples = (
+ 			pWaveProperties->durationInSamples /
+@@ -1829,7 +1822,7 @@ uint32_t FACTWaveBank_Prepare(
+ 	(*ppWave)->parentBank = pWaveBank;
+ 	(*ppWave)->parentCue = NULL;
+ 	(*ppWave)->index = nWaveIndex;
+-	(*ppWave)->notifyOnDestroy = false;
++	(*ppWave)->notifyOnDestroy = 0;
+ 	(*ppWave)->usercontext = NULL;
+ 
+ 	/* Playback */
+@@ -1838,8 +1831,8 @@ uint32_t FACTWaveBank_Prepare(
+ 	(*ppWave)->pitch = 0;
+ 	(*ppWave)->loopCount = nLoopCount;
+ 
+-	if (dwPlayOffset)
+-		FAudio_Log("Unhandled play offset.\n");
++	/* TODO: Convert dwPlayOffset to a byte offset */
++	FAudio_assert(dwPlayOffset == 0);
+ #if 0
+ 	if (dwFlags & FACT_FLAG_UNITS_MS)
+ 	{
+@@ -1859,7 +1852,7 @@ uint32_t FACTWaveBank_Prepare(
+ 	sends.pSends = &send;
+ 	format.pcm.nChannels = entry->Format.nChannels;
+ 	format.pcm.nSamplesPerSec = entry->Format.nSamplesPerSec;
+-	if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_PCM)
++	if (entry->Format.wFormatTag == 0x0)
+ 	{
+ 		format.pcm.wFormatTag = FAUDIO_FORMAT_PCM;
+ 		format.pcm.wBitsPerSample = 8 << entry->Format.wBitsPerSample;
+@@ -1867,7 +1860,7 @@ uint32_t FACTWaveBank_Prepare(
+ 		format.pcm.nAvgBytesPerSec = format.pcm.nBlockAlign * format.pcm.nSamplesPerSec;
+ 		format.pcm.cbSize = 0;
+ 	}
+-	else if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_XMA)
++	else if (entry->Format.wFormatTag == 0x1)
+ 	{
+ 		/* XMA2 is quite similar to WMA Pro... is what everyone thought.
+ 		 * What a great way to start this comment.
+@@ -1918,7 +1911,7 @@ uint32_t FACTWaveBank_Prepare(
+ 		format.xma2.bEncoderVersion = 4;
+ 		format.xma2.wBlockCount = seek->entryCount;
+ 	}
+-	else if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_ADPCM)
++	else if (entry->Format.wFormatTag == 0x2)
+ 	{
+ 		format.pcm.wFormatTag = FAUDIO_FORMAT_MSADPCM;
+ 		format.pcm.nBlockAlign = (entry->Format.wBlockAlign + 22) * format.pcm.nChannels;
+@@ -1931,7 +1924,7 @@ uint32_t FACTWaveBank_Prepare(
+ 			((format.pcm.nBlockAlign / format.pcm.nChannels) - 6) * 2
+ 		);
+ 	}
+-	else if (entry->Format.wFormatTag == FACT_WAVEBANKMINIFORMAT_TAG_WMA)
++	else if (entry->Format.wFormatTag == 0x3)
+ 	{
+ 		/* Apparently this is used to detect WMA Pro...? */
+ 		FAudio_assert(entry->Format.wBitsPerSample == 0);
+@@ -1942,6 +1935,10 @@ uint32_t FACTWaveBank_Prepare(
+ 		format.pcm.wBitsPerSample = 16;
+ 		format.pcm.cbSize = 0;
+ 	}
++	else
++	{
++		FAudio_assert(0 && "Rebuild your WaveBanks with ADPCM!");
++	}
+ 	(*ppWave)->callback.callback.OnBufferEnd = pWaveBank->streaming ?
+ 		FACT_INTERNAL_OnBufferEnd :
+ 		NULL;
+@@ -2138,11 +2135,11 @@ uint32_t FACTWave_Destroy(FACTWave *pWave)
+ 	{
+ 		pWave->parentBank->parentEngine->pFree(pWave->streamCache);
+ 	}
+-	if (pWave->notifyOnDestroy || (pWave->parentBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEDESTROYED)))
++	if (pWave->notifyOnDestroy || pWave->parentBank->parentEngine->notifications & NOTIFY_WAVEDESTROY)
+ 	{
+ 		note.type = FACTNOTIFICATIONTYPE_WAVEDESTROYED;
+ 		note.wave.pWave = pWave;
+-		if (pWave->parentBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVEDESTROYED))
++		if (pWave->parentBank->parentEngine->notifications & NOTIFY_WAVEDESTROY)
+ 		{
+ 			note.pvContext = pWave->parentBank->parentEngine->wave_context;
+ 		}
+@@ -2207,7 +2204,7 @@ uint32_t FACTWave_Stop(FACTWave *pWave, uint32_t dwFlags)
+ 		FAudioSourceVoice_ExitLoop(pWave->voice, 0);
+ 	}
+ 
+-	if (pWave->parentBank->parentEngine->notifications & (1u << FACTNOTIFICATIONTYPE_WAVESTOP))
++	if (pWave->parentBank->parentEngine->notifications & NOTIFY_WAVESTOP)
+ 	{
+ 		FACTNotification note;
+ 		note.type = FACTNOTIFICATIONTYPE_WAVESTOP;
+@@ -2452,7 +2449,7 @@ uint32_t FACTCue_Destroy(FACTCue *pCue)
+ 	FAudio_assert(cue != NULL && "Could not find Cue reference!");
+ 
+ 	pCue->parentBank->parentEngine->pFree(pCue->variableValues);
+-	FACT_INTERNAL_SendCueNotification(pCue, FACTNOTIFICATIONTYPE_CUEDESTROYED);
++	FACT_INTERNAL_SendCueNotification(pCue, NOTIFY_CUEDESTROY, FACTNOTIFICATIONTYPE_CUEDESTROYED);
+ 
+ 	mutex = pCue->parentBank->parentEngine->apiLock;
+ 	pCue->parentBank->parentEngine->pFree(pCue);
+@@ -2462,6 +2459,11 @@ uint32_t FACTCue_Destroy(FACTCue *pCue)
+ 
+ uint32_t FACTCue_Play(FACTCue *pCue)
+ {
++	union
++	{
++		float maxf;
++		uint8_t maxi;
++	} limitmax;
+ 	FACTCue *tmp, *wnr;
+ 	uint16_t fadeInMS = 0;
+ 	FACTCueData *data;
+@@ -2479,69 +2481,87 @@ uint32_t FACTCue_Play(FACTCue *pCue)
+ 	/* Cue Instance Limits */
+ 	if (data->instanceCount >= data->instanceLimit)
+ 	{
+-		float quietest_volume = FACTVOLUME_MAX;
+-		uint8_t lowest_priority = UINT8_MAX;
+-
+ 		wnr = NULL;
+ 		tmp = pCue->parentBank->cueList;
+-
+-		switch (data->maxInstanceBehavior)
++		if (data->maxInstanceBehavior == 0) /* Fail */
+ 		{
+-			case MAX_INSTANCE_BEHAVIOR_FAIL:
+-				pCue->state |= FACT_STATE_STOPPED;
+-				pCue->state &= ~(FACT_STATE_PLAYING | FACT_STATE_STOPPING | FACT_STATE_PAUSED);
+-
+-				FACT_INTERNAL_SendCueNotification(pCue, FACTNOTIFICATIONTYPE_CUESTOP);
++			pCue->state |= FACT_STATE_STOPPED;
++			pCue->state &= ~(
++				FACT_STATE_PLAYING |
++				FACT_STATE_STOPPING |
++				FACT_STATE_PAUSED
++			);
+ 
+-				FAudio_PlatformUnlockMutex(pCue->parentBank->parentEngine->apiLock);
+-				return FACTENGINE_E_INSTANCELIMITFAILTOPLAY;
++			FACT_INTERNAL_SendCueNotification(pCue, NOTIFY_CUESTOP, FACTNOTIFICATIONTYPE_CUESTOP);
+ 
+-			case MAX_INSTANCE_BEHAVIOR_QUEUE:
+-				/* FIXME: How is this different from Replace Oldest? */
+-			case MAX_INSTANCE_BEHAVIOR_REPLACE_OLDEST:
+-				while (tmp != NULL)
++			FAudio_PlatformUnlockMutex(
++				pCue->parentBank->parentEngine->apiLock
++			);
++			return 1;
++		}
++		else if (data->maxInstanceBehavior == 1) /* Queue */
++		{
++			/* FIXME: How is this different from Replace Oldest? */
++			while (tmp != NULL)
++			{
++				if (	tmp != pCue &&
++					tmp->index == pCue->index &&
++					!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED))	)
+ 				{
+-					if (tmp != pCue && tmp->index == pCue->index &&
+-						!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED)))
+-					{
+-						wnr = tmp;
+-						break;
+-					}
+-					tmp = tmp->next;
++					wnr = tmp;
++					break;
+ 				}
+-				break;
+-
+-			case MAX_INSTANCE_BEHAVIOR_REPLACE_QUIETEST:
+-				while (tmp != NULL)
++				tmp = tmp->next;
++			}
++		}
++		else if (data->maxInstanceBehavior == 2) /* Replace Oldest */
++		{
++			while (tmp != NULL)
++			{
++				if (	tmp != pCue &&
++					tmp->index == pCue->index &&
++					!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED))	)
+ 				{
+-					if (tmp != pCue && tmp->index == pCue->index &&
+-						tmp->playingSound != NULL &&
+-						/*FIXME: tmp->playingSound->volume < quietest_volume &&*/
+-						!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED))	)
+-					{
+-						wnr = tmp;
+-						/* quietest_volume = tmp->playingSound->volume; */
+-					}
+-					tmp = tmp->next;
++					wnr = tmp;
++					break;
+ 				}
+-				break;
+-
+-			case MAX_INSTANCE_BEHAVIOR_REPLACE_LOWEST_PRIORITY:
+-				while (tmp != NULL)
++				tmp = tmp->next;
++			}
++		}
++		else if (data->maxInstanceBehavior == 3) /* Replace Quietest */
++		{
++			limitmax.maxf = FACTVOLUME_MAX;
++			while (tmp != NULL)
++			{
++				if (	tmp != pCue &&
++					tmp->index == pCue->index &&
++					tmp->playingSound != NULL &&
++					/*FIXME: tmp->playingSound->volume < limitmax.maxf &&*/
++					!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED))	)
+ 				{
+-					if (tmp != pCue && tmp->index == pCue->index &&
+-						tmp->playingSound != NULL &&
+-						tmp->playingSound->sound->priority < lowest_priority &&
+-						!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED)))
+-					{
+-						wnr = tmp;
+-						lowest_priority = tmp->playingSound->sound->priority;
+-					}
+-					tmp = tmp->next;
++					wnr = tmp;
++					/* limitmax.maxf = tmp->playingSound->volume; */
+ 				}
+-				break;
++				tmp = tmp->next;
++			}
++		}
++		else if (data->maxInstanceBehavior == 4) /* Replace Lowest Priority */
++		{
++			limitmax.maxi = 0xFF;
++			while (tmp != NULL)
++			{
++				if (	tmp != pCue &&
++					tmp->index == pCue->index &&
++					tmp->playingSound != NULL &&
++					tmp->playingSound->sound->priority < limitmax.maxi &&
++					!(tmp->state & (FACT_STATE_STOPPING | FACT_STATE_STOPPED))	)
++				{
++					wnr = tmp;
++					limitmax.maxi = tmp->playingSound->sound->priority;
++				}
++				tmp = tmp->next;
++			}
+ 		}
+-
+ 		if (wnr != NULL)
+ 		{
+ 			fadeInMS = data->fadeInMS;
+@@ -2562,7 +2582,7 @@ uint32_t FACTCue_Play(FACTCue *pCue)
+ 		FAudio_PlatformUnlockMutex(
+ 			pCue->parentBank->parentEngine->apiLock
+ 		);
+-		return FACTENGINE_E_INSTANCELIMITFAILTOPLAY;
++		return 1;
+ 	}
+ 	data->instanceCount += 1;
+ 
+@@ -2573,7 +2593,7 @@ uint32_t FACTCue_Play(FACTCue *pCue)
+ 		FACT_STATE_PREPARED
+ 	);
+ 
+-	FACT_INTERNAL_SendCueNotification(pCue, FACTNOTIFICATIONTYPE_CUEPLAY);
++	FACT_INTERNAL_SendCueNotification(pCue, NOTIFY_CUEPLAY, FACTNOTIFICATIONTYPE_CUEPLAY);
+ 
+ 	pCue->start = FAudio_timems();
+ 
+@@ -2680,7 +2700,7 @@ uint32_t FACTCue_Stop(FACTCue *pCue, uint32_t dwFlags)
+ 		}
+ 	}
+ 
+-	FACT_INTERNAL_SendCueNotification(pCue, FACTNOTIFICATIONTYPE_CUESTOP);
++	FACT_INTERNAL_SendCueNotification(pCue, NOTIFY_CUESTOP, FACTNOTIFICATIONTYPE_CUESTOP);
+ 
+ 	FAudio_PlatformUnlockMutex(pCue->parentBank->parentEngine->apiLock);
+ 	return 0;
+@@ -2721,7 +2741,7 @@ uint32_t FACTCue_SetMatrixCoefficients(
+ 		pMatrixCoefficients,
+ 		sizeof(float) * uSrcChannelCount * uDstChannelCount
+ 	);
+-	pCue->active3D = true;
++	pCue->active3D = 1;
+ 
+ 	/* Apply to Waves if they exist */
+ 	if (pCue->simpleWave != NULL)
+@@ -2749,7 +2769,7 @@ uint32_t FACTCue_SetMatrixCoefficients(
+ 		}
+ 	}
+ 
+-	FACT_INTERNAL_SendCueNotification(pCue, FACTNOTIFICATIONTYPE_CUESTOP);
++	FACT_INTERNAL_SendCueNotification(pCue, NOTIFY_CUESTOP, FACTNOTIFICATIONTYPE_CUESTOP);
+ 
+ 	FAudio_PlatformUnlockMutex(pCue->parentBank->parentEngine->apiLock);
+ 	return 0;
+@@ -2759,19 +2779,24 @@ uint16_t FACTCue_GetVariableIndex(
+ 	FACTCue *pCue,
+ 	const char *szFriendlyName
+ ) {
+-	FACTAudioEngine *engine = pCue->parentBank->parentEngine;
+-
++	uint16_t i;
+ 	if (pCue == NULL)
+ 	{
+ 		return FACTVARIABLEINDEX_INVALID;
+ 	}
+-	for (uint16_t i = 0; i < engine->variableCount; ++i)
++	FAudio_PlatformLockMutex(pCue->parentBank->parentEngine->apiLock);
++	for (i = 0; i < pCue->parentBank->parentEngine->variableCount; i += 1)
+ 	{
+-		if (!FAudio_strcmp(szFriendlyName, engine->variableNames[i]) &&
+-			(engine->variables[i].accessibility & ACCESSIBILITY_CUE) &&
+-			(engine->variables[i].accessibility & ACCESSIBILITY_PUBLIC))
++		if (	FAudio_strcmp(szFriendlyName, pCue->parentBank->parentEngine->variableNames[i]) == 0 &&
++			pCue->parentBank->parentEngine->variables[i].accessibility & 0x04	)
++		{
++			FAudio_PlatformUnlockMutex(
++				pCue->parentBank->parentEngine->apiLock
++			);
+ 			return i;
++		}
+ 	}
++	FAudio_PlatformUnlockMutex(pCue->parentBank->parentEngine->apiLock);
+ 	return FACTVARIABLEINDEX_INVALID;
+ }
+ 
+@@ -2786,15 +2811,17 @@ uint32_t FACTCue_SetVariable(
+ 		return 1;
+ 	}
+ 
+-	if (nIndex >= pCue->parentBank->parentEngine->variableCount)
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-	var = &pCue->parentBank->parentEngine->variables[nIndex];
+-	if (!(var->accessibility & ACCESSIBILITY_PUBLIC) || !(var->accessibility & ACCESSIBILITY_CUE)
+-			|| (var->accessibility & ACCESSIBILITY_READONLY))
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
++	if (nIndex == FACTINDEX_INVALID)
++	{
++		return 1;
++	}
+ 
+ 	FAudio_PlatformLockMutex(pCue->parentBank->parentEngine->apiLock);
+ 
++	var = &pCue->parentBank->parentEngine->variables[nIndex];
++	FAudio_assert(var->accessibility & 0x01);
++	FAudio_assert(!(var->accessibility & 0x02));
++	FAudio_assert(var->accessibility & 0x04);
+ 	pCue->variableValues[nIndex] = FAudio_clamp(
+ 		nValue,
+ 		var->minValue,
+@@ -2817,14 +2844,17 @@ uint32_t FACTCue_GetVariable(
+ 		return 1;
+ 	}
+ 
+-	if (nIndex >= pCue->parentBank->parentEngine->variableCount)
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
+-	var = &pCue->parentBank->parentEngine->variables[nIndex];
+-	if (!(var->accessibility & ACCESSIBILITY_PUBLIC) || !(var->accessibility & ACCESSIBILITY_CUE))
+-		return FACTENGINE_E_INVALIDVARIABLEINDEX;
++	if (nIndex == FACTINDEX_INVALID)
++	{
++		return 1;
++	}
+ 
+ 	FAudio_PlatformLockMutex(pCue->parentBank->parentEngine->apiLock);
+ 
++	var = &pCue->parentBank->parentEngine->variables[nIndex];
++	FAudio_assert(var->accessibility & 0x01);
++	FAudio_assert(var->accessibility & 0x04);
++
+ 	if (nIndex == 0) /* NumCueInstances */
+ 	{
+ 		*nValue = pCue->parentBank->cues[pCue->index].instanceCount;
+@@ -2941,7 +2971,7 @@ uint32_t FACTCue_GetProperties(
+ 			pCue->playingVariation->maxWeight -
+ 			pCue->playingVariation->minWeight
+ 		);
+-		if (pCue->variation->type == VARIATION_TABLE_TYPE_INTERACTIVE)
++		if (pCue->variation->flags == 3)
+ 		{
+ 			varProps->iaVariableMin =
+ 				pCue->playingVariation->minWeight;

@@ -1,0 +1,22 @@
+diff --git a/programs/view/view.c b/programs/view/view.c
+index 1c811a035a69588a514374ec45f911ec2eadb7ee..1e5c7daa8cf43c056867d0401051f534c8ccdcbd 100644
+--- a/programs/view/view.c
++++ b/programs/view/view.c
+@@ -35,7 +35,7 @@ static int deltax = 0, deltay = 0;
+ static int width = 0, height = 0;
+ static BOOL isAldus, isEnhanced;
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ typedef struct
+ {
+ 	DWORD		key;
+@@ -45,7 +45,7 @@ typedef struct
+ 	DWORD		reserved;
+ 	WORD		checksum;
+ } APMFILEHEADER;
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ #define APMHEADER_KEY	0x9AC6CDD7l
+ 

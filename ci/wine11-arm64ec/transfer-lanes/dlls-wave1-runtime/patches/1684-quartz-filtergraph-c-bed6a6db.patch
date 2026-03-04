@@ -1,0 +1,155 @@
+diff --git a/dlls/quartz/filtergraph.c b/dlls/quartz/filtergraph.c
+--- a/dlls/quartz/filtergraph.c
++++ b/dlls/quartz/filtergraph.c
+@@ -36,6 +36,7 @@
+ #include "strmif.h"
+ #include "vfwmsgs.h"
+ #include "evcode.h"
++#include "wine/heap.h"
+ #include "wine/list.h"
+ 
+ 
+@@ -73,6 +74,7 @@
+     struct list entry;
+     IBaseFilter *filter;
+     IMediaSeeking *seeking;
++    IMediaPosition *position;
+     WCHAR *name;
+     BOOL sorting;
+ };
+@@ -205,7 +207,7 @@
+     if (!ref)
+     {
+         IUnknown_Release(enum_filters->graph->outer_unk);
+-        free(enum_filters);
++        heap_free(enum_filters);
+     }
+ 
+     return ref;
+@@ -299,7 +301,7 @@
+ {
+     struct enum_filters *enum_filters;
+ 
+-    if (!(enum_filters = malloc(sizeof(*enum_filters))))
++    if (!(enum_filters = heap_alloc(sizeof(*enum_filters))))
+         return E_OUTOFMEMORY;
+ 
+     enum_filters->IEnumFilters_iface.lpVtbl = &EnumFilters_vtbl;
+@@ -520,6 +522,13 @@
+ {
+     struct filter *filter;
+ 
++    /* King of Fighters XIII requests the WMV decoder filter by name to
++     * connect it to a Sample Grabber filter, return our custom decoder
++     * filter instance instead.
++     */
++    if (!wcscmp(name, L"WMVideo Decoder DMO"))
++        name = L"Reader";
++
+     LIST_FOR_EACH_ENTRY(filter, &graph->filters, struct filter, entry)
+     {
+         if (!wcscmp(filter->name, name))
+@@ -555,6 +564,7 @@
+ 
+ static void update_seeking(struct filter *filter)
+ {
++    IMediaPosition *position;
+     IMediaSeeking *seeking;
+ 
+     if (!filter->seeking)
+@@ -573,11 +583,19 @@
+                 IMediaSeeking_Release(seeking);
+         }
+     }
++
++    if (!filter->position)
++    {
++        /* Tokyo Xanadu eX+, same as above, same developer, destroys its filter when
++         * its IMediaPosition interface is released, so cache the interface instead
++         * of querying for it every time. */
++        if (SUCCEEDED(IBaseFilter_QueryInterface(filter->filter, &IID_IMediaPosition, (void **)&position)))
++            filter->position = position;
++    }
+ }
+ 
+ static BOOL is_renderer(struct filter *filter)
+ {
+-    IMediaPosition *media_position;
+     IAMFilterMiscFlags *flags;
+     BOOL ret = FALSE;
+ 
+@@ -587,16 +605,11 @@
+             ret = TRUE;
+         IAMFilterMiscFlags_Release(flags);
+     }
+-    else if (SUCCEEDED(IBaseFilter_QueryInterface(filter->filter, &IID_IMediaPosition, (void **)&media_position)))
+-    {
+-        if (!has_output_pins(filter->filter))
+-            ret = TRUE;
+-        IMediaPosition_Release(media_position);
+-    }
+     else
+     {
+         update_seeking(filter);
+-        if (filter->seeking && !has_output_pins(filter->filter))
++        if ((filter->seeking || filter->position) &&
++            !has_output_pins(filter->filter))
+             ret = TRUE;
+     }
+     return ret;
+@@ -617,12 +630,12 @@
+     if (!filter)
+         return E_POINTER;
+ 
+-    if (!(entry = malloc(sizeof(*entry))))
++    if (!(entry = heap_alloc(sizeof(*entry))))
+         return E_OUTOFMEMORY;
+ 
+     if (!(entry->name = CoTaskMemAlloc((name ? wcslen(name) + 6 : 5) * sizeof(WCHAR))))
+     {
+-        free(entry);
++        heap_free(entry);
+         return E_OUTOFMEMORY;
+     }
+ 
+@@ -647,7 +660,7 @@
+         if (i == 10000)
+         {
+             CoTaskMemFree(entry->name);
+-            free(entry);
++            heap_free(entry);
+             return VFW_E_DUPLICATE_NAME;
+         }
+     }
+@@ -658,7 +671,7 @@
+             (IFilterGraph *)&graph->IFilterGraph2_iface, entry->name)))
+     {
+         CoTaskMemFree(entry->name);
+-        free(entry);
++        heap_free(entry);
+         return hr;
+     }
+ 
+@@ -669,6 +682,7 @@
+     list_add_head(&graph->filters, &entry->entry);
+     entry->sorting = FALSE;
+     entry->seeking = NULL;
++    entry->position = NULL;
+     ++graph->version;
+ 
+     return duplicate_name ? VFW_S_DUPLICATE_NAME : hr;
+@@ -736,11 +750,13 @@
+             {
+                 IBaseFilter_SetSyncSource(pFilter, NULL);
+                 IBaseFilter_Release(pFilter);
++                if (entry->position)
++                    IMediaPosition_Release(entry->position);
+                 if (entry->seeking)
+                     IMediaSeeking_Release(entry->seeking);
+                 list_remove(&entry->entry);
+                 CoTaskMemFree(entry->name);
+-                free(entry);
++                heap_free(entry);
+                 This->version++;
+                 /* Invalidate interfaces in the cache */
+                 for (i = 0; i < This->nItfCacheEntries; i++)

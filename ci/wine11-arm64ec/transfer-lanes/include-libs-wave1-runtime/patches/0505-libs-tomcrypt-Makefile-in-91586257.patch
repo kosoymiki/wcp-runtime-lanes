@@ -1,0 +1,12 @@
+diff --git a/libs/tomcrypt/Makefile.in b/libs/tomcrypt/Makefile.in
+index fed01f375e87d08b795112a29e94a6739319eef6..d6ad90aaa619cc6e685bbd5f4f9ba110b4a1ebc6 100644
+--- a/libs/tomcrypt/Makefile.in
++++ b/libs/tomcrypt/Makefile.in
+@@ -1,6 +1,6 @@
+ EXTLIB    = libtomcrypt.a
+ EXTRAINCL = $(TOMCRYPT_PE_CFLAGS)
+-EXTRADEFS = -D_ACRTIMP= -DLTC_NO_TEST -DMP_32BIT=
++EXTRADEFS = -D_ACRTIMP= -DLTC_NO_TEST
+ 
+ SOURCES = \
+ 	mpi.c \

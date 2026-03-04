@@ -1,0 +1,13 @@
+diff --git a/libs/vkd3d/include/vkd3d.h b/libs/vkd3d/include/vkd3d.h
+index 38b3c82d5159f6062ea518834d496876d2f6b990..2cb150dce1689c964904d6e80be6c2e93e8f5271 100644
+--- a/libs/vkd3d/include/vkd3d.h
++++ b/libs/vkd3d/include/vkd3d.h
+@@ -101,8 +101,6 @@ enum vkd3d_api_version
+     VKD3D_API_VERSION_1_14,
+     VKD3D_API_VERSION_1_15,
+     VKD3D_API_VERSION_1_16,
+-    VKD3D_API_VERSION_1_17,
+-    VKD3D_API_VERSION_1_18,
+ 
+     VKD3D_FORCE_32_BIT_ENUM(VKD3D_API_VERSION),
+ };

@@ -1,0 +1,12 @@
+diff --git a/programs/taskmgr/taskmgr.rc b/programs/taskmgr/taskmgr.rc
+index 954712d62b861ff4c662114674c8fa52d5ca5481..ccabf34477eb9748075a3bbd4ccb282ad8f57f99 100644
+--- a/programs/taskmgr/taskmgr.rc
++++ b/programs/taskmgr/taskmgr.rc
+@@ -594,6 +594,7 @@ IDI_WINDOWSM            ICON windowsm.ico
+ */
+ 
+ #define WINE_FILEVERSION 1,0,0,1
++#define WINE_FILEVERSION_STR "1.0.0.1"
+ #define WINE_FILETYPE VFT_APP
+ #define WINE_FILEDESCRIPTION_STR "Wine Task Manager"
+ #define WINE_FILENAME "taskmgr"

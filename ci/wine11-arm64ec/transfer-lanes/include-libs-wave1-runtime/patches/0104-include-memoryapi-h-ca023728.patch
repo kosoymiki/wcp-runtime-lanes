@@ -1,0 +1,14 @@
+diff --git a/include/memoryapi.h b/include/memoryapi.h
+index 2cfcdd5a273a4c5671c7ddb205421a014b58bccf..6728b832fa7dd17e093e5a20bda1e976d63d47d1 100644
+--- a/include/memoryapi.h
++++ b/include/memoryapi.h
+@@ -41,6 +41,6 @@ typedef struct WIN32_MEMORY_REGION_INFORMATION
+     SIZE_T CommitSize;
+ } WIN32_MEMORY_REGION_INFORMATION;
+ 
+-WINBASEAPI HANDLE WINAPI CreateFileMapping2(HANDLE,LPSECURITY_ATTRIBUTES,ULONG,ULONG,ULONG,ULONG64,const WCHAR*,MEM_EXTENDED_PARAMETER*,ULONG);
+-WINBASEAPI DWORD  WINAPI DiscardVirtualMemory(void *addr, SIZE_T size);
+-WINBASEAPI BOOL   WINAPI QueryVirtualMemoryInformation(HANDLE process,const void *addr, WIN32_MEMORY_INFORMATION_CLASS info_class, void *info, SIZE_T size, SIZE_T *ret_size);
++DWORD WINAPI DiscardVirtualMemory(void *addr, SIZE_T size);
++BOOL WINAPI QueryVirtualMemoryInformation(HANDLE process,const void *addr,
++        WIN32_MEMORY_INFORMATION_CLASS info_class, void *info, SIZE_T size, SIZE_T *ret_size);

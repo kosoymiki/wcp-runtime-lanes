@@ -1,0 +1,12 @@
+diff --git a/include/d3dx10async.h b/include/d3dx10async.h
+index 931458f4813602c4e611460b1420dea63d90db54..bfab25b45616de206f8aa35e3431830d83dd0e7c 100644
+--- a/include/d3dx10async.h
++++ b/include/d3dx10async.h
+@@ -79,5 +79,7 @@ HRESULT WINAPI D3DX10CreateAsyncResourceLoaderW(HMODULE module, const WCHAR *res
+ HRESULT WINAPI D3DX10CreateAsyncTextureProcessor(ID3D10Device *device,
+         D3DX10_IMAGE_LOAD_INFO *info, ID3DX10DataProcessor **processor);
+ HRESULT WINAPI D3DX10CreateAsyncTextureInfoProcessor(D3DX10_IMAGE_INFO *info, ID3DX10DataProcessor **processor);
++HRESULT WINAPI D3DX10CreateAsyncShaderResourceViewProcessor(ID3D10Device *device,
++        D3DX10_IMAGE_LOAD_INFO *info, ID3DX10DataProcessor **processor);
+ 
+ #endif

@@ -1,0 +1,23 @@
+diff --git a/dlls/ntdll/tests/threadpool.c b/dlls/ntdll/tests/threadpool.c
+--- a/dlls/ntdll/tests/threadpool.c
++++ b/dlls/ntdll/tests/threadpool.c
+@@ -2041,8 +2041,8 @@
+     OVERLAPPED ovl = {}, ovl2 = {};
+     HANDLE client, server, thread;
+     struct io_cb_ctx userdata;
+-    const char out[1] = "";
+     char in[1], in2[1];
++    const char out[1];
+     NTSTATUS status;
+     DWORD ret_size;
+     TP_POOL *pool;
+@@ -2261,8 +2261,8 @@
+     OVERLAPPED ovl = {}, ovl2 = {};
+     HANDLE client, server, thread;
+     struct io_cb_ctx userdata;
+-    const char out[1] = "";
+     char in[1], in2[1];
++    const char out[1];
+     NTSTATUS status;
+     DWORD ret_size;
+     TP_POOL *pool;

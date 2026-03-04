@@ -1,0 +1,13 @@
+diff --git a/include/wtypes.idl b/include/wtypes.idl
+index 188c650cae92b2f72fd77184ed1412fef017b580..77a9f1c761afe871b8886447d8bdcd8ac992fcc3 100644
+--- a/include/wtypes.idl
++++ b/include/wtypes.idl
+@@ -289,7 +289,7 @@ typedef WCHAR OLECHAR;
+ typedef [string] OLECHAR *LPOLESTR;
+ typedef [string] const OLECHAR *LPCOLESTR;
+ cpp_quote("#ifndef __WINESRC__")
+-cpp_quote("# if defined(WINE_UNICODE_NATIVE) || defined(__MINGW32__) || defined(_MSC_VER)")
++cpp_quote("# ifdef WINE_UNICODE_NATIVE")
+ cpp_quote("#  define OLESTR(str) L##str")
+ cpp_quote("# else")
+ cpp_quote("#  define OLESTR(str) u##str")

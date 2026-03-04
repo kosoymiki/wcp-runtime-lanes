@@ -1,0 +1,13 @@
+diff --git a/documentation/README-uk.md b/documentation/README-uk.md
+index 97809ce032ca6e1dcef0f3ccd44f748d78df8ddf..28fe7e8107a7acd7c1fedcff8331b3313fed2afd 100644
+--- a/documentation/README-uk.md
++++ b/documentation/README-uk.md
+@@ -35,7 +35,7 @@ make
+ - FreeBSD 12.4 чи новіший
+ - Solaris x86 9 чи новіший
+ - NetBSD-поточна версія
+-- macOS 10.12 чи новіший
++- Mac OS X 10.12 чи новіший
+ 
+ Оскільки Wine вимагає для запуску підтримку потоків на рівні ядра, підтримуються
+ тільки операційні системи, перераховані вище. Інші операційні системи,

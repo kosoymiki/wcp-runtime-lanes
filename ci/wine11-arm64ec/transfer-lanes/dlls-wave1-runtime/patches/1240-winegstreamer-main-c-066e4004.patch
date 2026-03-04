@@ -1,0 +1,51 @@
+diff --git a/dlls/winegstreamer/main.c b/dlls/winegstreamer/main.c
+--- a/dlls/winegstreamer/main.c
++++ b/dlls/winegstreamer/main.c
+@@ -18,6 +18,8 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+  */
+ 
++#define WINE_NO_NAMELESS_EXTENSION
++
+ #define EXTERN_GUID DEFINE_GUID
+ 
+ #include "ntstatus.h"
+@@ -161,11 +163,12 @@
+     return E_NOTIMPL;
+ }
+ 
+-wg_parser_t wg_parser_create(bool output_compressed)
++wg_parser_t wg_parser_create(bool output_compressed, bool use_opengl)
+ {
+     struct wg_parser_create_params params =
+     {
+         .output_compressed = output_compressed,
++        .use_opengl = use_opengl,
+         .err_on = ERR_ON(quartz),
+         .warn_on = WARN_ON(quartz),
+     };
+@@ -859,9 +862,12 @@
+             return ALIGN(width * 2, 4);
+ 
+         case WG_VIDEO_FORMAT_I420:
+-        case WG_VIDEO_FORMAT_NV12:
+         case WG_VIDEO_FORMAT_YV12:
+             return ALIGN(width, 4); /* Y plane */
++
++        /* NV12 stride in Windows has alignment 2. GStreamer output is reformatted to 2 where necessary. */
++        case WG_VIDEO_FORMAT_NV12:
++            return ALIGN(width, 2); /* Y plane */
+ 
+         case WG_VIDEO_FORMAT_UNKNOWN:
+             FIXME("Cannot calculate stride for unknown video format.\n");
+@@ -1103,8 +1109,8 @@
+ {
+     .dwVersion = 2,
+     .dwMerit = MERIT_NORMAL - 1,
+-    .cPins2 = 3,
+-    .rgPins2 = reg_decodebin_parser_pins,
++    .u.s2.cPins2 = 3,
++    .u.s2.rgPins2 = reg_decodebin_parser_pins,
+ };
+ 
+ HRESULT WINAPI DllRegisterServer(void)

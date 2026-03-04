@@ -1,0 +1,14 @@
+diff --git a/dlls/wow64/process.c b/dlls/wow64/process.c
+--- a/dlls/wow64/process.c
++++ b/dlls/wow64/process.c
+@@ -944,6 +944,10 @@ NTSTATUS WINAPI wow64_NtSetInformationProcess( UINT *args )
+     case ProcessLeapSecondInformation:   /* PROCESS_LEAP_SECOND_INFO */
+     case ProcessWineGrantAdminToken:   /* NULL */
+         return NtSetInformationProcess( handle, class, ptr, len );
++
++    case ProcessFexHardwareTso:   /* BOOL */
++    case ProcessFexUnalignAtomic:   /* ULONG64 */
++        return NtSetInformationProcess( handle, class, ptr, len );
+ 
+     case ProcessAccessToken: /* PROCESS_ACCESS_TOKEN */
+         if (len == sizeof(PROCESS_ACCESS_TOKEN32))

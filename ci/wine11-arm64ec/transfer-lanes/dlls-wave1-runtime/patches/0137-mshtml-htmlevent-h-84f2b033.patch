@@ -1,0 +1,11 @@
+diff --git a/dlls/mshtml/htmlevent.h b/dlls/mshtml/htmlevent.h
+--- a/dlls/mshtml/htmlevent.h
++++ b/dlls/mshtml/htmlevent.h
+@@ -40,7 +40,6 @@
+     EVENTID_FOCUSOUT,
+     EVENTID_HELP,
+     EVENTID_INPUT,
+-    EVENTID_INVALID,
+     EVENTID_KEYDOWN,
+     EVENTID_KEYPRESS,
+     EVENTID_KEYUP,

@@ -1,0 +1,35 @@
+diff --git a/programs/winedbg/winedbg.c b/programs/winedbg/winedbg.c
+index c7f14e8238f1e64d1a691ba242d22affe10dff2b..b7c899d55c47c456fbc9fc1404f985c5dc9b9428 100644
+--- a/programs/winedbg/winedbg.c
++++ b/programs/winedbg/winedbg.c
+@@ -82,6 +82,8 @@ DWORD	                dbg_curr_pid = 0;
+ dbg_ctx_t               dbg_context;
+ BOOL    	        dbg_interactiveP = FALSE;
+ HANDLE                  dbg_houtput = 0;
++HANDLE                  dbg_crash_report_file = INVALID_HANDLE_VALUE;
++BOOL                    dbg_use_wine_dbg_output = FALSE;
+ 
+ static struct list      dbg_process_list = LIST_INIT(dbg_process_list);
+ 
+@@ -94,6 +96,9 @@ static void dbg_outputA(const char* buffer, int len)
+ 
+     DWORD w, i;
+ 
++    if (dbg_use_wine_dbg_output)
++        __wine_dbg_output(buffer);
++
+     while (len > 0)
+     {
+         unsigned int count = min( len, sizeof(line_buff) - line_pos );
+@@ -107,7 +112,10 @@ static void dbg_outputA(const char* buffer, int len)
+             if (len > 0) i = line_pos;  /* buffer is full, flush anyway */
+             else break;
+         }
+-        WriteFile(dbg_houtput, line_buff, i, &w, NULL);
++        if (!dbg_use_wine_dbg_output)
++            WriteFile(dbg_houtput, line_buff, i, &w, NULL);
++        if (dbg_crash_report_file != INVALID_HANDLE_VALUE)
++            WriteFile(dbg_crash_report_file, line_buff, i, &w, NULL);
+         memmove( line_buff, line_buff + i, line_pos - i );
+         line_pos -= i;
+     }

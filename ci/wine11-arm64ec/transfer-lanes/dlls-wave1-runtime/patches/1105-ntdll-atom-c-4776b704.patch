@@ -1,0 +1,37 @@
+diff --git a/dlls/ntdll/atom.c b/dlls/ntdll/atom.c
+--- a/dlls/ntdll/atom.c
++++ b/dlls/ntdll/atom.c
+@@ -145,10 +145,10 @@
+         if (len > MAX_ATOM_LEN) return STATUS_INVALID_PARAMETER;
+         return STATUS_MORE_ENTRIES;
+     }
+-    else if ((atom = LOWORD( atomstr )) >= MAXINTATOM) return STATUS_INVALID_PARAMETER;
++    else atom = LOWORD( atomstr );
+ done:
+-    if (atom >= MAXINTATOM) atom = 0;
+-    if (!(*pAtom = atom)) return STATUS_INVALID_PARAMETER;
++    if (!atom || atom >= MAXINTATOM) return STATUS_INVALID_PARAMETER;
++    *pAtom = atom;
+     return STATUS_SUCCESS;
+ }
+ 
+@@ -162,9 +162,8 @@
+ 
+     if ((status = lock_atom_table( table ))) return status;
+ 
+-    if (!atom) status = STATUS_INVALID_HANDLE;
+-    else if (atom < MAXINTATOM) status = STATUS_SUCCESS;
+-    else if (RtlIsValidIndexHandle( &table->HandleTable, atom - MAXINTATOM, (RTL_HANDLE **)&handle ))
++    if (atom >= MAXINTATOM && RtlIsValidIndexHandle( &table->HandleTable, atom - MAXINTATOM,
++                                                     (RTL_HANDLE **)&handle ))
+     {
+         if (handle->entry->Flags) status = STATUS_WAS_LOCKED;
+         else if (!--handle->entry->ReferenceCount)
+@@ -281,7 +280,6 @@
+ NTSTATUS WINAPI RtlDestroyAtomTable( RTL_ATOM_TABLE table )
+ {
+     if (!table || table->Signature != TABLE_SIGNATURE) return STATUS_INVALID_PARAMETER;
+-    RtlEmptyAtomTable( table, TRUE );
+     RtlDestroyHandleTable( &table->HandleTable );
+     RtlDeleteCriticalSection( &table->CriticalSection );
+     table->Signature = 0;

@@ -1,0 +1,15 @@
+diff --git a/dlls/d3dx11_42/d3dx11_42_main.c b/dlls/d3dx11_42/d3dx11_42_main.c
+--- a/dlls/d3dx11_42/d3dx11_42_main.c
++++ b/dlls/d3dx11_42/d3dx11_42_main.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright 2025 Connor McAdams for CodeWeavers
++ * Copyright 2024 Connor McAdams for CodeWeavers
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Lesser General Public
+@@ -31,3 +31,4 @@
+ 
+     return d3d_sdk_ver == D3D11_SDK_VERSION && d3dx_sdk_ver == D3DX11_SDK_VERSION;
+ }
++

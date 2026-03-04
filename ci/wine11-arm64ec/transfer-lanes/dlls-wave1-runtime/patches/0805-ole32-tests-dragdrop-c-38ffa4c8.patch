@@ -1,0 +1,20 @@
+diff --git a/dlls/ole32/tests/dragdrop.c b/dlls/ole32/tests/dragdrop.c
+--- a/dlls/ole32/tests/dragdrop.c
++++ b/dlls/ole32/tests/dragdrop.c
+@@ -733,16 +733,13 @@
+     {
+         for (seq = 0; seq < ARRAY_SIZE(call_lists); seq++)
+         {
+-            HCURSOR cursor;
+             DWORD effect_in;
+             trace("%d\n", seq);
+             call_ptr = call_lists[seq];
+             effect_in = call_ptr->set_param;
+             call_ptr++;
+ 
+-            cursor = GetCursor();
+             hr = DoDragDrop(&DataObject, &DropSource, effect_in, &effect);
+-            ok(GetCursor() == cursor, "cursor not restored\n");
+             check_expect(DoDragDrop_ret, hr, NULL);
+             check_expect(DoDragDrop_effect_out, effect, NULL);
+         }

@@ -1,0 +1,15 @@
+diff --git a/include/sqlext.h b/include/sqlext.h
+index 7f43c86da37a1beef7611a172b07f1921da436b6..6a707f8e162daede73a7ca9f35e7924f6de8db80 100644
+--- a/include/sqlext.h
++++ b/include/sqlext.h
+@@ -448,10 +448,6 @@ extern "C" {
+ #define SQL_TYPE_MAX                    SQL_VARCHAR
+ #endif
+ 
+-#if (ODBCVER >= 0x0380)
+-#define SQL_DRIVER_STMT_ATTR_BASE   0x00004000
+-#endif
+-
+ #if (ODBCVER >= 0x0300)
+ #define SQL_C_VARBOOKMARK		SQL_C_BINARY
+ #endif

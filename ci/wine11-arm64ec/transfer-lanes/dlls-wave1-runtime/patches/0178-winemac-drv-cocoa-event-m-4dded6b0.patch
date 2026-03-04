@@ -1,0 +1,11 @@
+diff --git a/dlls/winemac.drv/cocoa_event.m b/dlls/winemac.drv/cocoa_event.m
+--- a/dlls/winemac.drv/cocoa_event.m
++++ b/dlls/winemac.drv/cocoa_event.m
+@@ -22,6 +22,7 @@
+ #include <sys/event.h>
+ #include <sys/time.h>
+ #include <libkern/OSAtomic.h>
++#import <Carbon/Carbon.h>
+ 
+ #include "macdrv_cocoa.h"
+ #import "cocoa_event.h"

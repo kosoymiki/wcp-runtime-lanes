@@ -1,0 +1,12 @@
+diff --git a/libs/vkd3d/config.h b/libs/vkd3d/config.h
+index 08647a3f9431fcc4992b2880af58d0f880bc2e0e..85d63e5fddd1003bfaf4e1fd855fdb9069d24de9 100644
+--- a/libs/vkd3d/config.h
++++ b/libs/vkd3d/config.h
+@@ -1,5 +1,5 @@
+ #define PACKAGE_NAME "vkd3d"
+-#define PACKAGE_STRING "vkd3d 1.18"
+-#define PACKAGE_VERSION "1.18"
++#define PACKAGE_STRING "vkd3d 1.16"
++#define PACKAGE_VERSION "1.16"
+ #define PATH_MAX 1024
+ #define SONAME_LIBVULKAN "vulkan-1.dll"

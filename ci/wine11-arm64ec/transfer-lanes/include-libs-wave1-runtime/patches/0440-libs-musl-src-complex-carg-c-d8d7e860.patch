@@ -1,0 +1,12 @@
+diff --git a/libs/musl/src/complex/carg.c b/libs/musl/src/complex/carg.c
+deleted file mode 100644
+index 289b1ad21a14cd5160ae87ef2ddc922ceb9d3290..0000000000000000000000000000000000000000
+--- a/libs/musl/src/complex/carg.c
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#include "complex_impl.h"
+-
+-double carg(_Dcomplex z)
+-{
+-	return atan2(cimag(z), creal(z));
+-}

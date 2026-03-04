@@ -1,0 +1,545 @@
+diff --git a/dlls/opengl32/wgl.c b/dlls/opengl32/wgl.c
+--- a/dlls/opengl32/wgl.c
++++ b/dlls/opengl32/wgl.c
+@@ -29,7 +29,6 @@
+ #include "winbase.h"
+ #include "winreg.h"
+ #include "ntuser.h"
+-#include "ntgdi.h"
+ #include "malloc.h"
+ 
+ #include "unixlib.h"
+@@ -37,7 +36,7 @@
+ 
+ #include "wine/glu.h"
+ #include "wine/debug.h"
+-#include "wine/opengl_driver.h"
++#include "wine/wgl_driver.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(opengl);
+ WINE_DECLARE_DEBUG_CHANNEL(fps);
+@@ -125,7 +124,6 @@
+     PIXELFORMATDESCRIPTOR format, best;
+     int i, count, best_format;
+     int bestDBuffer = -1, bestStereo = -1;
+-    DWORD is_memdc;
+ 
+     TRACE( "%p %p: size %u version %u flags %lu type %u color %u %u,%u,%u,%u "
+            "accum %u depth %u stencil %u aux %u\n",
+@@ -135,8 +133,6 @@
+ 
+     count = wglDescribePixelFormat( hdc, 0, 0, NULL );
+     if (!count) return 0;
+-
+-    if (!NtGdiGetDCDword( hdc, NtGdiIsMemDC, &is_memdc )) is_memdc = 0;
+ 
+     best_format = 0;
+     best.dwFlags = 0;
+@@ -145,7 +141,6 @@
+     best.cDepthBits = -1;
+     best.cStencilBits = -1;
+     best.cAuxBuffers = -1;
+-    best.cAccumBits = -1;
+ 
+     for (i = 1; i <= count; i++)
+     {
+@@ -176,11 +171,6 @@
+         if ((ppfd->dwFlags & PFD_SUPPORT_OPENGL) && !(format.dwFlags & PFD_SUPPORT_OPENGL))
+         {
+             TRACE( "PFD_SUPPORT_OPENGL required but not found for iPixelFormat=%d\n", i );
+-            continue;
+-        }
+-        if (is_memdc && ppfd->cColorBits == 16 && ppfd->cAlphaBits != 1)
+-        {
+-            TRACE( "Ignoring iPixelFormat=%d RGB565 format on memory DC\n", i );
+             continue;
+         }
+ 
+@@ -295,18 +285,6 @@
+                 continue;
+             }
+         }
+-        if (ppfd->cAccumBits)
+-        {
+-            if (((ppfd->cAccumBits > best.cAccumBits) && (format.cAccumBits > best.cAccumBits)) ||
+-                ((format.cAccumBits >= ppfd->cAccumBits) && (format.cAccumBits < best.cAccumBits)))
+-                goto found;
+-
+-            if (best.cAccumBits != format.cAccumBits)
+-            {
+-                TRACE( "cAccumBits mismatch for iPixelFormat=%d\n", i );
+-                continue;
+-            }
+-        }
+         if (ppfd->dwFlags & PFD_DEPTH_DONTCARE)
+         {
+             if (format.cDepthBits < best.cDepthBits)
+@@ -336,14 +314,6 @@
+     struct get_pixel_formats_params args = { .teb = NtCurrentTeb(), .hdc = hdc };
+     PVOID *glReserved = NtCurrentTeb()->glReserved1;
+     NTSTATUS status;
+-    DWORD is_memdc;
+-
+-    *num_formats = *num_onscreen_formats = 0;
+-    if (!NtGdiGetDCDword( hdc, NtGdiIsMemDC, &is_memdc ))
+-    {
+-        SetLastError( ERROR_INVALID_HANDLE );
+-        return NULL;
+-    }
+ 
+     if (glReserved[WINE_GL_RESERVED_FORMATS_HDC] == hdc)
+     {
+@@ -358,8 +328,6 @@
+     if (!(args.formats = calloc( args.num_formats, sizeof(*args.formats) ))) goto error;
+     args.max_formats = args.num_formats;
+     if ((status = UNIX_CALL( get_pixel_formats, &args ))) goto error;
+-
+-    if (is_memdc) args.num_onscreen_formats = args.num_formats;
+ 
+     *num_formats = args.num_formats;
+     *num_onscreen_formats = args.num_onscreen_formats;
+@@ -736,12 +704,9 @@
+     UINT i, num_wgl_formats, num_wgl_onscreen_formats;
+     const struct wgl_pixel_format **format_array;
+     struct compare_formats_ctx ctx = { 0 };
+-    DWORD is_memdc;
+ 
+     TRACE( "hdc %p, attribs_int %p, attribs_float %p, max_formats %u, formats %p, num_formats %p\n",
+            hdc, attribs_int, attribs_float, max_formats, formats, num_formats );
+-
+-    if (!NtGdiGetDCDword( hdc, NtGdiIsMemDC, &is_memdc )) is_memdc = 0;
+ 
+     wgl_formats = get_pixel_formats( hdc, &num_wgl_formats, &num_wgl_onscreen_formats );
+ 
+@@ -782,12 +747,7 @@
+     /* Initialize the format_array with (pointers to) all wgl formats */
+     format_array = malloc( num_wgl_formats * sizeof(*format_array) );
+     if (!format_array) return FALSE;
+-    for (i = 0; i < num_wgl_formats; ++i)
+-    {
+-        struct wgl_pixel_format *format = wgl_formats + i;
+-        if (is_memdc && format->pfd.cColorBits == 16 && format->pfd.cAlphaBits != 1) format_array[i] = NULL;
+-        else format_array[i] = &wgl_formats[i];
+-    }
++    for (i = 0; i < num_wgl_formats; ++i) format_array[i] = &wgl_formats[i];
+ 
+     /* Remove formats that are not acceptable */
+     for (i = 0; i < ctx.num_attribs; ++i)
+@@ -822,7 +782,7 @@
+     struct wgl_pixel_format *formats;
+     UINT num_formats, num_onscreen_formats;
+ 
+-    TRACE( "hdc %p, index %d, size %u, ppfd %p\n", hdc, index, size, ppfd );
++    TRACE( "hdc %p, index %d, size %u, ppfd %p\n", hdc, index, index, ppfd );
+ 
+     if (!(formats = get_pixel_formats( hdc, &num_formats, &num_onscreen_formats ))) return 0;
+     if (!ppfd) return num_onscreen_formats;
+@@ -1686,7 +1646,7 @@
+     TRACE( "dc %p, renderer %d, attribute %d\n", dc, renderer, attribute );
+ 
+ #ifndef _WIN64
+-    if (UNIX_CALL( wglQueryRendererStringWINE, &args ) == STATUS_BUFFER_TOO_SMALL) args.ret = wow64_str = malloc( (size_t)args.ret );
++    if (UNIX_CALL( wglQueryCurrentRendererStringWINE, &args ) == STATUS_BUFFER_TOO_SMALL) args.ret = wow64_str = malloc( (size_t)args.ret );
+ #endif
+     if ((status = UNIX_CALL( wglQueryRendererStringWINE, &args ))) WARN( "wglQueryRendererStringWINE returned %#lx\n", status );
+ #ifndef _WIN64
+@@ -1694,6 +1654,238 @@
+     else if (args.ret) append_wow64_string( wow64_str );
+ #endif
+     return args.ret;
++}
++
++#ifndef _WIN64
++static void *get_buffer_pointer( GLenum target )
++{
++    void (WINAPI *p_glGetBufferPointerv)( GLenum target, GLenum pname, void **params );
++    void *ptr;
++    if (!(p_glGetBufferPointerv = (void *)wglGetProcAddress( "glGetBufferPointerv" ))) return 0;
++    p_glGetBufferPointerv( target, GL_BUFFER_MAP_POINTER, &ptr );
++    return ptr;
++}
++
++static void *get_named_buffer_pointer( GLint buffer )
++{
++    void (WINAPI *p_glGetNamedBufferPointerv)( GLuint buffer, GLenum pname, void **params );
++    void *ptr;
++    if (!(p_glGetNamedBufferPointerv = (void *)wglGetProcAddress( "glGetNamedBufferPointerv" ))) return 0;
++    p_glGetNamedBufferPointerv( buffer, GL_BUFFER_MAP_POINTER, &ptr );
++    return ptr;
++}
++#endif
++
++static void *gl_map_buffer( enum unix_funcs code, GLenum target, GLenum access )
++{
++    struct glMapBuffer_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .target = target,
++        .access = access,
++    };
++    NTSTATUS status;
++
++    TRACE( "target %d, access %d\n", target, access );
++
++    if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Unable to map wow64 buffer directly, using copy buffer!\n" );
++        if (!(args.ret = _aligned_malloc( (size_t)args.ret, 16 ))) status = STATUS_NO_MEMORY;
++        else if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++        _aligned_free( args.ret );
++    }
++#endif
++    WARN( "glMapBuffer returned %#lx\n", status );
++    return args.ret;
++}
++
++void * WINAPI glMapBuffer( GLenum target, GLenum access )
++{
++    return gl_map_buffer( unix_glMapBuffer, target, access );
++}
++
++void * WINAPI glMapBufferARB( GLenum target, GLenum access )
++{
++    return gl_map_buffer( unix_glMapBufferARB, target, access );
++}
++
++void * WINAPI glMapBufferRange( GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access )
++{
++    struct glMapBufferRange_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .target = target,
++        .offset = offset,
++        .length = length,
++        .access = access,
++    };
++    NTSTATUS status;
++
++    TRACE( "target %d, offset %Id, length %Id, access %d\n", target, offset, length, access );
++
++    if (!(status = UNIX_CALL( glMapBufferRange, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Unable to map wow64 buffer directly, using copy buffer!\n" );
++        if (!(args.ret = _aligned_malloc( length, 16 ))) status = STATUS_NO_MEMORY;
++        else if (!(status = UNIX_CALL( glMapBufferRange, &args ))) return args.ret;
++        _aligned_free( args.ret );
++    }
++#endif
++    WARN( "glMapBufferRange returned %#lx\n", status );
++    return args.ret;
++}
++
++static void *gl_map_named_buffer( enum unix_funcs code, GLuint buffer, GLenum access )
++{
++    struct glMapNamedBuffer_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .buffer = buffer,
++        .access = access,
++    };
++    NTSTATUS status;
++
++    TRACE( "(%d, %d)\n", buffer, access );
++
++    if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Unable to map wow64 buffer directly, using copy buffer!\n" );
++        if (!(args.ret = _aligned_malloc( (size_t)args.ret, 16 ))) status = STATUS_NO_MEMORY;
++        else if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++        _aligned_free( args.ret );
++    }
++#endif
++    WARN( "glMapNamedBuffer returned %#lx\n", status );
++    return args.ret;
++}
++
++void * WINAPI glMapNamedBuffer( GLuint buffer, GLenum access )
++{
++    return gl_map_named_buffer( unix_glMapNamedBuffer, buffer, access );
++}
++
++void * WINAPI glMapNamedBufferEXT( GLuint buffer, GLenum access )
++{
++    return gl_map_named_buffer( unix_glMapNamedBufferEXT, buffer, access );
++}
++
++static void *gl_map_named_buffer_range( enum unix_funcs code, GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access )
++{
++    struct glMapNamedBufferRange_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .buffer = buffer,
++        .offset = offset,
++        .length = length,
++        .access = access,
++    };
++    NTSTATUS status;
++
++    TRACE( "buffer %d, offset %Id, length %Id, access %d\n", buffer, offset, length, access );
++
++    if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Unable to map wow64 buffer directly, using copy buffer!\n" );
++        if (!(args.ret = _aligned_malloc( length, 16 ))) status = STATUS_NO_MEMORY;
++        else if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++        _aligned_free( args.ret );
++    }
++#endif
++    WARN( "glMapNamedBufferRange returned %#lx\n", status );
++    return args.ret;
++}
++
++void * WINAPI glMapNamedBufferRange( GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access )
++{
++    return gl_map_named_buffer_range( unix_glMapNamedBufferRange, buffer, offset, length, access );
++}
++
++void * WINAPI glMapNamedBufferRangeEXT( GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access )
++{
++    return gl_map_named_buffer_range( unix_glMapNamedBufferRangeEXT, buffer, offset, length, access );
++}
++
++static GLboolean gl_unmap_buffer( enum unix_funcs code, GLenum target )
++{
++    struct glUnmapBuffer_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .target = target,
++    };
++    NTSTATUS status;
++#ifndef _WIN64
++    void *ptr = get_buffer_pointer( target );
++#endif
++
++    TRACE( "target %d\n", target );
++
++    if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Releasing wow64 copy buffer %p\n", ptr );
++        _aligned_free( ptr );
++        return args.ret;
++    }
++#endif
++    WARN( "glUnmapBuffer returned %#lx\n", status );
++    return args.ret;
++}
++
++GLboolean WINAPI glUnmapBuffer( GLenum target )
++{
++    return gl_unmap_buffer( unix_glUnmapBuffer, target );
++}
++
++GLboolean WINAPI glUnmapBufferARB( GLenum target )
++{
++    return gl_unmap_buffer( unix_glUnmapBufferARB, target );
++}
++
++static GLboolean gl_unmap_named_buffer( enum unix_funcs code, GLuint buffer )
++{
++    struct glUnmapNamedBuffer_params args =
++    {
++        .teb = NtCurrentTeb(),
++        .buffer = buffer,
++    };
++    NTSTATUS status;
++#ifndef _WIN64
++    void *ptr = get_named_buffer_pointer( buffer );
++#endif
++
++    TRACE( "buffer %d\n", buffer );
++
++    if (!(status = WINE_UNIX_CALL( code, &args ))) return args.ret;
++#ifndef _WIN64
++    if (status == STATUS_INVALID_ADDRESS)
++    {
++        TRACE( "Releasing wow64 copy buffer %p\n", ptr );
++        _aligned_free( ptr );
++        return args.ret;
++    }
++#endif
++    WARN( "glUnmapNamedBuffer returned %#lx\n", status );
++    return args.ret;
++}
++
++GLboolean WINAPI glUnmapNamedBuffer( GLuint buffer )
++{
++    return gl_unmap_named_buffer( unix_glUnmapNamedBuffer, buffer );
++}
++
++GLboolean WINAPI glUnmapNamedBufferEXT( GLuint buffer )
++{
++    return gl_unmap_named_buffer( unix_glUnmapNamedBufferEXT, buffer );
+ }
+ 
+ typedef void (WINAPI *gl_debug_message)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar *, const void *);
+@@ -1708,6 +1900,160 @@
+     return STATUS_SUCCESS;
+ }
+ 
++static char *fixup_shader( GLsizei count, const GLchar *const*string, const GLint *length )
++{
++    static int needs_fixup = -1;
++    static unsigned int once;
++
++    static const struct
++    {
++        const char *gameid;
++        const char *add_ext;
++        const char *search_str;
++        BOOL replace;
++        const char *prepend_str;
++    }
++    replace[] =
++    {
++        {
++            "333420",
++
++            /* add_ext */
++            "#version 120\r\n"
++            "#extension GL_ARB_explicit_uniform_location : enable\r\n"
++            "#extension GL_ARB_explicit_attrib_location : enable\r\n",
++            /* search_str */
++            "uniform mat4 boneMatrices[NBONES];", FALSE,
++            /* prepend_str */
++            "layout(location = 2) ",
++        },
++        {
++            "242110",
++            /* add_ext */
++            "#version 120\r\n",
++        },
++        {
++            "229890",
++            /* add_ext */
++            "#version 120\r\n",
++        },
++        {
++            "2578670",
++            /* add_ext */
++            NULL,
++            /* search_str */
++            "#version 420", TRUE,
++            /* prepend_str */
++            "#version 330"
++        },
++    };
++    static const char *add_ext;
++    static const char *search_str;
++    static const char *prepend_str;
++    static unsigned int add_ext_len, search_len, prepend_len;
++    static BOOL replace_found_str;
++    unsigned int new_len;
++    const char *p, *next;
++    BOOL found = FALSE;
++    char *new, *out;
++
++    if (needs_fixup == -1)
++    {
++        const char *sgi = getenv("SteamGameId");
++        unsigned int i;
++
++        if (!sgi) return NULL;
++
++        for (i = 0; i < ARRAY_SIZE(replace); ++i)
++            if (!strcmp( sgi, replace[i].gameid )) break;
++
++        needs_fixup = i < ARRAY_SIZE(replace);
++        if (needs_fixup)
++        {
++            add_ext = replace[i].add_ext;
++            add_ext_len = add_ext ? strlen(add_ext) : 0;
++            search_str = replace[i].search_str;
++            search_len = search_str ? strlen(search_str) : 0;
++            prepend_str = replace[i].prepend_str;
++            prepend_len = prepend_str ? strlen(prepend_str) : 0;
++            replace_found_str = replace[i].replace;
++        }
++    }
++
++    if (!needs_fixup) return NULL;
++
++    if (!once++)
++      FIXME( "HACK: Fixing up shader.\n" );
++
++    TRACE( "Appending extension string.\n" );
++    new_len = strlen( *string ) + prepend_len + add_ext_len + 1;
++    new = out = malloc( new_len );
++    memcpy( out, add_ext, add_ext_len );
++    out += add_ext_len;
++
++    if (!search_str) goto skip_search;
++
++    next = *string;
++    while (*(p = next))
++    {
++      while (*next && *next != '\r' && *next != '\n') ++next;
++
++      if (next - p == search_len && !memcmp( p, search_str, search_len ))
++      {
++          TRACE( "Adding explicit location.\n" );
++          memcpy( out, *string, p - *string );
++          out += p - *string;
++          memcpy( out, prepend_str, prepend_len );
++          out += prepend_len;
++          if (replace_found_str) strcpy( out, next );
++          else                   strcpy( out, p );
++          found = TRUE;
++          break;
++      }
++
++      while (*next == '\n' || *next == '\r') ++next;
++    }
++
++skip_search:
++    if (!found)
++      strcpy( out, *string );
++
++    return new;
++}
++
++void WINAPI glShaderSource( GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length )
++{
++    struct glShaderSource_params args = { .teb = NtCurrentTeb(), .shader = shader, .count = count, .string = string, .length = length };
++    NTSTATUS status;
++    char *new;
++    TRACE( "shader %d, count %d, string %p, length %p\n", shader, count, string, length );
++    if ((new = fixup_shader( count, string, length )))
++    {
++        args.string = (const GLchar **)&new;
++        args.count = 1;
++        args.length = NULL;
++    }
++    if ((status = UNIX_CALL( glShaderSource, &args ))) WARN( "glShaderSource returned %#lx\n", status );
++    free( new );
++}
++
++void WINAPI glShaderSourceARB( GLhandleARB shaderObj, GLsizei count, const GLcharARB **string, const GLint *length )
++{
++    struct glShaderSourceARB_params args = { .teb = NtCurrentTeb(), .shaderObj = shaderObj, .count = count, .string = string, .length = length };
++    NTSTATUS status;
++    char *new;
++    TRACE( "shaderObj %d, count %d, string %p, length %p\n", shaderObj, count, string, length );
++    if ((new = fixup_shader( count, string, length )))
++    {
++        args.string = (const GLcharARB **)&new;
++        args.count = 1;
++        args.length = NULL;
++    }
++    if ((status = UNIX_CALL( glShaderSourceARB, &args ))) WARN( "glShaderSourceARB returned %#lx\n", status );
++    free( new );
++}
++
++
+ /***********************************************************************
+  *           OpenGL initialisation routine
+  */

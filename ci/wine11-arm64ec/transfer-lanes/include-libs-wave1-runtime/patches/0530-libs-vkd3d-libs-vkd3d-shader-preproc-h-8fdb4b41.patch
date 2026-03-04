@@ -1,0 +1,20 @@
+diff --git a/libs/vkd3d/libs/vkd3d-shader/preproc.h b/libs/vkd3d/libs/vkd3d-shader/preproc.h
+index 9217237d8d3a046e23c23656e1feeb3b0e31d28c..a98c8ae3df5f2842512305b16fa428285e33349d 100644
+--- a/libs/vkd3d/libs/vkd3d-shader/preproc.h
++++ b/libs/vkd3d/libs/vkd3d-shader/preproc.h
+@@ -38,7 +38,6 @@ struct preproc_buffer
+ {
+     void *lexer_buffer;
+     struct vkd3d_shader_location location;
+-    bool eof;
+ };
+ 
+ struct preproc_file
+@@ -126,6 +125,7 @@ struct preproc_ctx
+     int lookahead_token;
+ 
+     bool last_was_newline;
++    bool last_was_eof;
+     bool last_was_defined;
+ 
+     bool error;

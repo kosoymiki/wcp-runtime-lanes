@@ -1,0 +1,13 @@
+diff --git a/documentation/README-nl.md b/documentation/README-nl.md
+index 8c5010814982e31d9f1d7e273fa563ec8652990d..1d36bc9af63bafe78bcfa3a26a4f9f9536b95592 100644
+--- a/documentation/README-nl.md
++++ b/documentation/README-nl.md
+@@ -50,7 +50,7 @@ besturingssystemen nodig:
+ - FreeBSD 12.4 of nieuwer
+ - Solaris x86 9 of nieuwer
+ - NetBSD-current
+-- macOS 10.12 of nieuwer
++- Mac OS X 10.12 of nieuwer
+ 
+ Omdat Wine threadondersteuning op kernelniveau vereist, worden alleen de
+ bovenstaande besturingssystemen ondersteund. Andere besturingssystemen

@@ -1,0 +1,35 @@
+diff --git a/libs/png/pngdebug.h b/libs/png/pngdebug.h
+index 0337918aec379f81ef2d7f7fa652abc8513818cc..00d5a4569e4d8b9f1b33e118129b0045949e7b43 100644
+--- a/libs/png/pngdebug.h
++++ b/libs/png/pngdebug.h
+@@ -1,6 +1,7 @@
+-/* pngdebug.h - internal debugging macros for libpng
++
++/* pngdebug.h - Debugging macros for libpng, also used in pngtest.c
+  *
+- * Copyright (c) 2018-2025 Cosmin Truta
++ * Copyright (c) 2018 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2013 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -10,10 +11,6 @@
+  * and license in png.h
+  */
+ 
+-#ifndef PNGPRIV_H
+-#  error This file must not be included by applications; please include <png.h>
+-#endif
+-
+ /* Define PNG_DEBUG at compile time for debugging information.  Higher
+  * numbers for PNG_DEBUG mean more debugging information.  This has
+  * only been added since version 0.95 so it is not implemented throughout
+@@ -38,6 +35,9 @@
+ #define PNGDEBUG_H
+ /* These settings control the formatting of messages in png.c and pngerror.c */
+ /* Moved to pngdebug.h at 1.5.0 */
++#  ifndef PNG_LITERAL_SHARP
++#    define PNG_LITERAL_SHARP 0x23
++#  endif
+ #  ifndef PNG_LITERAL_LEFT_SQUARE_BRACKET
+ #    define PNG_LITERAL_LEFT_SQUARE_BRACKET 0x5b
+ #  endif

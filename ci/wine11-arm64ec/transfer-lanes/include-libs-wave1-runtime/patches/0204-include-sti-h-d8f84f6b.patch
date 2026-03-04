@@ -1,0 +1,21 @@
+diff --git a/include/sti.h b/include/sti.h
+index 015a44062e338cf6b94b6167743b5b0f61d45dd8..cda2c1c7fe1a3187ec144a006a4cb57478b972e1 100644
+--- a/include/sti.h
++++ b/include/sti.h
+@@ -23,7 +23,7 @@
+ /* #include <stireg.h> */
+ /* #include <stierr.h> */
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -176,6 +176,6 @@ DECLARE_INTERFACE_(IStillImageW, IUnknown)
+ };
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_STI_H */

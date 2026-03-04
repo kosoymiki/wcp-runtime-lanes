@@ -1,0 +1,20 @@
+diff --git a/include/windows.applicationmodel.background.idl b/include/windows.applicationmodel.background.idl
+index 59601ebc04320e79e8681fa9d9f2c41fc6218585..12780e5c9c6c42bb7fe89a7736b0e035818f8f5a 100644
+--- a/include/windows.applicationmodel.background.idl
++++ b/include/windows.applicationmodel.background.idl
+@@ -20,6 +20,7 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+@@ -28,6 +29,7 @@ import "windows.foundation.idl";
+ import "windows.applicationmodel.activation.idl";
+ import "windows.storage.idl";
+ import "windows.system.idl";
++#endif
+ 
+ namespace Windows.ApplicationModel.Activation {
+     runtimeclass BackgroundActivatedEventArgs;

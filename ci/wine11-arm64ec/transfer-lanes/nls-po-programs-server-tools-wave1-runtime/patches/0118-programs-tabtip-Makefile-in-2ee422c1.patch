@@ -1,0 +1,13 @@
+diff --git a/programs/tabtip/Makefile.in b/programs/tabtip/Makefile.in
+new file mode 100644
+index 0000000000000000000000000000000000000000..5070b74fc4cb817a15335a49c07dd030c08abcc4
+--- /dev/null
++++ b/programs/tabtip/Makefile.in
+@@ -0,0 +1,7 @@
++MODULE    = tabtip.exe
++IMPORTS   = ole32 user32 uiautomationcore shell32 oleaut32
++
++EXTRADLLFLAGS = -mconsole -municode
++
++SOURCES = \
++	tabtip.c

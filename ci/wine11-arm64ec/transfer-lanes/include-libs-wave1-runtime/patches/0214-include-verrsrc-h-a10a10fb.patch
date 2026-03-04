@@ -1,0 +1,13 @@
+diff --git a/include/verrsrc.h b/include/verrsrc.h
+index 0b9897a5ed1556f998355a9407ffb71fcba0348d..e13165a7d2e1400e92734408b2bdffb56ff9b673 100644
+--- a/include/verrsrc.h
++++ b/include/verrsrc.h
+@@ -22,7 +22,7 @@
+ 
+ /* Macro to deal with LP64 <=> LLP64 differences in numeric constants with 'l' modifier */
+ #ifndef __MSABI_LONG
+-#if !defined(__LP64__) && !defined(WINE_NO_LONG_TYPES) && !defined(WINE_UNIX_LIB)
++#if !defined(__LP64__) && !defined(WINE_NO_LONG_TYPES)
+ #  define __MSABI_LONG(x)         x ## l
+ # else
+ #  define __MSABI_LONG(x)         x

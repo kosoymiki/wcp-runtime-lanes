@@ -1,0 +1,13 @@
+diff --git a/programs/reg/reg.rc b/programs/reg/reg.rc
+index c0391906f2033799f727f95e2993fea5001e94e6..45acb993addc79f9bf481aba043b2cb5e22dd508 100644
+--- a/programs/reg/reg.rc
++++ b/programs/reg/reg.rc
+@@ -127,7 +127,7 @@ STRINGTABLE
+     STRING_ALL, "#msgctxt#All key#A"
+     STRING_YESNO, " (Yes|No)"
+     STRING_YESNOALL, " (Yes|No|All)"
+-    STRING_CANCELLED, "reg: The registry operation was canceled\n"
++    STRING_CANCELLED, "reg: The registry operation was cancelled\n"
+     STRING_DEFAULT_VALUE, "(Default)"
+     STRING_DELETE_VALUE, "Are you sure you want to delete the registry value '%1'?"
+     STRING_DELETE_VALUEALL, "Are you sure you want to delete all registry values in '%1'?"

@@ -1,0 +1,23 @@
+diff --git a/libs/xml2/libxml.h b/libs/xml2/libxml.h
+index bc0149c41a5d78a22483902faf9565a3d6e99f01..eb84ebbfe061be43e4fd88aa8153919358c9ee26 100644
+--- a/libs/xml2/libxml.h
++++ b/libs/xml2/libxml.h
+@@ -60,15 +60,9 @@
+ #endif
+ 
+ #ifdef __clang__
+-  #if (!defined(__apple_build_version__) && __clang_major__ >= 12) || \
+-      (defined(__apple_build_version__) && __clang_major__ >= 13)
+-    #define ATTRIBUTE_NO_SANITIZE_INTEGER \
+-      ATTRIBUTE_NO_SANITIZE("unsigned-integer-overflow") \
+-      ATTRIBUTE_NO_SANITIZE("unsigned-shift-base")
+-  #else
+-    #define ATTRIBUTE_NO_SANITIZE_INTEGER \
+-      ATTRIBUTE_NO_SANITIZE("unsigned-integer-overflow")
+-  #endif
++  #define ATTRIBUTE_NO_SANITIZE_INTEGER \
++    ATTRIBUTE_NO_SANITIZE("unsigned-integer-overflow") \
++    ATTRIBUTE_NO_SANITIZE("unsigned-shift-base")
+ #else
+   #define ATTRIBUTE_NO_SANITIZE_INTEGER
+ #endif

@@ -1,0 +1,18 @@
+diff --git a/include/msvcrt/ctype.h b/include/msvcrt/ctype.h
+index 5cfe312ea6d417916f30044a06782bbe370d54e8..88e79411f6460cbf0e43b9ab72a9abd2534e8c6a 100644
+--- a/include/msvcrt/ctype.h
++++ b/include/msvcrt/ctype.h
+@@ -50,13 +50,6 @@ _ACRTIMP int __cdecl isxdigit(int);
+ _ACRTIMP int __cdecl tolower(int);
+ _ACRTIMP int __cdecl toupper(int);
+ 
+-#ifndef MB_CUR_MAX
+-_ACRTIMP int             __cdecl ___mb_cur_max_func(void);
+-_ACRTIMP int             __cdecl ___mb_cur_max_l_func(_locale_t);
+-#define __mb_cur_max             ___mb_cur_max_func()
+-#define MB_CUR_MAX               ___mb_cur_max_func()
+-#endif /* MB_CUR_MAX */
+-
+ #ifdef __cplusplus
+ }
+ #endif

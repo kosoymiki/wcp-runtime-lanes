@@ -1,0 +1,12 @@
+diff --git a/dlls/jscript/jsutils.c b/dlls/jscript/jsutils.c
+--- a/dlls/jscript/jsutils.c
++++ b/dlls/jscript/jsutils.c
+@@ -676,7 +676,7 @@
+     return S_OK;
+ }
+ 
+-INT32 double_to_int32(double number)
++static INT32 double_to_int32(double number)
+ {
+     INT32 exp, result;
+     union {

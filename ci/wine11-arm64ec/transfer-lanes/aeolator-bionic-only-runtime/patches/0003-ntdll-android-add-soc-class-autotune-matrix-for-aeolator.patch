@@ -1,0 +1,227 @@
+From eec23bf714ec4a1ba9655c56a8b803b3470baf35 Mon Sep 17 00:00:00 2001
+From: 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 <kizya200272@gmail.com>
+Date: Wed, 4 Mar 2026 12:01:45 +0300
+Subject: [PATCH] ntdll/android: add SoC-class arm64 autotune profile matrix
+
+---
+ dlls/ntdll/unix/loader.c | 178 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 172 insertions(+), 6 deletions(-)
+
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+index f057ac131c..c913bdd966 100644
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -79,6 +79,7 @@
+ #endif
+ #ifdef __ANDROID__
+ # include <jni.h>
++# include <sys/system_properties.h>
+ #endif
+ 
+ #include "ntstatus.h"
+@@ -2547,21 +2548,149 @@ static void aeolator_set_default_env( const char *name, const char *value )
+     if (!current || !*current) setenv( name, value, 1 );
+ }
+ 
++static char aeolator_ascii_tolower( char ch )
++{
++    if (ch >= 'A' && ch <= 'Z') return ch - 'A' + 'a';
++    return ch;
++}
++
++static int aeolator_is_valid_tune_profile( const char *profile )
++{
++    return !strcmp( profile, "conservative" ) ||
++           !strcmp( profile, "balanced" ) ||
++           !strcmp( profile, "aggressive" );
++}
++
++static int aeolator_contains_any_token( const char *text, const char *const *tokens, size_t token_count )
++{
++    size_t i;
++
++    if (!text || !*text) return 0;
++    for (i = 0; i < token_count; i++)
++    {
++        if (tokens[i] && *tokens[i] && strstr( text, tokens[i] )) return 1;
++    }
++    return 0;
++}
++
++static void aeolator_get_android_property( const char *key, char *out, size_t out_len )
++{
++    char value[PROP_VALUE_MAX];
++    int len;
++
++    if (!out || !out_len) return;
++    out[0] = 0;
++
++    len = __system_property_get( key, value );
++    if (len <= 0) return;
++    if ((size_t)len >= out_len) len = out_len - 1;
++    memcpy( out, value, len );
++    out[len] = 0;
++}
++
++static void aeolator_append_lower( char *dst, size_t dst_len, const char *value )
++{
++    size_t cur, i;
++
++    if (!dst || dst_len < 2 || !value || !*value) return;
++    cur = strlen( dst );
++    if (cur + 1 >= dst_len) return;
++
++    if (cur) dst[cur++] = ' ';
++    for (i = 0; value[i] && cur + 1 < dst_len; i++) dst[cur++] = aeolator_ascii_tolower( value[i] );
++    dst[cur] = 0;
++}
++
++static void aeolator_detect_soc_class( long cpu_count, char *out, size_t out_len )
++{
++    static const char *const high_tokens[] =
++    {
++        "sm8750", "sm8650", "sm8635", "sm8550", "sm8475",
++        "dimensity 9400", "dimensity 9300", "dimensity 9200",
++        "exynos 2400", "exynos 2300",
++        "tensor g4", "tensor g3",
++        "adreno 830", "adreno 760", "adreno 750"
++    };
++    static const char *const mid_tokens[] =
++    {
++        "sm8450", "sm8350", "sm8250", "sm7325", "sm730",
++        "sm778", "sm7150", "sm7125",
++        "dimensity 9000", "dimensity 8300", "dimensity 8200",
++        "exynos 2200", "exynos 2100",
++        "tensor g2", "adreno 740", "adreno 730", "adreno 725"
++    };
++    char platform[PROP_VALUE_MAX];
++    char soc_model[PROP_VALUE_MAX];
++    char soc_vendor[PROP_VALUE_MAX];
++    char hardware[PROP_VALUE_MAX];
++    char product_board[PROP_VALUE_MAX];
++    char info[1024] = "";
++    const char *soc_class = "entry";
++
++    if (!out || !out_len) return;
++
++    aeolator_get_android_property( "ro.board.platform", platform, sizeof(platform) );
++    aeolator_get_android_property( "ro.soc.model", soc_model, sizeof(soc_model) );
++    aeolator_get_android_property( "ro.soc.manufacturer", soc_vendor, sizeof(soc_vendor) );
++    aeolator_get_android_property( "ro.hardware", hardware, sizeof(hardware) );
++    aeolator_get_android_property( "ro.product.board", product_board, sizeof(product_board) );
++
++    aeolator_append_lower( info, sizeof(info), platform );
++    aeolator_append_lower( info, sizeof(info), soc_model );
++    aeolator_append_lower( info, sizeof(info), soc_vendor );
++    aeolator_append_lower( info, sizeof(info), hardware );
++    aeolator_append_lower( info, sizeof(info), product_board );
++
++    if (aeolator_contains_any_token( info, high_tokens, ARRAY_SIZE(high_tokens) )) soc_class = "high-end";
++    else if (aeolator_contains_any_token( info, mid_tokens, ARRAY_SIZE(mid_tokens) )) soc_class = "mid-range";
++    else if (cpu_count >= 10) soc_class = "high-end";
++    else if (cpu_count >= 8) soc_class = "mid-range";
++
++    snprintf( out, out_len, "%s", soc_class );
++}
++
++static const char *aeolator_profile_for_soc_class( const char *soc_class )
++{
++    if (!soc_class || !*soc_class) return "balanced";
++    if (!strcmp( soc_class, "high-end" )) return "aggressive";
++    if (!strcmp( soc_class, "mid-range" )) return "balanced";
++    return "conservative";
++}
++
+ static void aeolator_apply_arm64_android_tuning(void)
+ {
+     const char *flag = getenv( "AEO_ARM64_AUTOTUNE" );
+-    const char *profile = getenv( "AEO_ARM64_TUNE_PROFILE" );
++    const char *requested_profile = getenv( "AEO_ARM64_TUNE_PROFILE" );
++    const char *effective_profile;
++    const char *wineesync, *winefsync, *present_mode, *shader_cache;
+     long cpu_count = sysconf( _SC_NPROCESSORS_ONLN );
+     char cpu_buf[32];
++    char soc_class[32];
+ 
+     if (aeolator_is_falsey( flag )) return;
+     if (flag && !aeolator_is_truthy( flag ))
+         WARN( "AEO arm64 autotune: unknown AEO_ARM64_AUTOTUNE value '%s', enabling by default\n", flag );
+ 
+-    if (!profile || !*profile) profile = "balanced";
++    if (!requested_profile || !*requested_profile) requested_profile = "auto";
++    aeolator_detect_soc_class( cpu_count, soc_class, sizeof(soc_class) );
++
++    if (!strcmp( requested_profile, "auto" )) effective_profile = aeolator_profile_for_soc_class( soc_class );
++    else if (aeolator_is_valid_tune_profile( requested_profile )) effective_profile = requested_profile;
++    else
++    {
++        effective_profile = aeolator_profile_for_soc_class( soc_class );
++        WARN( "AEO arm64 autotune: unsupported profile '%s', using '%s'\n", requested_profile, effective_profile );
++    }
+ 
+     setenv( "AEO_ARM64_AUTOTUNE_ACTIVE", "1", 1 );
+-    setenv( "AEO_ARM64_TUNE_PROFILE_EFFECTIVE", profile, 1 );
++    setenv( "AEO_ARM64_SOC_CLASS_DETECTED", soc_class, 1 );
++    setenv( "AEO_ARM64_TUNE_PROFILE_REQUESTED", requested_profile, 1 );
++    setenv( "AEO_ARM64_TUNE_PROFILE_EFFECTIVE", effective_profile, 1 );
++    setenv( "AEO_ARM64_TUNE_MATRIX_VERSION", "android-arm64-v1", 1 );
++    setenv( "AEO_ARM64_TUNE_SOC_MAP", "entry:conservative,mid-range:balanced,high-end:aggressive", 1 );
++    setenv( "AEO_ARM64_TUNE_ENV_KEYS",
++            "WINEESYNC,WINEFSYNC,DXVK_LOG_LEVEL,VKD3D_DEBUG,MESA_VK_WSI_PRESENT_MODE,MESA_SHADER_CACHE_MAX_SIZE,MESA_DISK_CACHE_SINGLE_FILE",
++            1 );
+     setenv( "AEO_ARM64_TUNE_SOURCE", "ntdll-unix-loader-jni", 1 );
+ 
+     if (cpu_count > 0)
+@@ -2570,9 +2699,46 @@ static void aeolator_apply_arm64_android_tuning(void)
+         setenv( "AEO_ARM64_CPU_ONLINE", cpu_buf, 1 );
+     }
+ 
+-    /* Enable Wine async/fsync paths by default on Android arm64 unless caller pinned values. */
+-    aeolator_set_default_env( "WINEESYNC", "1" );
+-    aeolator_set_default_env( "WINEFSYNC", "1" );
++    aeolator_set_default_env( "DXVK_LOG_LEVEL", "none" );
++    aeolator_set_default_env( "VKD3D_DEBUG", "none" );
++    aeolator_set_default_env( "MESA_DISK_CACHE_SINGLE_FILE", "1" );
++    aeolator_set_default_env( "MESA_SHADER_CACHE_DISABLE", "0" );
++
++    if (!strcmp( effective_profile, "conservative" ))
++    {
++        aeolator_set_default_env( "WINEESYNC", "1" );
++        aeolator_set_default_env( "WINEFSYNC", "0" );
++        aeolator_set_default_env( "MESA_VK_WSI_PRESENT_MODE", "fifo" );
++        aeolator_set_default_env( "MESA_SHADER_CACHE_MAX_SIZE", "192M" );
++    }
++    else if (!strcmp( effective_profile, "balanced" ))
++    {
++        aeolator_set_default_env( "WINEESYNC", "1" );
++        aeolator_set_default_env( "WINEFSYNC", "1" );
++        aeolator_set_default_env( "MESA_VK_WSI_PRESENT_MODE", "mailbox" );
++        aeolator_set_default_env( "MESA_SHADER_CACHE_MAX_SIZE", "384M" );
++    }
++    else
++    {
++        aeolator_set_default_env( "WINEESYNC", "1" );
++        aeolator_set_default_env( "WINEFSYNC", "1" );
++        aeolator_set_default_env( "MESA_VK_WSI_PRESENT_MODE", "immediate" );
++        aeolator_set_default_env( "MESA_SHADER_CACHE_MAX_SIZE", "768M" );
++    }
++
++    wineesync = getenv( "WINEESYNC" );
++    winefsync = getenv( "WINEFSYNC" );
++    present_mode = getenv( "MESA_VK_WSI_PRESENT_MODE" );
++    shader_cache = getenv( "MESA_SHADER_CACHE_MAX_SIZE" );
++
++    WARN( "AEO arm64 autotune: soc=%s profile=%s cpu=%s WINEESYNC=%s WINEFSYNC=%s WSI=%s SHADER_CACHE=%s\n",
++          soc_class,
++          effective_profile,
++          cpu_count > 0 ? cpu_buf : "unknown",
++          wineesync ? wineesync : "",
++          winefsync ? winefsync : "",
++          present_mode ? present_mode : "",
++          shader_cache ? shader_cache : "" );
+ }
+ 
+ /* main Wine initialisation */
+-- 
+2.43.0
+

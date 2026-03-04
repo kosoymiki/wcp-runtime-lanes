@@ -1,0 +1,16 @@
+diff --git a/include/windows.security.exchangeactivesyncprovisioning.idl b/include/windows.security.exchangeactivesyncprovisioning.idl
+index f68506dfd2f481b360d2cd376346f4ce7838dbfa..afdb427c2071de28e0ed9fb35aa5cb81ab215747 100644
+--- a/include/windows.security.exchangeactivesyncprovisioning.idl
++++ b/include/windows.security.exchangeactivesyncprovisioning.idl
+@@ -20,9 +20,11 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "eventtoken.idl";
+ import "windows.foundation.idl";
++#endif
+ 
+ namespace Windows.Security.ExchangeActiveSyncProvisioning {
+     interface IEasClientDeviceInformation;

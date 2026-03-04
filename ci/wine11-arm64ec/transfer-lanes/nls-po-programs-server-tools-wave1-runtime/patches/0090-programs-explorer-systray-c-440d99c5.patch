@@ -1,0 +1,13 @@
+diff --git a/programs/explorer/systray.c b/programs/explorer/systray.c
+index fcbceb6fda4de87d6debb13fdafef7becd4f023b..02fe50787063e5fa14bf563413cbddf618e5e402 100644
+--- a/programs/explorer/systray.c
++++ b/programs/explorer/systray.c
+@@ -1253,7 +1253,7 @@ void initialize_systray( BOOL arg_using_root, BOOL arg_enable_shell, BOOL arg_sh
+     else
+     {
+         SIZE size = get_window_size();
+-        tray_window = CreateWindowExW( 0, shell_traywnd_class.lpszClassName, L"", WS_CAPTION | WS_SYSMENU,
++        tray_window = CreateWindowExW( WS_EX_NOACTIVATE, shell_traywnd_class.lpszClassName, L"", WS_CAPTION | WS_SYSMENU,
+                                        CW_USEDEFAULT, CW_USEDEFAULT, size.cx, size.cy, 0, 0, 0, 0 );
+         NtUserMessageCall( tray_window, WINE_SYSTRAY_DOCK_INIT, 0, 0, NULL, NtUserSystemTrayCall, FALSE );
+     }

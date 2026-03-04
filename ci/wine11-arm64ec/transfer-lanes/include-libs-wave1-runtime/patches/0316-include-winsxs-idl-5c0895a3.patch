@@ -1,0 +1,9 @@
+diff --git a/include/winsxs.idl b/include/winsxs.idl
+index 44acdc9e1e4fdf421c68add249de6a8055bc5354..775c69a844160346e83630fa938b3ed019582982 100644
+--- a/include/winsxs.idl
++++ b/include/winsxs.idl
+@@ -196,4 +196,3 @@ typedef [public] enum
+ 
+ cpp_quote("HRESULT WINAPI CreateAssemblyCache(IAssemblyCache**,DWORD);")
+ cpp_quote("HRESULT WINAPI CreateAssemblyNameObject(LPASSEMBLYNAME *,LPCWSTR,DWORD,LPVOID);")
+-cpp_quote("BOOL WINAPI SxspGenerateManifestPathOnAssemblyIdentity( const WCHAR *name, WCHAR *buffer, DWORD *size, void *unknown );")

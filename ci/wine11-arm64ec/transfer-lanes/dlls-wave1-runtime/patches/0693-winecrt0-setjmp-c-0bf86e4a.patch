@@ -1,0 +1,15 @@
+diff --git a/dlls/winecrt0/setjmp.c b/dlls/winecrt0/setjmp.c
+--- a/dlls/winecrt0/setjmp.c
++++ b/dlls/winecrt0/setjmp.c
+@@ -19,11 +19,6 @@
+  */
+ 
+ #include <stdarg.h>
+-#include "excpt.h"
+-#undef USE_COMPILER_EXCEPTIONS
+-#undef GetExceptionInformation
+-#undef GetExceptionCode
+-#undef AbnormalTermination
+ #include "winternl.h"
+ #include "wine/exception.h"
+ #include "wine/asm.h"

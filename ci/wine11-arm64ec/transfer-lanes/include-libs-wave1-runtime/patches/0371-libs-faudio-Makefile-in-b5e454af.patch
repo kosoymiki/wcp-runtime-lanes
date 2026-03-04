@@ -1,0 +1,10 @@
+diff --git a/libs/faudio/Makefile.in b/libs/faudio/Makefile.in
+index 50568719de49a8be023f0b35fd3fbf2bfe5e0645..7be4fe259a40cabdcbd75a5a32207a3c3ac56492 100644
+--- a/libs/faudio/Makefile.in
++++ b/libs/faudio/Makefile.in
+@@ -20,5 +20,4 @@ SOURCES = \
+ 	src/FAudio_internal_simd.c \
+ 	src/FAudio_operationset.c \
+ 	src/FAudio_platform_win32.c \
+-	src/FAudio_platform_win32_wmadec.c \
+ 	src/matrix_defaults.inl

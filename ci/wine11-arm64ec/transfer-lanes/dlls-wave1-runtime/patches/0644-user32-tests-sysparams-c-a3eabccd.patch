@@ -1,0 +1,14 @@
+diff --git a/dlls/user32/tests/sysparams.c b/dlls/user32/tests/sysparams.c
+--- a/dlls/user32/tests/sysparams.c
++++ b/dlls/user32/tests/sysparams.c
+@@ -187,7 +187,9 @@
+     ok_(file, line)( ret, "CreateProcessA failed, error %lu\n", GetLastError() );
+     if (!ret) return;
+ 
+-    wait_child_process( &info );
++    wait_child_process( info.hProcess );
++    CloseHandle( info.hThread );
++    CloseHandle( info.hProcess );
+ }
+ 
+ static BOOL get_reg_dword(HKEY base, const char *key_name, const char *value_name, DWORD *value)

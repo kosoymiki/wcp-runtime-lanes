@@ -1,0 +1,10 @@
+diff --git a/dlls/msv1_0/unixlib.h b/dlls/msv1_0/unixlib.h
+--- a/dlls/msv1_0/unixlib.h
++++ b/dlls/msv1_0/unixlib.h
+@@ -111,5 +111,6 @@
+     unix_chat,
+     unix_cleanup,
+     unix_fork,
++    unix_check_version,
+     unix_funcs_count,
+ };

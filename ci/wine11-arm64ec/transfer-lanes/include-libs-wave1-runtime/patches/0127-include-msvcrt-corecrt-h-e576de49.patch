@@ -1,0 +1,29 @@
+diff --git a/include/msvcrt/corecrt.h b/include/msvcrt/corecrt.h
+index b5bf31b728db7c8d0c7b64a7071a4827fa6118ab..8f6ed6ae6c67c0978909e0fed834343e4b5cc70b 100644
+--- a/include/msvcrt/corecrt.h
++++ b/include/msvcrt/corecrt.h
+@@ -205,8 +205,6 @@ typedef unsigned int size_t;
+ #define _SIZE_T_DEFINED
+ #endif
+ 
+-typedef size_t rsize_t;
+-
+ #ifndef _TIME32_T_DEFINED
+ typedef __msvcrt_long __time32_t;
+ #define _TIME32_T_DEFINED
+@@ -252,15 +250,6 @@ typedef int errno_t;
+ #define _ERRNO_T_DEFINED
+ #endif
+ 
+-#ifndef _CONST_RETURN
+-# ifdef __cplusplus
+-#  define _CONST_RETURN const
+-#  define _CRT_CONST_CORRECT_OVERLOADS
+-# else
+-#  define _CONST_RETURN
+-# endif
+-#endif
+-
+ struct threadlocaleinfostruct;
+ struct threadmbcinfostruct;
+ typedef struct threadlocaleinfostruct *pthreadlocinfo;

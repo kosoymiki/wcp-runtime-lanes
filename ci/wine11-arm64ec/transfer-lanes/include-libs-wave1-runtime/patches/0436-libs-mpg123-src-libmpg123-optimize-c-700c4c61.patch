@@ -1,0 +1,13 @@
+diff --git a/libs/mpg123/src/libmpg123/optimize.c b/libs/mpg123/src/libmpg123/optimize.c
+index 65c5a7764666614bfab9fa0df4ecb570d0b7a7ab..00e43c164d31ff43e63b4db63ef9fc687a29667c 100644
+--- a/libs/mpg123/src/libmpg123/optimize.c
++++ b/libs/mpg123/src/libmpg123/optimize.c
+@@ -1027,7 +1027,7 @@ static const char *mpg123_decoder_list[] =
+ 	NULL
+ };
+ 
+-static void check_decoders(void)
++void check_decoders(void)
+ {
+ #ifndef OPT_MULTI
+ 	/* In non-multi mode, only the full list (one entry) is used. */

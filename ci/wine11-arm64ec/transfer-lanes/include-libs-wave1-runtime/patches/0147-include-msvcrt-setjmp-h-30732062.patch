@@ -1,0 +1,21 @@
+diff --git a/include/msvcrt/setjmp.h b/include/msvcrt/setjmp.h
+index 538896ff1cd3df71751fce621043c4d3416d39da..0978e39c18a0f7bc81007dbef056eb9e650e57b4 100644
+--- a/include/msvcrt/setjmp.h
++++ b/include/msvcrt/setjmp.h
+@@ -22,7 +22,7 @@
+ 
+ #include <corecrt.h>
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ #ifdef __i386__
+ 
+@@ -180,6 +180,6 @@ _ACRTIMP int __cdecl __attribute__((__nothrow__,__returns_twice__)) _setjmpex(jm
+ }
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_SETJMP_H */

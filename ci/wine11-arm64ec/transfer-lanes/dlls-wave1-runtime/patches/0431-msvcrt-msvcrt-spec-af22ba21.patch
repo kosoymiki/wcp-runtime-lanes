@@ -1,0 +1,12 @@
+diff --git a/dlls/msvcrt/msvcrt.spec b/dlls/msvcrt/msvcrt.spec
+--- a/dlls/msvcrt/msvcrt.spec
++++ b/dlls/msvcrt/msvcrt.spec
+@@ -174,7 +174,7 @@
+ @ extern _HUGE MSVCRT__HUGE
+ @ cdecl _Strftime(ptr long str ptr ptr)
+ @ cdecl _XcptFilter(long ptr)
+-@ stdcall -arch=!i386 __C_specific_handler(ptr long ptr ptr)
++@ stdcall -arch=!i386 __C_specific_handler(ptr long ptr ptr) ntdll.__C_specific_handler
+ @ cdecl __CppXcptFilter(long ptr)
+ # stub __CxxCallUnwindDelDtor
+ # stub __CxxCallUnwindDtor

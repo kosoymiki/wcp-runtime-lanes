@@ -1,0 +1,30 @@
+diff --git a/dlls/msxml3/docfrag.c b/dlls/msxml3/docfrag.c
+--- a/dlls/msxml3/docfrag.c
++++ b/dlls/msxml3/docfrag.c
+@@ -157,9 +157,12 @@
+ {
+     domfrag *This = impl_from_IXMLDOMDocumentFragment( iface );
+ 
++    static const WCHAR document_fragmentW[] =
++        {'#','d','o','c','u','m','e','n','t','-','f','r','a','g','m','e','n','t',0};
++
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"#document-fragment", p);
++    return return_bstr(document_fragmentW, p);
+ }
+ 
+ static HRESULT WINAPI domfrag_get_nodeValue(
+@@ -346,10 +349,11 @@
+     BSTR* p)
+ {
+     domfrag *This = impl_from_IXMLDOMDocumentFragment( iface );
++    static const WCHAR documentfragmentW[] = {'d','o','c','u','m','e','n','t','f','r','a','g','m','e','n','t',0};
+ 
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"documentfragment", p);
++    return return_bstr(documentfragmentW, p);
+ }
+ 
+ static HRESULT WINAPI domfrag_get_text(

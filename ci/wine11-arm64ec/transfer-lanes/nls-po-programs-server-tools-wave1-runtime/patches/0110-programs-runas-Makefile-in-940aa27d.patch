@@ -1,0 +1,13 @@
+diff --git a/programs/runas/Makefile.in b/programs/runas/Makefile.in
+deleted file mode 100644
+index 4363f124198b17530152577821c62842f42ec8f6..0000000000000000000000000000000000000000
+--- a/programs/runas/Makefile.in
++++ /dev/null
+@@ -1,7 +0,0 @@
+-MODULE    = runas.exe
+-IMPORTS   = kernel32 advapi32
+-
+-EXTRADLLFLAGS = -mconsole -municode
+-
+-SOURCES = \
+-	runas.c

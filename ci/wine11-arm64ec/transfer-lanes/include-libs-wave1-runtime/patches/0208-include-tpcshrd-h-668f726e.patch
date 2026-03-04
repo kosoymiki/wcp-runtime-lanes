@@ -1,0 +1,13 @@
+diff --git a/include/tpcshrd.h b/include/tpcshrd.h
+index 8fe9d3fb8ac8562bf1e325c21200564b076f2734..e1565bd5b6408b20034abb4c5d797109bcd8c39d 100644
+--- a/include/tpcshrd.h
++++ b/include/tpcshrd.h
+@@ -18,8 +18,6 @@
+ #ifndef __WISPSHRD_H
+ #define __WISPSHRD_H
+ 
+-#define TABLET_DISABLE_PRESSANDHOLD        0x00000001
+-
+ #define WM_TABLET_DEFBASE                  0x02c0
+ #define WM_TABLET_MAXOFFSET                0x20
+ #define WM_TABLET_ADDED                    (WM_TABLET_DEFBASE + 8)

@@ -1,0 +1,20 @@
+diff --git a/dlls/winedmo/Makefile.in b/dlls/winedmo/Makefile.in
+--- a/dlls/winedmo/Makefile.in
++++ b/dlls/winedmo/Makefile.in
+@@ -4,9 +4,16 @@
+ IMPORTS   = mfuuid
+ UNIX_CFLAGS  = $(FFMPEG_CFLAGS)
+ UNIX_LIBS    = $(FFMPEG_LIBS) $(PTHREAD_LIBS)
++PARENTSRC = ../winegstreamer
++EXTRADEFS = -D_WINEDMO
+ 
+ SOURCES = \
+ 	main.c \
++	media-converter/fossilize.c \
++	media-converter/murmur3.c \
++	media-converter/lib.c \
++	libavcodec/pcm_byte_order_reverse_bsf.c \
+ 	unix_demuxer.c \
++	unix_demuxer_mediaconv.c \
+ 	unix_media_type.c \
+ 	unixlib.c

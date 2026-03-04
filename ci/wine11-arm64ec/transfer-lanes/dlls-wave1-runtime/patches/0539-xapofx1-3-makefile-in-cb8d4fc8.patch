@@ -1,0 +1,12 @@
+diff --git a/dlls/xapofx1_3/Makefile.in b/dlls/xapofx1_3/Makefile.in
+--- a/dlls/xapofx1_3/Makefile.in
++++ b/dlls/xapofx1_3/Makefile.in
+@@ -3,6 +3,8 @@
+ IMPORTS   = $(FAUDIO_PE_LIBS) ole32
+ EXTRAINCL = $(FAUDIO_PE_CFLAGS)
+ PARENTSRC = ../xaudio2_7
++
++EXTRADLLFLAGS = -Wb,--prefer-native
+ 
+ SOURCES = \
+ 	version.rc \

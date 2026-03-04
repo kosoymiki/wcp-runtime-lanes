@@ -1,0 +1,14 @@
+diff --git a/programs/conhost/conhost.rc b/programs/conhost/conhost.rc
+index 2afb27da295929cebfe3a274a21f100b5545fe21..14bb10b83c483c35851bde187202cf4b55953ed8 100644
+--- a/programs/conhost/conhost.rc
++++ b/programs/conhost/conhost.rc
+@@ -119,6 +119,9 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+ #define WINE_FILEDESCRIPTION_STR "Wine conhost"
+ #define WINE_FILENAME_STR "conhost.exe"
+ #define WINE_FILEVERSION 6,1,7601,22045
++#define WINE_FILEVERSION_STR "6.1.7601.22045"
++#define WINE_PRODUCTVERSION 6,1,7601,22045
++#define WINE_PRODUCTVERSION_STR "6.1.7601.22045"
+ 
+ #include "wine/wine_common_ver.rc"
+ 

@@ -1,0 +1,12 @@
+diff --git a/include/adshlp.h b/include/adshlp.h
+index 4e85c0efb5c4d9bdef41a7dd80f591ee5baef0ce..7366c07778897a74efba7b67f7a0832810ccf0cd 100644
+--- a/include/adshlp.h
++++ b/include/adshlp.h
+@@ -31,7 +31,6 @@ WCHAR*  WINAPI AllocADsStr(WCHAR*) __WINE_DEALLOC(FreeADsStr) __WINE_MALLOC;
+ 
+ HRESULT WINAPI ADsBuildEnumerator(IADsContainer*,IEnumVARIANT**);
+ HRESULT WINAPI ADsBuildVarArrayStr(LPWSTR*,DWORD,VARIANT*);
+-HRESULT WINAPI ADsBuildVarArrayInt(LPDWORD,DWORD,VARIANT*);
+ HRESULT WINAPI ADsEnumerateNext(IEnumVARIANT*,ULONG,VARIANT*,ULONG*);
+ HRESULT WINAPI ADsGetObject(LPCWSTR,REFIID,VOID**);
+ HRESULT WINAPI ADsOpenObject(LPCWSTR,LPCWSTR,LPCWSTR,DWORD,REFIID,VOID**);

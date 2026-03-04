@@ -1,0 +1,22 @@
+diff --git a/dlls/dxgi/device.c b/dlls/dxgi/device.c
+--- a/dlls/dxgi/device.c
++++ b/dlls/dxgi/device.c
+@@ -347,8 +347,7 @@
+         return E_OUTOFMEMORY;
+     }
+ 
+-    if (FAILED(hr = dxgi_resource_init(object, (IDXGIDevice *)iface, outer, needs_surface,
+-            wined3d_resource, NULL, 0)))
++    if (FAILED(hr = dxgi_resource_init(object, (IDXGIDevice *)iface, outer, needs_surface, wined3d_resource)))
+     {
+         WARN("Failed to initialize resource, hr %#lx.\n", hr);
+         free(object);
+@@ -356,7 +355,7 @@
+     }
+ 
+     TRACE("Created resource %p.\n", object);
+-    *resource = outer ? &object->IUnknown_iface : (IUnknown *)&object->IDXGIResource1_iface;
++    *resource = outer ? &object->IUnknown_iface : (IUnknown *)&object->IDXGIResource_iface;
+ 
+     return S_OK;
+ }

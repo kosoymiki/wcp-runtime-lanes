@@ -1,0 +1,12 @@
+diff --git a/dlls/mountmgr.sys/dbus.c b/dlls/mountmgr.sys/dbus.c
+--- a/dlls/mountmgr.sys/dbus.c
++++ b/dlls/mountmgr.sys/dbus.c
+@@ -824,7 +824,7 @@
+         break;
+     }
+     default:
+-        FIXME( "option %u not supported\n", params->req->id );
++        FIXME( "option %u not supported\n", (unsigned int)params->req->id );
+         break;
+     }
+ 

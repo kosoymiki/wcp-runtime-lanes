@@ -1,0 +1,12 @@
+diff --git a/include/msvcrt/inttypes.h b/include/msvcrt/inttypes.h
+index 64a98e9f04109124142fa906779fd4c9b7e43fa2..a0a569d8adc744e880a5fb253197c8679a4e37e3 100644
+--- a/include/msvcrt/inttypes.h
++++ b/include/msvcrt/inttypes.h
+@@ -233,7 +233,6 @@ typedef struct {
+ #define SCNuPTR "u"
+ #endif
+ 
+-_ACRTIMP imaxdiv_t          __cdecl imaxdiv(intmax_t, intmax_t);
+ _ACRTIMP __int64            __cdecl strtoimax(const char*,char**,int);
+ _ACRTIMP __int64            __cdecl strtoimax_l(const char*,char**,int,_locale_t);
+ _ACRTIMP unsigned __int64   __cdecl strtoumax(const char*,char**,int);

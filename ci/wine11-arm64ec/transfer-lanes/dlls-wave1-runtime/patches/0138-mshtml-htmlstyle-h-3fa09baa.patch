@@ -1,0 +1,11 @@
+diff --git a/dlls/mshtml/htmlstyle.h b/dlls/mshtml/htmlstyle.h
+--- a/dlls/mshtml/htmlstyle.h
++++ b/dlls/mshtml/htmlstyle.h
+@@ -91,7 +91,6 @@
+     STYLEID_COLUMN_RULE_WIDTH,
+     STYLEID_COLUMN_SPAN,
+     STYLEID_COLUMN_WIDTH,
+-    STYLEID_CONTENT,
+     STYLEID_CURSOR,
+     STYLEID_DIRECTION,
+     STYLEID_DISPLAY,

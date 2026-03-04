@@ -1,0 +1,49 @@
+diff --git a/dlls/user32/button.c b/dlls/user32/button.c
+--- a/dlls/user32/button.c
++++ b/dlls/user32/button.c
+@@ -195,7 +195,11 @@
+             return -1; /* abort */
+ 
+         /* XP turns a BS_USERBUTTON into BS_PUSHBUTTON */
+-        if (btn_type == BS_USERBUTTON ) NtUserAlterWindowStyle( hWnd, BS_TYPEMASK, BS_PUSHBUTTON );
++        if (btn_type == BS_USERBUTTON )
++        {
++            style = (style & ~BS_TYPEMASK) | BS_PUSHBUTTON;
++            WIN_SetStyle( hWnd, style, BS_TYPEMASK & ~style );
++        }
+         set_button_state( hWnd, BST_UNCHECKED );
+         return 0;
+ 
+@@ -370,6 +374,11 @@
+     case WM_GETFONT:
+         return (LRESULT)get_button_font( hWnd );
+ 
++    case WM_GETOBJECT:
++      if ((LONG)lParam == OBJID_QUERYCLASSNAMEIDX)
++        return 0x10002;
++      break;
++
+     case WM_SETFOCUS:
+         TRACE("WM_SETFOCUS %p\n",hWnd);
+         set_button_state( hWnd, get_button_state(hWnd) | BST_FOCUS );
+@@ -404,7 +413,8 @@
+ 
+     case BM_SETSTYLE:
+         btn_type = wParam & BS_TYPEMASK;
+-        NtUserAlterWindowStyle( hWnd, BS_TYPEMASK, btn_type );
++        style = (style & ~BS_TYPEMASK) | btn_type;
++        WIN_SetStyle( hWnd, style, BS_TYPEMASK & ~style );
+ 
+         NtUserNotifyWinEvent( EVENT_OBJECT_STATECHANGE, hWnd, OBJID_CLIENT, 0 );
+ 
+@@ -447,8 +457,8 @@
+         state = get_button_state( hWnd );
+         if ((btn_type == BS_RADIOBUTTON) || (btn_type == BS_AUTORADIOBUTTON))
+         {
+-            if (wParam) NtUserAlterWindowStyle( hWnd, WS_TABSTOP, WS_TABSTOP );
+-            else NtUserAlterWindowStyle( hWnd, WS_TABSTOP, 0 );
++            if (wParam) WIN_SetStyle( hWnd, WS_TABSTOP, 0 );
++            else WIN_SetStyle( hWnd, 0, WS_TABSTOP );
+         }
+         if ((state & 3) != wParam)
+         {

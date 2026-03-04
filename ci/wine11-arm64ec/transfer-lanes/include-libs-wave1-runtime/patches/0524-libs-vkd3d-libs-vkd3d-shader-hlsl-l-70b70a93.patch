@@ -1,0 +1,29 @@
+diff --git a/libs/vkd3d/libs/vkd3d-shader/hlsl.l b/libs/vkd3d/libs/vkd3d-shader/hlsl.l
+index c41d807cca141846375590c14e71915ca4c24469..d9fd43b5e78054e6a1c1fafc2acf8d92f1a41252 100644
+--- a/libs/vkd3d/libs/vkd3d-shader/hlsl.l
++++ b/libs/vkd3d/libs/vkd3d-shader/hlsl.l
+@@ -83,6 +83,7 @@ ComputeShader           {return KW_COMPUTESHADER;       }
+ compile                 {return KW_COMPILE;             }
+ CompileShader           {return KW_COMPILESHADER;       }
+ const                   {return KW_CONST;               }
++ConstructGSWithSO       {return KW_CONSTRUCTGSWITHSO;   }
+ continue                {return KW_CONTINUE;            }
+ DepthStencilState       {return KW_DEPTHSTENCILSTATE;   }
+ DepthStencilView        {return KW_DEPTHSTENCILVIEW;    }
+@@ -157,7 +158,6 @@ static                  {return KW_STATIC;              }
+ string                  {return KW_STRING;              }
+ String                  {return KW_STRING;              }
+ struct                  {return KW_STRUCT;              }
+-StructuredBuffer        {return KW_STRUCTUREDBUFFER;    }
+ switch                  {return KW_SWITCH;              }
+ tbuffer                 {return KW_TBUFFER;             }
+ (?i:technique)          {return KW_TECHNIQUE;           }
+@@ -345,7 +345,7 @@ while                   {return KW_WHILE;               }
+ <pp>{ANY}               {}
+ 
+ {ANY}                   {
+-                            return (unsigned char)yytext[0];
++                            return yytext[0];
+                         }
+ 
+ %%

@@ -1,0 +1,21 @@
+diff --git a/dlls/cryptnet/cryptnet_main.c b/dlls/cryptnet/cryptnet_main.c
+--- a/dlls/cryptnet/cryptnet_main.c
++++ b/dlls/cryptnet/cryptnet_main.c
+@@ -1552,7 +1552,7 @@
+     if (FAILED(hr = SHGetKnownFolderPath(&FOLDERID_LocalAppDataLow, 0, NULL, &appdata_path)))
+     {
+         ERR("Failed to get LocalAppDataLow path, hr %#lx.\n", hr);
+-        return NULL;
++        return INVALID_HANDLE_VALUE;
+     }
+ 
+     len = swprintf(path, ARRAY_SIZE(path), L"%s\\Microsoft\\CryptnetUrlCache\\Content\\", appdata_path);
+@@ -1561,7 +1561,7 @@
+     if (len + CACHED_CERT_HASH_SIZE * 2 * sizeof(WCHAR) > ARRAY_SIZE(path) - 1)
+     {
+         WARN("Hash length exceeds static buffer; not caching.\n");
+-        return NULL;
++        return INVALID_HANDLE_VALUE;
+     }
+ 
+     CryptAcquireContextW(&prov, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);

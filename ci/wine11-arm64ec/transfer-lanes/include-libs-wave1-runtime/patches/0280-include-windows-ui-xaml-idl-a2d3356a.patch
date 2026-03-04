@@ -1,0 +1,12 @@
+diff --git a/include/windows.ui.xaml.idl b/include/windows.ui.xaml.idl
+index 50a0f48cd862e17ab47a9ed8c6ca7977e9589ef5..e143597281d7dd81e50cbfd794e3e8cf66253302 100644
+--- a/include/windows.ui.xaml.idl
++++ b/include/windows.ui.xaml.idl
+@@ -17,7 +17,6 @@
+  */
+ 
+ #ifdef __WIDL__
+-#pragma makedep header install winmd
+ #pragma winrt ns_prefix
+ #endif
+ 

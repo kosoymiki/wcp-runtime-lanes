@@ -1,0 +1,19 @@
+diff --git a/dlls/gdi32/tests/Makefile.in b/dlls/gdi32/tests/Makefile.in
+--- a/dlls/gdi32/tests/Makefile.in
++++ b/dlls/gdi32/tests/Makefile.in
+@@ -7,6 +7,7 @@
+ 	clipping.c \
+ 	dc.c \
+ 	dib.c \
++	driver.c \
+ 	font.c \
+ 	gdiobj.c \
+ 	generated.c \
+@@ -18,7 +19,6 @@
+ 	pen.c \
+ 	resource.rc \
+ 	vertical.sfd \
+-	vertical2.sfd \
+ 	wine_heavy.sfd \
+ 	wine_langnames.sfd \
+ 	wine_langnames2.sfd \

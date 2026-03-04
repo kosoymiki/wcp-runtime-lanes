@@ -1,0 +1,31 @@
+diff --git a/tools/widl/parser.l b/tools/widl/parser.l
+index c57ad990c5b0a7a1ba7837518994629117c5ee92..9ff4e7b01f6ef392d3a91d8a346ee23062d56dbf 100644
+--- a/tools/widl/parser.l
++++ b/tools/widl/parser.l
+@@ -136,10 +136,7 @@ static int token_uuid( const char *str, YYSTYPE *yylval )
+ 
+ static int token_str( int token, const char *str, YYSTYPE *yylval )
+ {
+-    int len = strlen( str );
+-    char *tmp = xmalloc( len + 1 );
+-
+-    strcpy( tmp, str );
++    char *tmp = xstrdup( str );
+ 
+     if (token == aWSTRING || token == aSTRING || token == aSQSTRING)
+     {
+@@ -152,14 +149,6 @@ static int token_str( int token, const char *str, YYSTYPE *yylval )
+         }
+         dst[-1] = 0; /* strip last quote */
+     }
+-    else if (token == aIDENTIFIER)
+-    {
+-        if (len > 255)
+-        {
+-            warning( "truncating identifier that exceeds 255 character limit\n" );
+-            tmp[255] = 0;
+-        }
+-    }
+ 
+     yylval->str = tmp;
+     return token;

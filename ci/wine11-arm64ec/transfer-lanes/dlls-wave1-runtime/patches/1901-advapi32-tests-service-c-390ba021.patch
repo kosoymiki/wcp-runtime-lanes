@@ -1,0 +1,274 @@
+diff --git a/dlls/advapi32/tests/service.c b/dlls/advapi32/tests/service.c
+--- a/dlls/advapi32/tests/service.c
++++ b/dlls/advapi32/tests/service.c
+@@ -442,6 +442,10 @@
+     CHAR displayname[4096];
+     WCHAR displaynameW[2048];
+     DWORD displaysize, tempsize, tempsizeW;
++    static const CHAR deadbeef[] = "Deadbeef";
++    static const WCHAR spoolerW[] = {'S','p','o','o','l','e','r',0};
++    static const WCHAR deadbeefW[] = {'D','e','a','d','b','e','e','f',0};
++    static const WCHAR abcW[] = {'A','B','C',0};
+     static const CHAR servicename[] = "winetest_displayname";
+     static const CHAR pathname[] = "we_dont_care.exe";
+ 
+@@ -473,13 +477,13 @@
+     /* Test for nonexistent service */
+     SetLastError(0xdeadbeef);
+     displaysize = -1;
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", NULL, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, NULL, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+ 
+     SetLastError(0xdeadbeef);
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", NULL, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, NULL, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -487,7 +491,7 @@
+ 
+     displaysize = 15;
+     strcpy(displayname, "ABC");
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", displayname, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, displayname, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -495,8 +499,8 @@
+     ok(displayname[0] == 0, "Service name not empty\n");
+ 
+     displaysize = 15;
+-    wcscpy(displaynameW, L"ABC");
+-    ret = GetServiceDisplayNameW(scm_handle, L"Deadbeef", displaynameW, &displaysize);
++    lstrcpyW( displaynameW, abcW );
++    ret = GetServiceDisplayNameW(scm_handle, deadbeefW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -505,7 +509,7 @@
+ 
+     displaysize = 0;
+     strcpy(displayname, "ABC");
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", displayname, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, displayname, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -513,8 +517,8 @@
+     ok(displayname[0] == 'A', "Service name changed\n");
+ 
+     displaysize = 0;
+-    wcscpy(displaynameW, L"ABC");
+-    ret = GetServiceDisplayNameW(scm_handle, L"Deadbeef", displaynameW, &displaysize);
++    lstrcpyW( displaynameW, abcW );
++    ret = GetServiceDisplayNameW(scm_handle, deadbeefW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(displaysize == 2, "Service size expected 2, got %ld\n", displaysize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -523,7 +527,7 @@
+ 
+     displaysize = 1;
+     strcpy(displayname, "ABC");
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", displayname, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, displayname, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -531,8 +535,8 @@
+     ok(displayname[0] == 0, "Service name not empty\n");
+ 
+     displaysize = 1;
+-    wcscpy(displaynameW, L"ABC");
+-    ret = GetServiceDisplayNameW(scm_handle, L"Deadbeef", displaynameW, &displaysize);
++    lstrcpyW( displaynameW, abcW );
++    ret = GetServiceDisplayNameW(scm_handle, deadbeefW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(displaysize == 2, "Service size expected 2, got %ld\n", displaysize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -541,7 +545,7 @@
+ 
+     displaysize = 2;
+     strcpy(displayname, "ABC");
+-    ret = GetServiceDisplayNameA(scm_handle, "Deadbeef", displayname, &displaysize);
++    ret = GetServiceDisplayNameA(scm_handle, deadbeef, displayname, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -549,8 +553,8 @@
+     ok(displayname[0] == 0, "Service name not empty\n");
+ 
+     displaysize = 2;
+-    wcscpy(displaynameW, L"ABC");
+-    ret = GetServiceDisplayNameW(scm_handle, L"Deadbeef", displaynameW, &displaysize);
++    lstrcpyW( displaynameW, abcW );
++    ret = GetServiceDisplayNameW(scm_handle, deadbeefW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(displaysize == 2, "Service size expected 2, got %ld\n", displaysize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -622,7 +626,7 @@
+     /* Do the buffer(size) tests also for GetServiceDisplayNameW */
+     SetLastError(0xdeadbeef);
+     displaysize = -1;
+-    ret = GetServiceDisplayNameW(scm_handle, L"Spooler", NULL, &displaysize);
++    ret = GetServiceDisplayNameW(scm_handle, spoolerW, NULL, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_INSUFFICIENT_BUFFER,
+        "Expected ERROR_INSUFFICIENT_BUFFER, got %ld\n", GetLastError());
+@@ -631,7 +635,7 @@
+     SetLastError(0xdeadbeef);
+     tempsizeW = displaysize;
+     displaysize = tempsizeW / 2;
+-    ret = GetServiceDisplayNameW(scm_handle, L"Spooler", displaynameW, &displaysize);
++    ret = GetServiceDisplayNameW(scm_handle, spoolerW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(displaysize == tempsizeW, "Expected the needed buffersize\n");
+     ok(GetLastError() == ERROR_INSUFFICIENT_BUFFER,
+@@ -640,7 +644,7 @@
+     /* Now with the original returned size */
+     SetLastError(0xdeadbeef);
+     displaysize = tempsizeW;
+-    ret = GetServiceDisplayNameW(scm_handle, L"Spooler", displaynameW, &displaysize);
++    ret = GetServiceDisplayNameW(scm_handle, spoolerW, displaynameW, &displaysize);
+     ok(!ret, "Expected failure\n");
+     ok(displaysize == tempsizeW, "Expected the needed buffersize\n");
+     ok(GetLastError() == ERROR_INSUFFICIENT_BUFFER,
+@@ -649,7 +653,7 @@
+     /* And with a bigger than needed buffer */
+     SetLastError(0xdeadbeef);
+     displaysize = tempsizeW + 1; /* This caters for the null terminating character */
+-    ret = GetServiceDisplayNameW(scm_handle, L"Spooler", displaynameW, &displaysize);
++    ret = GetServiceDisplayNameW(scm_handle, spoolerW, displaynameW, &displaysize);
+     ok(ret, "Expected success, got error %lu\n", GetLastError());
+     ok(displaysize == tempsizeW, "Expected the needed buffersize\n");
+     ok(lstrlenW(displaynameW) == displaysize,
+@@ -725,6 +729,9 @@
+     WCHAR displaynameW[4096];
+     DWORD servicesize, displaysize, tempsize;
+     BOOL ret;
++    static const CHAR deadbeef[] = "Deadbeef";
++    static const WCHAR deadbeefW[] = {'D','e','a','d','b','e','e','f',0};
++    static const WCHAR abcW[] = {'A','B','C',0};
+ 
+     /* Having NULL for the size of the buffer will crash on W2K3 */
+ 
+@@ -757,7 +764,7 @@
+ 
+     /* Test for nonexistent displayname */
+     SetLastError(0xdeadbeef);
+-    ret = GetServiceKeyNameA(scm_handle, "Deadbeef", NULL, &servicesize);
++    ret = GetServiceKeyNameA(scm_handle, deadbeef, NULL, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -765,7 +772,7 @@
+ 
+     servicesize = 15;
+     strcpy(servicename, "ABC");
+-    ret = GetServiceKeyNameA(scm_handle, "Deadbeef", servicename, &servicesize);
++    ret = GetServiceKeyNameA(scm_handle, deadbeef, servicename, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -773,8 +780,8 @@
+     ok(servicename[0] == 0, "Service name not empty\n");
+ 
+     servicesize = 15;
+-    wcscpy(servicenameW, L"ABC");
+-    ret = GetServiceKeyNameW(scm_handle, L"Deadbeef", servicenameW, &servicesize);
++    lstrcpyW( servicenameW, abcW );
++    ret = GetServiceKeyNameW(scm_handle, deadbeefW, servicenameW, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -783,7 +790,7 @@
+ 
+     servicesize = 0;
+     strcpy(servicename, "ABC");
+-    ret = GetServiceKeyNameA(scm_handle, "Deadbeef", servicename, &servicesize);
++    ret = GetServiceKeyNameA(scm_handle, deadbeef, servicename, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -791,8 +798,8 @@
+     ok(servicename[0] == 'A', "Service name changed\n");
+ 
+     servicesize = 0;
+-    wcscpy(servicenameW, L"ABC");
+-    ret = GetServiceKeyNameW(scm_handle, L"Deadbeef", servicenameW, &servicesize);
++    lstrcpyW( servicenameW, abcW );
++    ret = GetServiceKeyNameW(scm_handle, deadbeefW, servicenameW, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(servicesize == 2, "Service size expected 2, got %ld\n", servicesize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -801,7 +808,7 @@
+ 
+     servicesize = 1;
+     strcpy(servicename, "ABC");
+-    ret = GetServiceKeyNameA(scm_handle, "Deadbeef", servicename, &servicesize);
++    ret = GetServiceKeyNameA(scm_handle, deadbeef, servicename, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -809,8 +816,8 @@
+     ok(servicename[0] == 0, "Service name not empty\n");
+ 
+     servicesize = 1;
+-    wcscpy(servicenameW, L"ABC");
+-    ret = GetServiceKeyNameW(scm_handle, L"Deadbeef", servicenameW, &servicesize);
++    lstrcpyW( servicenameW, abcW );
++    ret = GetServiceKeyNameW(scm_handle, deadbeefW, servicenameW, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(servicesize == 2, "Service size expected 2, got %ld\n", servicesize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -819,7 +826,7 @@
+ 
+     servicesize = 2;
+     strcpy(servicename, "ABC");
+-    ret = GetServiceKeyNameA(scm_handle, "Deadbeef", servicename, &servicesize);
++    ret = GetServiceKeyNameA(scm_handle, deadbeef, servicename, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+        "Expected ERROR_SERVICE_DOES_NOT_EXIST, got %ld\n", GetLastError());
+@@ -827,8 +834,8 @@
+     ok(servicename[0] == 0, "Service name not empty\n");
+ 
+     servicesize = 2;
+-    wcscpy(servicenameW, L"ABC");
+-    ret = GetServiceKeyNameW(scm_handle, L"Deadbeef", servicenameW, &servicesize);
++    lstrcpyW( servicenameW, abcW );
++    ret = GetServiceKeyNameW(scm_handle, deadbeefW, servicenameW, &servicesize);
+     ok(!ret, "Expected failure\n");
+     ok(servicesize == 2, "Service size expected 2, got %ld\n", servicesize);
+     ok(GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST,
+@@ -2213,7 +2220,9 @@
+     static const CHAR dependencies[] = "Master1\0Master2\0+MasterGroup1\0";
+     static const CHAR password    [] = "";
+     static const CHAR description [] = "Description";
+-    static const WCHAR descriptionW [] = L"DescriptionW";
++    static const CHAR description_empty[] = "";
++    static const WCHAR descriptionW [] = {'D','e','s','c','r','i','p','t','i','o','n','W',0};
++    static const WCHAR descriptionW_empty[] = {0};
+ 
+     if(!pQueryServiceConfig2A)
+     {
+@@ -2394,7 +2403,7 @@
+     ok(pConfig->lpDescription && !strcmp(description, pConfig->lpDescription),
+         "expected lpDescription to be %s, got %s\n", description, pConfig->lpDescription);
+ 
+-    pConfig->lpDescription = (char*)"";
++    pConfig->lpDescription = (LPSTR)description_empty;
+     ret = pChangeServiceConfig2A(svc_handle, SERVICE_CONFIG_DESCRIPTION, &buffer);
+     ok(ret, "expected ChangeServiceConfig2A to succeed\n");
+ 
+@@ -2424,7 +2433,7 @@
+     ok(pConfigW->lpDescription && !lstrcmpW(descriptionW, pConfigW->lpDescription),
+         "expected lpDescription to be %s, got %s\n", wine_dbgstr_w(descriptionW), wine_dbgstr_w(pConfigW->lpDescription));
+ 
+-    pConfigW->lpDescription = (WCHAR*)L"";
++    pConfigW->lpDescription = (LPWSTR)descriptionW_empty;
+     ret = pChangeServiceConfig2W(svc_handle, SERVICE_CONFIG_DESCRIPTION, &buffer);
+     ok(ret, "expected ChangeServiceConfig2W to succeed\n");
+ 

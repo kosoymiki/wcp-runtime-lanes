@@ -1,0 +1,11 @@
+diff --git a/dlls/comdlg32/cdlg.h b/dlls/comdlg32/cdlg.h
+--- a/dlls/comdlg32/cdlg.h
++++ b/dlls/comdlg32/cdlg.h
+@@ -30,6 +30,7 @@
+ extern HANDLE COMDLG32_hActCtx;
+ 
+ void	COMDLG32_SetCommDlgExtendedError(DWORD err);
++LPVOID	COMDLG32_AllocMem(int size) __WINE_ALLOC_SIZE(1);
+ 
+ /* Find/Replace local definitions */
+ 

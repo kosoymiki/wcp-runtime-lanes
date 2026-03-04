@@ -1,0 +1,30 @@
+diff --git a/dlls/msxml3/cdata.c b/dlls/msxml3/cdata.c
+--- a/dlls/msxml3/cdata.c
++++ b/dlls/msxml3/cdata.c
+@@ -158,9 +158,12 @@
+ {
+     domcdata *This = impl_from_IXMLDOMCDATASection( iface );
+ 
++    static const WCHAR cdata_sectionW[] =
++        {'#','c','d','a','t','a','-','s','e','c','t','i','o','n',0};
++
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"#cdata-section", p);
++    return return_bstr(cdata_sectionW, p);
+ }
+ 
+ static HRESULT WINAPI domcdata_get_nodeValue(
+@@ -349,10 +352,11 @@
+     BSTR* p)
+ {
+     domcdata *This = impl_from_IXMLDOMCDATASection( iface );
++    static const WCHAR cdatasectionW[] = {'c','d','a','t','a','s','e','c','t','i','o','n',0};
+ 
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"cdatasection", p);
++    return return_bstr(cdatasectionW, p);
+ }
+ 
+ static HRESULT WINAPI domcdata_get_text(

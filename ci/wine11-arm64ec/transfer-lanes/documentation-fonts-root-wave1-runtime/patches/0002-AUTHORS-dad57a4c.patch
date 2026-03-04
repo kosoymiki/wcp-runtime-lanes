@@ -1,0 +1,369 @@
+diff --git a/AUTHORS b/AUTHORS
+index 77afb245756bed815e6923aa205bb3ef81564778..7d47debf1cdb5c421898d3eb474ff8bc5888031a 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -16,7 +16,6 @@ Adam Buchbinder
+ Adam D. Moss
+ Adam Gashlin
+ Adam Gundy
+-Adam Markowski
+ Adam Martinson
+ Adam Petaccia
+ Adam Rehn
+@@ -182,7 +181,6 @@ Arkadiusz Hiler
+ Arno Teigseth
+ Artem Reznikov
+ Artur Szymiec
+-Attila Fidan
+ Augusto Arcoverde da Rocha
+ Aurélien Inacio
+ Aurimas Fischer
+@@ -241,7 +239,6 @@ Bob Goodwin
+ Bob Ziuchkovski
+ Borut Razem
+ Boyuan Yang
+-Bradan Fleming
+ Brad Campbell
+ Bradley Baetz
+ Brad Martin
+@@ -326,7 +323,6 @@ Christian Inci
+ Christian Lupien
+ Christian Neumair
+ Christian Schlaile
+-Christian Tinauer
+ Christoph Brill
+ Christoph Bumiller
+ Christopher Berner
+@@ -356,7 +352,6 @@ Conor McCarthy
+ Constantine Sapuntzakis
+ Corentin Rossignon
+ Crestez Leonard
+-Csányi István
+ C. Scott Ananian
+ C.W. Betts
+ Cyril Margorin
+@@ -377,7 +372,6 @@ Daniel Jelinski
+ Daniel Lehman
+ Daniel Lund
+ Daniel Marmier
+-Daniel Martin
+ Daniel Nylander
+ Daniel Remenak
+ Daniel Rusek
+@@ -507,7 +501,6 @@ Elias Norberg
+ Elias Ross
+ Elie Morisse
+ Elizabeth Figura
+-Ellington Santos
+ Emilio Cobos Álvarez
+ Emmanuel Maillard
+ Enol Puente
+@@ -521,7 +514,6 @@ Eric Kohl
+ Eric Laforest
+ Eric Lammerts
+ Eric Pouech
+-Eric Tian
+ Eric van Beurden
+ Eric Warnke
+ Eric Wheeler
+@@ -541,7 +533,6 @@ Etaash Mathamsetty
+ Ethan Chen
+ Ethan Lee
+ Eugene Mayevski
+-Eugene McArdle
+ Eugeny Gorelov
+ Evan Deaubl
+ Evan G. Parry
+@@ -670,7 +661,6 @@ Hagop Hagopian
+ Haidong Yu
+ Haithem Hmida
+ Hajime Segawa
+-Hajo Nils Krabbenhöft
+ Hamza Lakhani
+ Hann-huei Chiou
+ Hannu Valtonen
+@@ -723,7 +713,6 @@ Hwang YunSong (황윤성)
+ Iain Arnell
+ Ian Pilcher
+ Ian Schmidt
+-Ignacy Kuchciński
+ Igor Egorov
+ Igor Grahek
+ Igor Kotrasinski
+@@ -753,7 +742,6 @@ Ivan de Saedeleer
+ Ivan Gyurdiev
+ Ivan Kalvachev
+ Ivan Leo Puoti
+-Ivan Lyugaev
+ Iván Matellanes
+ Ivan Sinitsin
+ Ivan Vojtko
+@@ -771,7 +759,6 @@ Jaekil Lee
+ J A Gow
+ Jaime Rave
+ Jaka Kranjc
+-Jake Coppinger
+ Jake Hamby
+ Jakob Eriksson
+ Jakub Bartmiński
+@@ -894,7 +881,6 @@ Jody Goldberg
+ Joel Holdsworth
+ Joel Parker
+ Joerg Schiermeier
+-Joe Souza
+ Johan Dahlin
+ Johan Gardell
+ Johan Gill
+@@ -925,7 +911,6 @@ John Richardson
+ John R. Sheets
+ John Sheu
+ John Sullivan
+-John Szakmeister
+ John Thomson
+ John Voltz
+ John Zero
+@@ -983,7 +968,6 @@ Julien Loir
+ Julien Muchembled
+ Julio César Gázquez
+ Julio E. Gonzalez P
+-Julius Bettin
+ Julius Schwartzenberg
+ Junichi Kuchinishi
+ Juraj Hercek
+@@ -1005,7 +989,6 @@ Kalen Alwardt
+ Kalevi J Hautaniemi
+ Kamil Pošvic
+ Kanit Therdsteerasukdi
+-Kareem Aladli
+ Karl Backström
+ Karl Guenter Wuensch
+ Karl Lessard
+@@ -1018,7 +1001,6 @@ Katarzyna Caban
+ K.B.Dharun Krishna
+ Kees Cook
+ Kees Schoenmakers
+-Keigo Okamoto
+ Keith Bowes
+ Keith Matthews
+ Keith Reynolds
+@@ -1038,7 +1020,6 @@ Kevin Groeneveld
+ Kevin Holbrook
+ Kevin Koltzau
+ Kevin Krammer
+-Kevin Martinez
+ Kevin Puetz
+ Kevin Schmidt
+ Kieran Clancy
+@@ -1069,7 +1050,6 @@ Konstantin Kondratyuk
+ Konstantin L. Metlov
+ Konstantin Petrov
+ Konstantin Romanov
+-Kostin Mikhail
+ Kostya Ivanov
+ Kouji Sasaki
+ Krishna Murthy
+@@ -1083,7 +1063,6 @@ Krzysztof Bogacki
+ Krzysztof Foltman
+ Krzysztof Kotlenga
+ Krzysztof Nowicki
+-Kun Yang
+ Kurt Kartaltepe
+ Kusanagi Kouichi
+ Kyle Luna
+@@ -1126,7 +1105,6 @@ Lorenzo Ferrillo
+ Louis Lenders
+ Louis Philippe Gagnon
+ L. Rahyen
+-Luca Bacci
+ Luca Bennati
+ Lucas Chollet
+ Lucas Fialho Zawacki
+@@ -1151,12 +1129,10 @@ Maciek Kaliszewski
+ Madhura Sahasrabudhe
+ Magnus Lundborg
+ Magnus Olsen
+-Makarenko Oleg
+ Maksim Kuleshov
+ Malte Starostik
+ Manfred Weichel
+ Manuel Edelmann
+-Maotong Zhang
+ Marc-Aurel Zent
+ Marc Bessières
+ Marcel Baur
+@@ -1287,7 +1263,6 @@ Michael Poole
+ Michael Schlüter
+ Michael Skorokhodov
+ Michael Stefaniuc
+-Michael Stopa
+ Michael Veksler
+ Michael Wetherell
+ Michał Janiszewski
+@@ -1307,7 +1282,6 @@ Mike Frysinger
+ Mike Gibson
+ Mike Hearn
+ Mike Kaplinskiy
+-Mike Kozelkov
+ Mike O'Regan
+ Mike Ruprecht
+ Mike Schaadt
+@@ -1412,10 +1386,7 @@ Pablo Martin
+ Pablo Martín
+ Pablo Saratxaga
+ Pablo Spallanzani
+-Pali Rohár
+ Panagiotis Christeas
+-Panayiotis Talianos
+-Pan Hui
+ Pascal Cuoq
+ Pascal Lessard
+ Pat Leamon
+@@ -1468,7 +1439,6 @@ Peter Bajusz
+ Peter Berg Larsen
+ Peter Beutner
+ Peter Bortas
+-Peter Castelein
+ Peter Chapman
+ Peter Davies
+ Peter Dons Tychsen
+@@ -1528,7 +1498,6 @@ Pim Bollen
+ Piotr Caban
+ Piotr Chruściel
+ Piotr Kleski
+-Piotr Morgwai Kotarbinski
+ Piotr Pawłow
+ Porot Mo
+ Przemysław Białek
+@@ -1549,16 +1518,13 @@ Ralf S. Engelschall
+ Ramon Garcia
+ Randy Weems
+ Raphael Junqueira
+-Raphael Riemann
+ Rastislav Stanik
+-Ratchanan Srirattanamet
+ Raul Dias
+ Raul Fernandes
+ Raul Metsma
+ Ray Hinchliffe
+ Reece H. Dunn
+ Reinhard Karcher
+-Reinhold Gschweicher
+ Rein Klazes
+ Rémi Assailly
+ Rémi Bernon
+@@ -1588,7 +1554,6 @@ Rizsanyi Zsolt
+ Robert 'Admiral' Coeyman
+ Robert Dickenson
+ Robert Key
+-Robert Lippmann
+ Robert Lunnon
+ Robert McDonald
+ Robert Millan
+@@ -1646,7 +1611,6 @@ Russell Greene
+ Rustam Chernotkach
+ Ryan Cumming
+ Ryan Hendrickson
+-Ryan Houdek
+ Ryan Schmidt
+ Ryan Turner
+ Sagar Mittal
+@@ -1680,7 +1644,6 @@ Sebastian Gasiorek
+ Sebastian Krzyszkowiak
+ Sebastian Lackner
+ Sebastian Mayr
+-Sebastian Scheibner
+ Sébastien Ramage
+ Semenov Herman (Семенов Герман)
+ Seong-ho Cho
+@@ -1744,7 +1707,7 @@ Stefan Silviu
+ Stefan Stranz
+ Steffen Moeller
+ Stephan Beuze
+-Stéphane Bacri
++Stephane Bacri
+ Stéphane Loeuillet
+ Stephane Lussier
+ Stephan Rose
+@@ -1758,14 +1721,12 @@ Steve Lustbader
+ Steven Bell
+ Steven Edwards
+ Steven Elliott
+-Steven Flint
+ Steven Stein
+ Steven Wallace
+ Steve Tibbett
+ Steve Zellers
+ Stewart Allen
+ Stewart Caie
+-Stian Low
+ Sunil Mohan Adapa
+ Supphachoke Suntiwichaya
+ Susan Farley
+@@ -1789,7 +1750,6 @@ Thanasis Papoutsidakis
+ Theodore Dubois
+ Theodore S. Hetke
+ Thiago Barbato
+-Thibault Payet
+ Thierry Vermeylen
+ Thomas Brix Larsen
+ Thomas Crider
+@@ -1838,7 +1798,6 @@ Tomas Carnecky
+ Tomas Vanek
+ Tomasz Jezierski
+ Tomasz Nowiński
+-Tomasz Pakuła
+ Tom Bech
+ Tom Brus
+ Tom Fogal
+@@ -1856,7 +1815,6 @@ Toufic Milan
+ Travis Athougies
+ Travis Michielsen
+ Trent Waddington
+-Tres Finocchiaro
+ Trey Hunner
+ Tristan Schmelcher
+ Tristan Tarrant
+@@ -1864,7 +1822,6 @@ Troy Rollo
+ Trygve Vea
+ Tuomas Räsänen
+ Tyson Whitehead
+-Ugur Sari
+ Ulrich Czekalla
+ Ulrich Hecht
+ Ulrich Schmid
+@@ -1872,12 +1829,10 @@ Ulrich Weigand
+ Ulrik Dickow
+ Uwe Bonnes
+ Vadim Druzhin
+-Vadim Kazakov
+ Vadim Strizhevsky
+ Vahid Pourlotfali
+ Valentin Gabriel Mitrea
+ Valery Kartel
+-Vasiliy Stelmachenok
+ Vasily I. Volchenko
+ Vasudev Mulchandani
+ Vedran Rodic
+@@ -1966,7 +1921,6 @@ Yorick Hardy
+ Yoshiji Emoto
+ Yoshiro Takeno
+ Young Chung
+-Yuri Hérouard
+ Yuri Khan
+ Yuri Kozlov
+ Yuriy Kaminskiy
+@@ -1985,7 +1939,6 @@ Zhan Jianyu
+ Zhao Yi
+ Zhenbo Li
+ Zheng Chen
+-Zhengyong Chen
+ Zhennan Cai
+ Zhipeng Zhao
+ Zhiyi Zhang
+@@ -1995,6 +1948,5 @@ Zixing Liu
+ Zoltan Kovacs
+ Zoltan Nagy
+ Zoran Dzelajlija
+-Zowie van Dillen
+ Zsolt Vadasz
+ Zygo Blaxell

@@ -1,0 +1,26 @@
+diff --git a/include/windows.devices.geolocation.idl b/include/windows.devices.geolocation.idl
+index 2d9dcd91d89e7affdc4c5fdd7beb8cfe44c97794..ce4853ffc9d9ac9d078038345624aeb0d0f12eb2 100644
+--- a/include/windows.devices.geolocation.idl
++++ b/include/windows.devices.geolocation.idl
+@@ -20,11 +20,13 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+ import "windowscontracts.idl";
+ import "windows.foundation.idl";
++#endif
+ 
+ namespace Windows.Devices.Geolocation {
+ 
+@@ -206,7 +208,6 @@ namespace Windows.Devices.Geolocation {
+     }
+ 
+     [
+-        contract(Windows.Foundation.UniversalApiContract, 1.0),
+         marshaling_behavior(agile)
+     ]
+     runtimeclass StatusChangedEventArgs

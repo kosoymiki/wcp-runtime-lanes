@@ -1,0 +1,19 @@
+diff --git a/include/windows.gaming.input.forcefeedback.idl b/include/windows.gaming.input.forcefeedback.idl
+index 290d1f6297172c1e9a326d2cbdcf2291b54839ee..82fb083b34b5eabd89136a1ae588bfc8458e7157 100644
+--- a/include/windows.gaming.input.forcefeedback.idl
++++ b/include/windows.gaming.input.forcefeedback.idl
+@@ -20,12 +20,14 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+ import "windowscontracts.idl";
+ import "windows.foundation.idl";
+ import "windows.foundation.numerics.idl";
++#endif
+ 
+ namespace Windows.Gaming.Input.ForceFeedback {
+     typedef enum ForceFeedbackEffectAxes ForceFeedbackEffectAxes;

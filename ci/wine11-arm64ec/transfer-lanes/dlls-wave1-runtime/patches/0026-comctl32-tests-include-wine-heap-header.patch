@@ -1,0 +1,11 @@
+diff --git a/dlls/comctl32/tests/msg.h b/dlls/comctl32/tests/msg.h
+--- a/dlls/comctl32/tests/msg.h
++++ b/dlls/comctl32/tests/msg.h
+@@ -20,6 +20,7 @@
+ 
+ #include <assert.h>
+ #include <windows.h>
++#include "wine/heap.h"
+ #include "wine/test.h"
+ 
+ /* undocumented SWP flags - from SDK 3.1 */

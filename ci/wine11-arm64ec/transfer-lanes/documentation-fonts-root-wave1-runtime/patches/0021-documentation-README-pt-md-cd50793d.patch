@@ -1,0 +1,13 @@
+diff --git a/documentation/README-pt.md b/documentation/README-pt.md
+index af923e60eaa87423e23fbdaa7ee8c61d97f2ea86..c1ebc045cea1328b257a860ef05a06a8e8bc9d1a 100644
+--- a/documentation/README-pt.md
++++ b/documentation/README-pt.md
+@@ -34,7 +34,7 @@ Para compilar e correr o Wine, deves ter o seguinte:
+ - FreeBSD 12.4 ou seguinte
+ - Solaris x86 9 ou seguinte
+ - NetBSD-current
+-- macOS 10.12 ou seguinte
++- Mac OS X 10.12 ou seguinte
+ 
+ Como o Wine requer sequências kernel-level para poder correr, apenas
+ os sistemas operativos acima mencionados são suportados.

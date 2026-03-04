@@ -1,0 +1,9 @@
+diff --git a/dlls/windows.media/tests/Makefile.in b/dlls/windows.media/tests/Makefile.in
+--- a/dlls/windows.media/tests/Makefile.in
++++ b/dlls/windows.media/tests/Makefile.in
+@@ -2,4 +2,4 @@
+ IMPORTS = combase
+ 
+ SOURCES = \
+-	media.c
++	captions.c

@@ -1,0 +1,73 @@
+diff --git a/dlls/msxml3/element.c b/dlls/msxml3/element.c
+--- a/dlls/msxml3/element.c
++++ b/dlls/msxml3/element.c
+@@ -384,10 +384,11 @@
+     BSTR* p)
+ {
+     domelem *This = impl_from_IXMLDOMElement( iface );
++    static const WCHAR elementW[] = {'e','l','e','m','e','n','t',0};
+ 
+     TRACE("(%p)->(%p)\n", This, p);
+ 
+-    return return_bstr(L"element", p);
++    return return_bstr(elementW, p);
+ }
+ 
+ static HRESULT WINAPI domelem_get_text(
+@@ -1413,6 +1414,7 @@
+     IXMLDOMAttribute** old)
+ {
+     domelem *This = impl_from_IXMLDOMElement( iface );
++    static const WCHAR xmlnsW[] = {'x','m','l','n','s',0};
+     xmlChar *name, *value;
+     BSTR nameW, prefix;
+     xmlnode *attr_node;
+@@ -1437,7 +1439,7 @@
+     if (hr != S_OK) return hr;
+ 
+     /* adding xmlns attribute doesn't change a tree or existing namespace definition */
+-    if (!wcscmp(nameW, L"xmlns"))
++    if (!wcscmp(nameW, xmlnsW))
+     {
+         SysFreeString(nameW);
+         return DISP_E_UNKNOWNNAME;
+@@ -1491,28 +1493,8 @@
+     IXMLDOMAttribute** attributeNode)
+ {
+     domelem *This = impl_from_IXMLDOMElement( iface );
+-    xmlnode *attr_node;
+-
+-    TRACE("(%p)->(%p %p)\n", This, domAttribute, attributeNode);
+-
+-    if (!domAttribute)
+-        return E_INVALIDARG;
+-    attr_node = get_node_obj((IXMLDOMNode*)domAttribute);
+-    if (This->node.node != attr_node->node->parent)
+-        return E_INVALIDARG;
+-
+-    if (attributeNode)
+-    {
+-        xmlUnlinkNode(attr_node->node );
+-        xmldoc_add_orphan(attr_node->node->doc, attr_node->node);
+-        *attributeNode = (IXMLDOMAttribute*)create_node(attr_node->node);
+-    }
+-    else
+-    {
+-        if (xmlRemoveProp((xmlAttrPtr)attr_node->node) == -1)
+-            return E_INVALIDARG;
+-    }
+-    return S_OK;
++    FIXME("(%p)->(%p %p)\n", This, domAttribute, attributeNode);
++    return E_NOTIMPL;
+ }
+ 
+ static HRESULT WINAPI domelem_getElementsByTagName(
+@@ -1832,8 +1814,6 @@
+             *item = create_node( (xmlNodePtr) curr );
+             return S_OK;
+         }
+-
+-        ++attrIndex;
+     }
+ 
+     if (!node->nsDef)

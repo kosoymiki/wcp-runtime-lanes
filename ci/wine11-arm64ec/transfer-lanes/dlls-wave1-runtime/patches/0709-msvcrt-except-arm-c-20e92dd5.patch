@@ -1,0 +1,16 @@
+diff --git a/dlls/msvcrt/except_arm.c b/dlls/msvcrt/except_arm.c
+--- a/dlls/msvcrt/except_arm.c
++++ b/dlls/msvcrt/except_arm.c
+@@ -94,12 +94,4 @@
+     return EXCEPTION_CONTINUE_SEARCH;
+ }
+ 
+-__ASM_GLOBAL_FUNC( __C_ExecuteExceptionFilter,
+-    "push {r3-r11,lr}\n\t"
+-    ".seh_save_regs_w {r3-r11,lr}\n\t"
+-    ".seh_endprologue\n\t"
+-    "ldm r3, {r4-r11}\n\t"
+-    "blx r2\n\t"
+-    "pop {r3-r11,pc}\n\t" );
+-
+ #endif  /* __arm__ */

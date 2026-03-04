@@ -1,0 +1,28 @@
+diff --git a/include/windows.media.devices.idl b/include/windows.media.devices.idl
+index e538e71ea09f486a238426c1ac76ef58a3370077..d0b3fcef873405e3a98a47d8805468fb8efa11d0 100644
+--- a/include/windows.media.devices.idl
++++ b/include/windows.media.devices.idl
+@@ -98,7 +98,6 @@ namespace Windows {
+             }
+ 
+             [
+-                contract(Windows.Foundation.UniversalApiContract, 1.0),
+                 activatable(Windows.Foundation.UniversalApiContract, 1.0),
+                 marshaling_behavior(agile),
+                 static(Windows.Media.Devices.IMediaDeviceStatics, Windows.Foundation.UniversalApiContract, 1.0),
+@@ -108,7 +107,6 @@ namespace Windows {
+             }
+ 
+             [
+-                contract(Windows.Foundation.UniversalApiContract, 1.0),
+                 marshaling_behavior(agile)
+             ]
+             runtimeclass DefaultAudioRenderDeviceChangedEventArgs
+@@ -117,7 +115,6 @@ namespace Windows {
+             }
+ 
+             [
+-                contract(Windows.Foundation.UniversalApiContract, 1.0),
+                 marshaling_behavior(agile)
+             ]
+             runtimeclass DefaultAudioCaptureDeviceChangedEventArgs

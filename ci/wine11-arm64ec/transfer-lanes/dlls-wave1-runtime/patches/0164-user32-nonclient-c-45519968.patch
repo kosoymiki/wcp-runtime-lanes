@@ -1,0 +1,11 @@
+diff --git a/dlls/user32/nonclient.c b/dlls/user32/nonclient.c
+--- a/dlls/user32/nonclient.c
++++ b/dlls/user32/nonclient.c
+@@ -21,6 +21,7 @@
+ #include "user_private.h"
+ #include "controls.h"
+ #include "wine/debug.h"
++#include "ntuser.h"
+ 
+ 
+ #define SC_ABOUTWINE            (SC_SCREENSAVE+1)

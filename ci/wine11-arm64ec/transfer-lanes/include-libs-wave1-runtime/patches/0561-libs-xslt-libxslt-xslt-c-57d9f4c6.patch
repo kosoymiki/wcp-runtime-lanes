@@ -1,0 +1,26 @@
+diff --git a/libs/xslt/libxslt/xslt.c b/libs/xslt/libxslt/xslt.c
+index 6532f976b3a0234987fe9e1c3a963c52a7db63e8..22fdb75856921d7e1f8a92f7b2379935b6aef468 100644
+--- a/libs/xslt/libxslt/xslt.c
++++ b/libs/xslt/libxslt/xslt.c
+@@ -147,20 +147,10 @@ xsltParseContentError(xsltStylesheetPtr style,
+  * in case of error
+  */
+ static int
+-exclPrefixPush(xsltStylesheetPtr style, xmlChar * orig)
++exclPrefixPush(xsltStylesheetPtr style, xmlChar * value)
+ {
+-    xmlChar *value;
+     int i;
+ 
+-    /*
+-     * orig can come from a namespace definition on a node which
+-     * could be deleted later, for example in xsltParseTemplateContent.
+-     * Store the string in stylesheet's dict to avoid use after free.
+-     */
+-    value = (xmlChar *) xmlDictLookup(style->dict, orig, -1);
+-    if (value == NULL)
+-        return(-1);
+-
+     /* do not push duplicates */
+     for (i = 0;i < style->exclPrefixNr;i++) {
+         if (xmlStrEqual(style->exclPrefixTab[i], value))

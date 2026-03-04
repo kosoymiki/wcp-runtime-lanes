@@ -1,0 +1,9 @@
+diff --git a/dlls/bcp47langs/Makefile.in b/dlls/bcp47langs/Makefile.in
+--- a/dlls/bcp47langs/Makefile.in
++++ b/dlls/bcp47langs/Makefile.in
+@@ -1,5 +1,2 @@
+ MODULE    = bcp47langs.dll
+ IMPORTLIB = bcp47langs
+-
+-SOURCES = \
+-	main.c

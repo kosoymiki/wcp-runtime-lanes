@@ -1,0 +1,12 @@
+diff --git a/dlls/wineandroid.drv/device.c b/dlls/wineandroid.drv/device.c
+--- a/dlls/wineandroid.drv/device.c
++++ b/dlls/wineandroid.drv/device.c
+@@ -1144,7 +1144,7 @@
+     }
+     else
+     {
+-        FIXME( "ioctl %x not supported\n", irpsp->Parameters.DeviceIoControl.IoControlCode );
++        FIXME( "ioctl %x not supported\n", (int)irpsp->Parameters.DeviceIoControl.IoControlCode );
+         irp->IoStatus.Status = STATUS_NOT_SUPPORTED;
+     }
+     return STATUS_SUCCESS;

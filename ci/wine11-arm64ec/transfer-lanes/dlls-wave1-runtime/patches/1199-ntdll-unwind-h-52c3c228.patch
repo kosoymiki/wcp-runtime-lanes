@@ -1,0 +1,12 @@
+diff --git a/dlls/ntdll/unwind.h b/dlls/ntdll/unwind.h
+--- a/dlls/ntdll/unwind.h
++++ b/dlls/ntdll/unwind.h
+@@ -169,7 +169,7 @@ static inline void context_x64_to_arm( ARM64_NT_CONTEXT *arm_ctx, const ARM64EC_
+     arm_ctx->Fpcr = fpcsr;
+     arm_ctx->Fpsr = fpcsr >> 32;
+ 
+-    if ((ec_ctx->ContextFlags & CONTEXT_AMD64_XSTATE) == CONTEXT_AMD64_XSTATE)
++    if ((ec_ctx->ContextFlags & CONTEXT_XSTATE) == CONTEXT_XSTATE)
+     {
+         CONTEXT_EX *ec_xctx = (CONTEXT_EX *)(ec_ctx + 1);
+         YMMCONTEXT *ec_ymm = RtlLocateExtendedFeature( ec_xctx, XSTATE_AVX, NULL );

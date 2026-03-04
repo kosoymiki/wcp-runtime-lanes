@@ -1,0 +1,12 @@
+diff --git a/include/windows.graphics.idl b/include/windows.graphics.idl
+index 86a409f224e1308beb1286e6c0001ebe31c5ec3c..48c68014a760ce8dcb8d1e436160ea9c8c2b343c 100644
+--- a/include/windows.graphics.idl
++++ b/include/windows.graphics.idl
+@@ -17,7 +17,6 @@
+  */
+ 
+ #ifdef __WIDL__
+-#pragma makedep header install winmd
+ #pragma winrt ns_prefix
+ #endif
+ 

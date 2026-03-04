@@ -1,0 +1,13 @@
+diff --git a/programs/getminidump/Makefile.in b/programs/getminidump/Makefile.in
+new file mode 100644
+index 0000000000000000000000000000000000000000..56d148dfb9d27a241018740bf78e52083893182a
+--- /dev/null
++++ b/programs/getminidump/Makefile.in
+@@ -0,0 +1,7 @@
++MODULE  = getminidump.exe
++IMPORTS = shcore dbghelp
++
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++	main.c

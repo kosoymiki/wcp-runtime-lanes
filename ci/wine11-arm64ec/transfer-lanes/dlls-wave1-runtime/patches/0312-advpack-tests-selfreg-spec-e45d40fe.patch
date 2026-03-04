@@ -1,0 +1,6 @@
+diff --git a/dlls/advpack/tests/selfreg.spec b/dlls/advpack/tests/selfreg.spec
+--- a/dlls/advpack/tests/selfreg.spec
++++ /dev/null
+@@ -1,2 +0,0 @@
+-@ stdcall -private DllRegisterServer()
+-@ stdcall -private DllUnregisterServer()

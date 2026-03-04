@@ -1,0 +1,11 @@
+diff --git a/dlls/scrrun/Makefile.in b/dlls/scrrun/Makefile.in
+--- a/dlls/scrrun/Makefile.in
++++ b/dlls/scrrun/Makefile.in
+@@ -1,6 +1,6 @@
+ MODULE    = scrrun.dll
+ IMPORTLIB = scrrun
+-IMPORTS   = uuid oleaut32 version advapi32 kernelbase
++IMPORTS   = uuid oleaut32 version advapi32
+ 
+ EXTRADLLFLAGS = -Wb,--prefer-native
+ 

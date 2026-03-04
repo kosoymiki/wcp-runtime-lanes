@@ -1,0 +1,13 @@
+diff --git a/libs/mpg123/src/libmpg123/format.c b/libs/mpg123/src/libmpg123/format.c
+index c4457e3595bb941ac6a184ae26ba63747986803f..5350ed4e925c40c5ffa0d5d01d086cd7315421e7 100644
+--- a/libs/mpg123/src/libmpg123/format.c
++++ b/libs/mpg123/src/libmpg123/format.c
+@@ -688,7 +688,7 @@ static void conv_s16_to_s32(struct outbuffer *buf)
+ 
+ #include "../common/swap_bytes_impl.h"
+ 
+-static void swap_endian(struct outbuffer *buf, int block)
++void swap_endian(struct outbuffer *buf, int block)
+ {
+ 	size_t count;
+ 

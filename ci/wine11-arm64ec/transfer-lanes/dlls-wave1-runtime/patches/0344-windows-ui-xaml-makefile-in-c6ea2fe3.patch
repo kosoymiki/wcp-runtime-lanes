@@ -1,0 +1,11 @@
+diff --git a/dlls/windows.ui.xaml/Makefile.in b/dlls/windows.ui.xaml/Makefile.in
+--- a/dlls/windows.ui.xaml/Makefile.in
++++ /dev/null
+@@ -1,7 +0,0 @@
+-MODULE  = windows.ui.xaml.dll
+-IMPORTS = combase
+-
+-SOURCES = \
+-	classes.idl \
+-	color_helper.c \
+-	main.c

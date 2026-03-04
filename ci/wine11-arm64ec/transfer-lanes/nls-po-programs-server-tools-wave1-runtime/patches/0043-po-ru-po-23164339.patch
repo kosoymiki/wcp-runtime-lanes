@@ -1,0 +1,2723 @@
+diff --git a/po/ru.po b/po/ru.po
+index 9d730f2f12c0f16a7125497db32bb879db4200be..cf06766472f1d7dc59fdc2038af9dc3066af77c0 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -5,14 +5,14 @@ msgstr ""
+ "Project-Id-Version: Wine\n"
+ "Report-Msgid-Bugs-To: https://bugs.winehq.org\n"
+ "POT-Creation-Date: N/A\n"
+-"PO-Revision-Date: 2025-02-04 09:30+0100\n"
++"PO-Revision-Date: 2022-01-03 11:22+0300\n"
+ "Last-Translator: Nikolay Sivov <nsivov@codeweavers.com>\n"
+ "Language-Team: Russian\n"
+ "Language: ru\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"X-Generator: Poedit 3.5\n"
++"X-Generator: Poedit 3.0.1\n"
+ 
+ #: dlls/aclui/aclui.rc:29 dlls/inetcpl.cpl/inetcpl.rc:90
+ #: programs/winefile/winefile.rc:114
+@@ -26,8 +26,10 @@ msgid "&Group or user names:"
+ msgstr "По&льзователь:"
+ 
+ #: dlls/aclui/aclui.rc:38
++#, fuzzy
++#| msgid "Yellow"
+ msgid "Allow"
+-msgstr "Разрешить"
++msgstr "Жёлтый"
+ 
+ #: dlls/aclui/aclui.rc:39
+ msgid "Deny"
+@@ -39,11 +41,11 @@ msgstr "Запретить"
+ msgid "Permissions for %1"
+ msgstr "Доступ запрещён.\n"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:60
++#: dlls/appwiz.cpl/appwiz.rc:59
+ msgid "Install/Uninstall"
+ msgstr "Установка/Удаление"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:63
++#: dlls/appwiz.cpl/appwiz.rc:62
+ msgid ""
+ "To install a new program from a floppy disk, CD-ROM drive, or your hard "
+ "drive, click Install."
+@@ -51,11 +53,11 @@ msgstr ""
+ "Чтобы установить программу с CD-ROM, дискеты или жёсткого диска, нажмите "
+ "Установить."
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:64
++#: dlls/appwiz.cpl/appwiz.rc:63
+ msgid "&Install..."
+ msgstr "Ус&тановить..."
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:67
++#: dlls/appwiz.cpl/appwiz.rc:66
+ msgid ""
+ "The following software can be automatically removed. To remove a program or "
+ "to modify its installed components, select it from the list and click Modify/"
+@@ -65,27 +67,27 @@ msgstr ""
+ "или изменить состав установленных компонентов, выберите её в списке и "
+ "нажмите кнопку Изменить/Удалить."
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:69
++#: dlls/appwiz.cpl/appwiz.rc:68
+ msgid "&Support Information"
+ msgstr "&Сведения о поддержке"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:70 programs/regedit/regedit.rc:136
++#: dlls/appwiz.cpl/appwiz.rc:69 programs/regedit/regedit.rc:136
+ #: programs/regedit/regedit.rc:237
+ msgid "&Modify..."
+ msgstr "&Изменить..."
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:71 dlls/appwiz.cpl/appwiz.rc:45
++#: dlls/appwiz.cpl/appwiz.rc:70 dlls/appwiz.cpl/appwiz.rc:45
+ #: dlls/cryptui/cryptui.rc:351 dlls/msacm32/msacm32.rc:40
+ #: programs/winecfg/winecfg.rc:205 programs/winecfg/winecfg.rc:242
+ #: programs/wordpad/wordpad.rc:256
+ msgid "&Remove"
+ msgstr "&Удалить"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:77
++#: dlls/appwiz.cpl/appwiz.rc:76
+ msgid "Support Information"
+ msgstr "Сведения о поддержке"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:80 dlls/avifil32/avifil32.rc:54
++#: dlls/appwiz.cpl/appwiz.rc:79 dlls/avifil32/avifil32.rc:54
+ #: dlls/comctl32/comctl32.rc:71 dlls/comctl32/comctl32.rc:55
+ #: dlls/comdlg32/comdlg32.rc:233 dlls/comdlg32/comdlg32.rc:263
+ #: dlls/comdlg32/comdlg32.rc:307 dlls/comdlg32/comdlg32.rc:390
+@@ -100,11 +102,11 @@ msgstr "Сведения о поддержке"
+ #: dlls/serialui/serialui.rc:41 dlls/setupapi/setupapi.rc:59
+ #: dlls/shell32/shell32.rc:278 dlls/shell32/shell32.rc:302
+ #: dlls/shell32/shell32.rc:324 dlls/shell32/shell32.rc:343
+-#: dlls/shlwapi/shlwapi.rc:44 dlls/twaindsm/twain.rc:32
++#: dlls/shlwapi/shlwapi.rc:44 dlls/twain_32/twain.rc:32
+ #: dlls/user32/user32.rc:94 dlls/user32/user32.rc:109 dlls/user32/user32.rc:73
+ #: dlls/wininet/wininet.rc:62 dlls/wininet/wininet.rc:82
+ #: dlls/winspool.drv/winspool.rc:42 programs/net/net.rc:48
+-#: programs/notepad/notepad.rc:125 programs/oleview/oleview.rc:161
++#: programs/notepad/notepad.rc:124 programs/oleview/oleview.rc:161
+ #: programs/oleview/oleview.rc:174 programs/progman/progman.rc:106
+ #: programs/progman/progman.rc:124 programs/progman/progman.rc:142
+ #: programs/progman/progman.rc:158 programs/progman/progman.rc:180
+@@ -122,57 +124,57 @@ msgstr "Сведения о поддержке"
+ msgid "OK"
+ msgstr "ОК"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:81
++#: dlls/appwiz.cpl/appwiz.rc:80
+ msgid "The following information can be used to get technical support for %s:"
+ msgstr ""
+ "Указанная информация может быть использована для получения технической "
+ "поддержки приложения %s:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:82
++#: dlls/appwiz.cpl/appwiz.rc:81
+ msgid "Publisher:"
+ msgstr "Издатель:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:83 programs/winefile/winefile.rc:165
++#: dlls/appwiz.cpl/appwiz.rc:82 programs/winefile/winefile.rc:165
+ msgid "Version:"
+ msgstr "Версия:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:84
++#: dlls/appwiz.cpl/appwiz.rc:83
+ msgid "Contact:"
+ msgstr "Контактное лицо:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:85
++#: dlls/appwiz.cpl/appwiz.rc:84
+ msgid "Support Information:"
+ msgstr "Поддержка:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:86
++#: dlls/appwiz.cpl/appwiz.rc:85
+ msgid "Support Telephone:"
+ msgstr "Телефон:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:87
++#: dlls/appwiz.cpl/appwiz.rc:86
+ msgid "Readme:"
+ msgstr "Файл «Readme»:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:88
++#: dlls/appwiz.cpl/appwiz.rc:87
+ msgid "Product Updates:"
+ msgstr "Обновления:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:89
++#: dlls/appwiz.cpl/appwiz.rc:88
+ msgid "Comments:"
+ msgstr "Комментарии:"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:102
++#: dlls/appwiz.cpl/appwiz.rc:101
+ msgid "Wine Gecko Installer"
+ msgstr "Установка Wine Gecko"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:105
++#: dlls/appwiz.cpl/appwiz.rc:104
+ msgid ""
+ "Wine could not find a Gecko package which is needed for applications "
+ "embedding HTML to work correctly. Wine can automatically download and "
+ "install it for you.\n"
+ "\n"
+ "Note: it is recommended to use your distribution's packages instead. See <a "
+-"href=\"https://gitlab.winehq.org/wine/wine/-/wikis/Gecko\">https://"
+-"gitlab.winehq.org/wine/wine/-/wikis/Gecko</a> for details."
++"href=\"https://gitlab.winehq.org/wine/wine/-/wikis/Gecko\">https://gitlab."
++"winehq.org/wine/wine/-/wikis/Gecko</a> for details."
+ msgstr ""
+ "Wine не может найти пакет Gecko, который необходим для корректной работы "
+ "приложений с поддержкой HTML. Wine может автоматически загрузить и "
+@@ -183,11 +185,11 @@ msgstr ""
+ "wikis/Gecko\">https://gitlab.winehq.org/wine/wine/-/wikis/Gecko</a> для "
+ "получения более подробной информации."
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:111 dlls/appwiz.cpl/appwiz.rc:126
++#: dlls/appwiz.cpl/appwiz.rc:110 dlls/appwiz.cpl/appwiz.rc:125
+ msgid "&Install"
+ msgstr "&Установить"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:112 dlls/appwiz.cpl/appwiz.rc:127
++#: dlls/appwiz.cpl/appwiz.rc:111 dlls/appwiz.cpl/appwiz.rc:126
+ #: dlls/avifil32/avifil32.rc:55 dlls/browseui/browseui.rc:45
+ #: dlls/comctl32/comctl32.rc:72 dlls/comctl32/comctl32.rc:87
+ #: dlls/comctl32/comctl32.rc:56 dlls/comdlg32/comdlg32.rc:172
+@@ -204,15 +206,15 @@ msgstr "&Установить"
+ #: dlls/inetcpl.cpl/inetcpl.rc:81 dlls/localui/localui.rc:45
+ #: dlls/localui/localui.rc:58 dlls/mpr/mpr.rc:50 dlls/msacm32/msacm32.rc:54
+ #: dlls/mshtml/mshtml.rc:48 dlls/mshtml/mshtml.rc:58 dlls/msvfw32/msvfw32.rc:37
+-#: dlls/oledlg/oledlg.rc:63 dlls/oledlg/oledlg.rc:95 dlls/sane.ds/sane.rc:70
++#: dlls/oledlg/oledlg.rc:63 dlls/oledlg/oledlg.rc:95
+ #: dlls/serialui/serialui.rc:42 dlls/setupapi/setupapi.rc:42
+ #: dlls/setupapi/setupapi.rc:60 dlls/shell32/shell32.rc:279
+ #: dlls/shell32/shell32.rc:303 dlls/shell32/shell32.rc:314
+ #: dlls/shell32/shell32.rc:344 dlls/shlwapi/shlwapi.rc:45
+-#: dlls/twaindsm/twain.rc:33 dlls/user32/user32.rc:95 dlls/user32/user32.rc:110
++#: dlls/twain_32/twain.rc:33 dlls/user32/user32.rc:95 dlls/user32/user32.rc:110
+ #: dlls/user32/user32.rc:74 dlls/wininet/wininet.rc:63
+ #: dlls/wininet/wininet.rc:83 dlls/winspool.drv/winspool.rc:43
+-#: programs/notepad/notepad.rc:126 programs/notepad/notepad.rc:139
++#: programs/notepad/notepad.rc:125 programs/notepad/notepad.rc:138
+ #: programs/oleview/oleview.rc:162 programs/oleview/oleview.rc:175
+ #: programs/progman/progman.rc:107 programs/progman/progman.rc:125
+ #: programs/progman/progman.rc:143 programs/progman/progman.rc:159
+@@ -230,11 +232,11 @@ msgstr "&Установить"
+ msgid "Cancel"
+ msgstr "Отмена"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:117
++#: dlls/appwiz.cpl/appwiz.rc:116
+ msgid "Wine Mono Installer"
+ msgstr "Установка Wine Mono"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:120
++#: dlls/appwiz.cpl/appwiz.rc:119
+ msgid ""
+ "Wine could not find a wine-mono package which is needed for .NET "
+ "applications to work correctly. Wine can automatically download and install "
+@@ -281,7 +283,7 @@ msgstr ""
+ msgid "Not specified"
+ msgstr "Отсутствует"
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:38 dlls/oledb32/version.rc:35
++#: dlls/appwiz.cpl/appwiz.rc:38 dlls/oledb32/version.rc:38
+ #: dlls/shell32/shell32.rc:141 dlls/shell32/shell32.rc:243
+ #: programs/regedit/regedit.rc:150 programs/winefile/winefile.rc:106
+ msgid "Name"
+@@ -305,7 +307,7 @@ msgstr "Программы (*.exe)"
+ 
+ #: dlls/appwiz.cpl/appwiz.rc:43 dlls/avifil32/avifil32.rc:33
+ #: dlls/cryptui/cryptui.rc:83 dlls/shell32/shell32.rc:199
+-#: programs/notepad/notepad.rc:82 programs/oleview/oleview.rc:103
++#: programs/notepad/notepad.rc:81 programs/oleview/oleview.rc:103
+ #: programs/progman/progman.rc:82 programs/regedit/regedit.rc:230
+ #: programs/winedbg/winedbg.rc:43 programs/winhlp32/winhlp32.rc:90
+ msgid "All files (*.*)"
+@@ -335,12 +337,6 @@ msgstr ""
+ msgid "Please wait until the current uninstall/modify process is complete."
+ msgstr ""
+ 
+-#: dlls/appwiz.cpl/appwiz.rc:55
+-#, fuzzy
+-#| msgid "Downloading..."
+-msgid "Download failed."
+-msgstr "Загрузка..."
+-
+ #: dlls/avifil32/avifil32.rc:42
+ msgid "Compress options"
+ msgstr "Настройки сжатия"
+@@ -393,21 +389,6 @@ msgstr "Обработчик по умолчанию avi-файлов в Wine"
+ msgid "uncompressed"
+ msgstr "без сжатия"
+ 
+-#: dlls/bluetoothapis/bluetoothapis.rc:31
+-#, fuzzy
+-#| msgid "&Confirm password:"
+-msgid "Confirm pairing"
+-msgstr "П&одтверждение:"
+-
+-#: dlls/bluetoothapis/bluetoothapis.rc:32
+-msgid "Pair with '%1!s!' using the following PIN/passkey value: %2!lu!?"
+-msgstr ""
+-
+-#: dlls/bluetoothapis/bluetoothapis.rc:33
+-msgid ""
+-"Pair with unnamed device %1!s! using the following PIN/passkey value: %2!lu!?"
+-msgstr ""
+-
+ #: dlls/browseui/browseui.rc:28
+ msgid "Canceling..."
+ msgstr "Отмена..."
+@@ -455,7 +436,7 @@ msgstr "Мастер"
+ msgid "< &Back"
+ msgstr "< &Назад"
+ 
+-#: dlls/comctl32/comctl32.rc:85 dlls/oledb32/version.rc:58
++#: dlls/comctl32/comctl32.rc:85 dlls/oledb32/version.rc:61
+ msgid "&Next >"
+ msgstr "&Далее >"
+ 
+@@ -487,7 +468,7 @@ msgstr "С&бросить"
+ #: dlls/comdlg32/comdlg32.rc:531 dlls/ieframe/ieframe.rc:58
+ #: dlls/msacm32/msacm32.rc:52 dlls/oledlg/oledlg.rc:96
+ #: dlls/shell32/shell32.rc:125 programs/clock/clock.rc:44
+-#: programs/notepad/notepad.rc:65 programs/notepad/notepad.rc:127
++#: programs/notepad/notepad.rc:65 programs/notepad/notepad.rc:126
+ #: programs/oleview/oleview.rc:72 programs/progman/progman.rc:55
+ #: programs/progman/progman.rc:108 programs/progman/progman.rc:126
+ #: programs/progman/progman.rc:144 programs/progman/progman.rc:160
+@@ -557,7 +538,7 @@ msgstr "Показать подробности"
+ 
+ #: dlls/comctl32/comctl32.rc:31 dlls/cryptui/cryptui.rc:235
+ #: programs/regedit/regedit.rc:291 programs/taskmgr/taskmgr.rc:434
+-#: programs/winedbg/winedbg.rc:62 programs/winedbg/winedbg.rc:77
++#: programs/winedbg/winedbg.rc:61 programs/winedbg/winedbg.rc:76
+ #: programs/wordpad/wordpad.rc:180
+ msgid "Close"
+ msgstr "Закрыть"
+@@ -608,7 +589,7 @@ msgstr "Сохранить как"
+ 
+ #: dlls/comdlg32/comdlg32.rc:202 dlls/comdlg32/comdlg32.rc:211
+ #: dlls/comdlg32/comdlg32.rc:358 dlls/comdlg32/comdlg32.rc:55
+-#: dlls/hhctrl.ocx/hhctrl.rc:51 programs/wordpad/wordpad.rc:173
++#: dlls/hhctrl.ocx/hhctrl.rc:49 programs/wordpad/wordpad.rc:173
+ msgid "Print"
+ msgstr "Печать"
+ 
+@@ -718,7 +699,7 @@ msgid "Font St&yle:"
+ msgstr "&Начертание:"
+ 
+ #: dlls/comdlg32/comdlg32.rc:260 dlls/comdlg32/comdlg32.rc:439
+-#: programs/winecfg/winecfg.rc:302
++#: programs/winecfg/winecfg.rc:300
+ msgid "&Size:"
+ msgstr "&Размер:"
+ 
+@@ -734,7 +715,7 @@ msgstr "&Зачёркнутый"
+ msgid "&Underline"
+ msgstr "Под&чёркнутый"
+ 
+-#: dlls/comdlg32/comdlg32.rc:270 programs/winecfg/winecfg.rc:300
++#: dlls/comdlg32/comdlg32.rc:270 programs/winecfg/winecfg.rc:298
+ msgid "&Color:"
+ msgstr "Цвет:"
+ 
+@@ -747,7 +728,6 @@ msgid "Scr&ipt:"
+ msgstr "На&бор символов:"
+ 
+ #: dlls/comdlg32/comdlg32.rc:283 dlls/comdlg32/comdlg32.rc:288
+-#: dlls/compstui/compstui.rc:33 dlls/sane.ds/sane.rc:42
+ msgid "Color"
+ msgstr "Выбор цвета"
+ 
+@@ -913,7 +893,7 @@ msgstr "Число &копий:"
+ msgid "C&ollate"
+ msgstr "&Разбить"
+ 
+-#: dlls/comdlg32/comdlg32.rc:414 programs/winecfg/winecfg.rc:308
++#: dlls/comdlg32/comdlg32.rc:414 programs/winecfg/winecfg.rc:306
+ msgid "Si&ze:"
+ msgstr "Размер:"
+ 
+@@ -945,7 +925,7 @@ msgstr "&Книжная"
+ msgid "L&eft:"
+ msgstr "&Слева:"
+ 
+-#: dlls/comdlg32/comdlg32.rc:449 programs/notepad/notepad.rc:120
++#: dlls/comdlg32/comdlg32.rc:449 programs/notepad/notepad.rc:119
+ msgid "&Right:"
+ msgstr "Сп&рава:"
+ 
+@@ -953,7 +933,7 @@ msgstr "Сп&рава:"
+ msgid "T&op:"
+ msgstr "Св&ерху:"
+ 
+-#: dlls/comdlg32/comdlg32.rc:453 programs/notepad/notepad.rc:122
++#: dlls/comdlg32/comdlg32.rc:453 programs/notepad/notepad.rc:121
+ msgid "&Bottom:"
+ msgstr "С&низу:"
+ 
+@@ -1103,8 +1083,7 @@ msgstr "Пурпурный"
+ msgid "Teal"
+ msgstr "Морской волны"
+ 
+-#: dlls/comdlg32/comdlg32.rc:129 dlls/sane.ds/sane.rc:41
+-#: programs/wordpad/wordpad.rc:132
++#: dlls/comdlg32/comdlg32.rc:129 programs/wordpad/wordpad.rc:132
+ msgid "Gray"
+ msgstr "Серый"
+ 
+@@ -1366,56 +1345,23 @@ msgstr "мм"
+ msgid "Properties"
+ msgstr "Сво&йства"
+ 
+-#: dlls/compstui/compstui.rc:30 dlls/hhctrl.ocx/hhctrl.rc:52
++#: dlls/compstui/compstui.rc:30 dlls/hhctrl.ocx/hhctrl.rc:50
+ #: programs/conhost/conhost.rc:51 programs/wordpad/wordpad.rc:166
+ msgid "Options"
+ msgstr "Настройки"
+ 
+ #: dlls/compstui/compstui.rc:31
++#, fuzzy
++#| msgid "Defaults"
+ msgid "Default"
+ msgstr "По умолчанию"
+ 
+-#: dlls/compstui/compstui.rc:35
+-#, fuzzy
+-#| msgid "&Copy Background"
+-msgid "&Copy count"
+-msgstr "&Копировать фон"
+-
+-#: dlls/compstui/compstui.rc:36
+-msgid "Print on Both Sides"
+-msgstr "Печатать на обеих сторонах"
+-
+-#: dlls/compstui/compstui.rc:32
+-#, fuzzy
+-#| msgid "C&olor:"
+-msgid "C&olor"
+-msgstr "Цвет:"
+-
+-#: dlls/compstui/compstui.rc:34
+-msgid "Bla&ck && White"
+-msgstr ""
+-
+-#: dlls/compstui/compstui.rc:37
+-#, fuzzy
+-#| msgctxt "hotkey"
+-#| msgid "None"
+-msgid "&None"
+-msgstr "Нет"
+-
+-#: dlls/compstui/compstui.rc:38 dlls/compstui/compstui.rc:41
+-msgid "Flip on Shor&t Edge"
+-msgstr ""
+-
+-#: dlls/compstui/compstui.rc:39 dlls/compstui/compstui.rc:40
+-msgid "Flip on Long E&dge"
+-msgstr ""
+-
+ #: dlls/credui/credui.rc:45
+ msgid "&User name:"
+ msgstr "По&льзователь:"
+ 
+ #: dlls/credui/credui.rc:48 dlls/cryptui/cryptui.rc:402
+-#: dlls/oledb32/version.rc:78
++#: dlls/oledb32/version.rc:81
+ msgid "&Password:"
+ msgstr "&Пароль:"
+ 
+@@ -2453,7 +2399,7 @@ msgid "&File name:"
+ msgstr "Имя &файла:"
+ 
+ #: dlls/cryptui/cryptui.rc:301 dlls/cryptui/cryptui.rc:323
+-#: dlls/cryptui/cryptui.rc:437 programs/winecfg/winecfg.rc:321
++#: dlls/cryptui/cryptui.rc:437 programs/winecfg/winecfg.rc:319
+ msgid "B&rowse..."
+ msgstr "&Обзор..."
+ 
+@@ -2752,7 +2698,7 @@ msgstr "Сертификат годен."
+ msgid "Field"
+ msgstr "Поле"
+ 
+-#: dlls/cryptui/cryptui.rc:48 dlls/oledb32/version.rc:36
++#: dlls/cryptui/cryptui.rc:48 dlls/oledb32/version.rc:39
+ msgid "Value"
+ msgstr "Значение"
+ 
+@@ -3220,12 +3166,18 @@ msgid "Not yet implemented"
+ msgstr "Ещё не реализовано"
+ 
+ #: dlls/desk.cpl/desk.rc:35
++#, fuzzy
++#| msgctxt "display name"
++#| msgid "Desktop"
+ msgid "Desktop"
+ msgstr "Рабочий стол"
+ 
+ #: dlls/desk.cpl/desk.rc:38
++#, fuzzy
++#| msgctxt "display name"
++#| msgid "Desktop"
+ msgid "Virtual Desktop"
+-msgstr "Виртуальный рабочий стол"
++msgstr "Рабочий стол"
+ 
+ #: dlls/desk.cpl/desk.rc:40 dlls/joy.cpl/joy.rc:41
+ #, fuzzy
+@@ -3359,7 +3311,7 @@ msgstr "Символьный"
+ msgid "OEM/DOS"
+ msgstr "OEM/DOS"
+ 
+-#: dlls/gdi32/gdi32.rc:45 dlls/oledb32/version.rc:97
++#: dlls/gdi32/gdi32.rc:45 dlls/oledb32/version.rc:100
+ #: dlls/wldap32/wldap32.rc:112
+ msgid "Other"
+ msgstr "Другой"
+@@ -3404,60 +3356,60 @@ msgstr "Подключение к камере"
+ msgid "Connecting to camera... Please Wait"
+ msgstr "Подключение к камере... Ждите"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:61
++#: dlls/hhctrl.ocx/hhctrl.rc:59
+ msgid "S&ync"
+ msgstr "С&инхронизировать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:62 dlls/hhctrl.ocx/hhctrl.rc:75
++#: dlls/hhctrl.ocx/hhctrl.rc:60 dlls/hhctrl.ocx/hhctrl.rc:73
+ #: dlls/shdoclc/shdoclc.rc:41 programs/winhlp32/winhlp32.rc:89
+ msgid "&Back"
+ msgstr "&Назад"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:63 dlls/hhctrl.ocx/hhctrl.rc:76
++#: dlls/hhctrl.ocx/hhctrl.rc:61 dlls/hhctrl.ocx/hhctrl.rc:74
+ msgid "&Forward"
+ msgstr "&Вперёд"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:64
++#: dlls/hhctrl.ocx/hhctrl.rc:62
+ msgctxt "table of contents"
+ msgid "&Home"
+ msgstr "&Начало"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:65
++#: dlls/hhctrl.ocx/hhctrl.rc:63
+ msgid "&Stop"
+ msgstr "Останов&ить"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:66 dlls/hhctrl.ocx/hhctrl.rc:83
+-#: dlls/oledb32/version.rc:70 dlls/shdoclc/shdoclc.rc:59
++#: dlls/hhctrl.ocx/hhctrl.rc:64 dlls/hhctrl.ocx/hhctrl.rc:81
++#: dlls/oledb32/version.rc:73 dlls/shdoclc/shdoclc.rc:59
+ msgid "&Refresh"
+ msgstr "О&бновить"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:67 dlls/hhctrl.ocx/hhctrl.rc:82
++#: dlls/hhctrl.ocx/hhctrl.rc:65 dlls/hhctrl.ocx/hhctrl.rc:80
+ #: programs/winhlp32/winhlp32.rc:34
+ msgid "&Print..."
+ msgstr "&Печатать..."
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:78 dlls/hhctrl.ocx/hhctrl.rc:92
++#: dlls/hhctrl.ocx/hhctrl.rc:76 dlls/hhctrl.ocx/hhctrl.rc:90
+ #: dlls/shdoclc/shdoclc.rc:49 dlls/shdoclc/shdoclc.rc:98
+ #: dlls/shdoclc/shdoclc.rc:120 dlls/user32/user32.rc:65
+ msgid "Select &All"
+ msgstr "Выделить в&сё"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:80 dlls/shdoclc/shdoclc.rc:54
++#: dlls/hhctrl.ocx/hhctrl.rc:78 dlls/shdoclc/shdoclc.rc:54
+ msgid "&View Source"
+ msgstr "&Открыть исходный текст"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:85
++#: dlls/hhctrl.ocx/hhctrl.rc:83
+ msgid "Proper&ties"
+ msgstr "Сво&йства"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:89 dlls/shdoclc/shdoclc.rc:79
++#: dlls/hhctrl.ocx/hhctrl.rc:87 dlls/shdoclc/shdoclc.rc:79
+ #: dlls/shdoclc/shdoclc.rc:93 dlls/shdoclc/shdoclc.rc:117
+ #: dlls/shdoclc/shdoclc.rc:159 dlls/shdoclc/shdoclc.rc:183
+ #: dlls/user32/user32.rc:60 programs/wordpad/wordpad.rc:112
+ msgid "Cu&t"
+ msgstr "&Вырезать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:90 dlls/shdoclc/shdoclc.rc:80
++#: dlls/hhctrl.ocx/hhctrl.rc:88 dlls/shdoclc/shdoclc.rc:80
+ #: dlls/shdoclc/shdoclc.rc:94 dlls/shdoclc/shdoclc.rc:118
+ #: dlls/shdoclc/shdoclc.rc:133 dlls/shdoclc/shdoclc.rc:160
+ #: dlls/shdoclc/shdoclc.rc:184 dlls/shell32/shell32.rc:98
+@@ -3466,12 +3418,12 @@ msgstr "&Вырезать"
+ msgid "&Copy"
+ msgstr "&Копировать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:91 dlls/shdoclc/shdoclc.rc:119
++#: dlls/hhctrl.ocx/hhctrl.rc:89 dlls/shdoclc/shdoclc.rc:119
+ #: dlls/shell32/shell32.rc:64
+ msgid "Paste"
+ msgstr "&Вставить"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:93 dlls/shdoclc/shdoclc.rc:121
++#: dlls/hhctrl.ocx/hhctrl.rc:91 dlls/shdoclc/shdoclc.rc:121
+ #: dlls/shell32/shell32.rc:166
+ msgid "&Print"
+ msgstr "&Печать"
+@@ -3484,7 +3436,7 @@ msgstr "&Содержание"
+ msgid "I&ndex"
+ msgstr "&Оглавление"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:33
++#: dlls/hhctrl.ocx/hhctrl.rc:33 programs/notepad/notepad.rc:55
+ msgid "&Search"
+ msgstr "П&оиск"
+ 
+@@ -3500,44 +3452,38 @@ msgstr "Скрыть &вкладки"
+ msgid "Show &Tabs"
+ msgstr "Показать &вкладки"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:39
+-#, fuzzy
+-#| msgid "Select Source"
+-msgid "Select Topic"
+-msgstr "Выберите источник"
+-
+-#: dlls/hhctrl.ocx/hhctrl.rc:44
++#: dlls/hhctrl.ocx/hhctrl.rc:42
+ msgid "Show"
+ msgstr "Показать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:45 dlls/winemac.drv/winemac.rc:34
++#: dlls/hhctrl.ocx/hhctrl.rc:43 dlls/winemac.drv/winemac.rc:34
+ msgid "Hide"
+ msgstr "Спрятать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:46 dlls/ieframe/ieframe.rc:68
++#: dlls/hhctrl.ocx/hhctrl.rc:44 dlls/ieframe/ieframe.rc:68
+ #: dlls/shdoclc/shdoclc.rc:167 dlls/shdoclc/shdoclc.rc:191
+ msgid "Stop"
+ msgstr "Остановить"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:47 dlls/ieframe/ieframe.rc:69
++#: dlls/hhctrl.ocx/hhctrl.rc:45 dlls/ieframe/ieframe.rc:69
+ #: dlls/shell32/shell32.rc:62
+ msgid "Refresh"
+ msgstr "Обновить"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:48 dlls/ieframe/ieframe.rc:66
++#: dlls/hhctrl.ocx/hhctrl.rc:46 dlls/ieframe/ieframe.rc:66
+ msgid "Back"
+ msgstr "Назад"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:49
++#: dlls/hhctrl.ocx/hhctrl.rc:47
+ msgctxt "table of contents"
+ msgid "Home"
+ msgstr "Начало"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:50
++#: dlls/hhctrl.ocx/hhctrl.rc:48
+ msgid "Sync"
+ msgstr "Синхронизировать"
+ 
+-#: dlls/hhctrl.ocx/hhctrl.rc:53 dlls/ieframe/ieframe.rc:67
++#: dlls/hhctrl.ocx/hhctrl.rc:51 dlls/ieframe/ieframe.rc:67
+ msgid "Forward"
+ msgstr "Вперёд"
+ 
+@@ -3568,7 +3514,8 @@ msgstr "&Окно"
+ msgid "&Open..."
+ msgstr "&Открыть..."
+ 
+-#: dlls/ieframe/ieframe.rc:36 programs/wordpad/wordpad.rc:34
++#: dlls/ieframe/ieframe.rc:36 programs/notepad/notepad.rc:33
++#: programs/wordpad/wordpad.rc:34
+ msgid "Save &as..."
+ msgstr "Сохранить &как..."
+ 
+@@ -3822,8 +3769,10 @@ msgid "High"
+ msgstr "Высокий"
+ 
+ #: dlls/ir50_32/ir50_32.rc:28
++#, fuzzy
++#| msgid "Index"
+ msgid "Indeo5"
+-msgstr "Indeo5"
++msgstr "Указатель"
+ 
+ #: dlls/ir50_32/ir50_32.rc:29
+ #, fuzzy
+@@ -3850,12 +3799,16 @@ msgid "&Enable"
+ msgstr "&Включить"
+ 
+ #: dlls/joy.cpl/joy.rc:44
++#, fuzzy
++#| msgid "Connected (xinput device)"
+ msgid "Connected (DirectInput devices)"
+-msgstr "Подключено (устройства DirectInput)"
++msgstr "Подключено (устройство xinput)"
+ 
+ #: dlls/joy.cpl/joy.rc:46
++#, fuzzy
++#| msgid "Connected (xinput device)"
+ msgid "Connected (XInput devices)"
+-msgstr "Подключено (устройства XInput)"
++msgstr "Подключено (устройство xinput)"
+ 
+ #: dlls/joy.cpl/joy.rc:48
+ msgid "Disabled"
+@@ -3872,36 +3825,36 @@ msgid "Enable SDL"
+ msgstr "&Включить"
+ 
+ #: dlls/joy.cpl/joy.rc:53
++#, fuzzy
++#| msgid "Disabled"
+ msgid "Disable hidraw"
+-msgstr "Отключить hidraw"
++msgstr "Выключено"
+ 
+ #: dlls/joy.cpl/joy.rc:58
+ msgid "DInput"
+-msgstr "DInput"
++msgstr ""
+ 
+-#: dlls/joy.cpl/joy.rc:62 dlls/joy.cpl/joy.rc:111
++#: dlls/joy.cpl/joy.rc:62
+ msgid "Axes"
+-msgstr "Оси"
++msgstr ""
+ 
+-#: dlls/joy.cpl/joy.rc:63 dlls/joy.cpl/joy.rc:112
++#: dlls/joy.cpl/joy.rc:63
+ msgid "POVs"
+ msgstr ""
+ 
+-#: dlls/joy.cpl/joy.rc:64 dlls/joy.cpl/joy.rc:113
++#: dlls/joy.cpl/joy.rc:64
+ msgid "Buttons"
+ msgstr "Кнопки"
+ 
+ #: dlls/joy.cpl/joy.rc:65
++#, fuzzy
++#| msgid "Test Force Feedback"
+ msgid "Force Feedback Effect"
+-msgstr "Эффект отдачи"
++msgstr "Проверить отдачу"
+ 
+ #: dlls/joy.cpl/joy.rc:67
+-#, fuzzy
+-#| msgid ""
+-#| "Press any button in the controller to activate the chosen effect. The "
+-#| "effect direction can be changed with the controller axis."
+ msgid ""
+-"Hold any button in the controller to play the chosen effect. The effect "
++"Press any button in the controller to activate the chosen effect. The effect "
+ "direction can be changed with the controller axis."
+ msgstr ""
+ "Нажмите любую кнопку на контроллере, чтобы активировать выбранный эффект. "
+@@ -3909,7 +3862,7 @@ msgstr ""
+ 
+ #: dlls/joy.cpl/joy.rc:73
+ msgid "XInput"
+-msgstr "XInput"
++msgstr ""
+ 
+ #: dlls/joy.cpl/joy.rc:76
+ #, fuzzy
+@@ -3960,14 +3913,10 @@ msgid ""
+ msgstr ""
+ 
+ #: dlls/joy.cpl/joy.rc:98 dlls/joy.cpl/joy.rc:99 dlls/joy.cpl/joy.rc:100
+-#: dlls/joy.cpl/joy.rc:101 dlls/joy.cpl/joy.rc:115
++#: dlls/joy.cpl/joy.rc:101
+ msgid "Rumble"
+ msgstr ""
+ 
+-#: dlls/joy.cpl/joy.rc:106
+-msgid "Windows.Gaming.Input"
+-msgstr ""
+-
+ #: dlls/joy.cpl/joy.rc:31
+ msgid "Game Controllers"
+ msgstr "Игровые контроллеры"
+@@ -4008,7 +3957,7 @@ msgstr "Объект не поддерживает это свойство ил
+ msgid "Object doesn't support this action"
+ msgstr "Объект не поддерживает это действие"
+ 
+-#: dlls/jscript/jscript.rc:36 dlls/vbscript/vbscript.rc:54
++#: dlls/jscript/jscript.rc:36
+ msgid "Argument not optional"
+ msgstr "Отсутствует обязательный аргумент"
+ 
+@@ -4082,19 +4031,19 @@ msgstr "Условная компиляция отключена"
+ msgid "Expected '@'"
+ msgstr "Ожидается «@»"
+ 
+-#: dlls/jscript/jscript.rc:97
++#: dlls/jscript/jscript.rc:90
+ msgid "Microsoft JScript compilation error"
+ msgstr "Ошибка компиляции Microsoft JScript"
+ 
+-#: dlls/jscript/jscript.rc:98
++#: dlls/jscript/jscript.rc:91
+ msgid "Microsoft JScript runtime error"
+ msgstr "Ошибка выполнения Microsoft JScript"
+ 
+-#: dlls/jscript/jscript.rc:99 dlls/vbscript/vbscript.rc:64
++#: dlls/jscript/jscript.rc:92 dlls/vbscript/vbscript.rc:64
+ msgid "Unknown runtime error"
+ msgstr "Неизвестная ошибка времени выполнения"
+ 
+-#: dlls/jscript/jscript.rc:57
++#: dlls/jscript/jscript.rc:56
+ msgid "Number expected"
+ msgstr "Ожидается число"
+ 
+@@ -4103,194 +4052,158 @@ msgid "Function expected"
+ msgstr "Ожидается функция"
+ 
+ #: dlls/jscript/jscript.rc:55
+-#, fuzzy
+-#| msgid "'[object]' is not a date object"
+-msgid "'[object]' is not a string object"
+-msgstr "«[object]» не объект типа «date»"
+-
+-#: dlls/jscript/jscript.rc:56
+ msgid "'[object]' is not a date object"
+ msgstr "«[object]» не объект типа «date»"
+ 
+-#: dlls/jscript/jscript.rc:58
++#: dlls/jscript/jscript.rc:57
+ msgid "Object expected"
+ msgstr "Ожидается объект"
+ 
+-#: dlls/jscript/jscript.rc:59
++#: dlls/jscript/jscript.rc:58
+ msgid "Illegal assignment"
+ msgstr "Неверное присваивание"
+ 
+-#: dlls/jscript/jscript.rc:60
++#: dlls/jscript/jscript.rc:59
+ msgid "'|' is undefined"
+ msgstr "«|» не определён"
+ 
+-#: dlls/jscript/jscript.rc:61
++#: dlls/jscript/jscript.rc:60
+ msgid "Boolean object expected"
+ msgstr "Ожидается объект типа «bool»"
+ 
+-#: dlls/jscript/jscript.rc:62
++#: dlls/jscript/jscript.rc:61
+ msgid "Cannot delete '|'"
+ msgstr "Невозможно удалить «|»"
+ 
+-#: dlls/jscript/jscript.rc:63
++#: dlls/jscript/jscript.rc:62
+ msgid "VBArray object expected"
+ msgstr "Ожидается объект типа «VBArray»"
+ 
+-#: dlls/jscript/jscript.rc:64
++#: dlls/jscript/jscript.rc:63
+ msgid "JScript object expected"
+ msgstr "Ожидается объект типа «JScript»"
+ 
+-#: dlls/jscript/jscript.rc:65
++#: dlls/jscript/jscript.rc:64
+ #, fuzzy
+ #| msgid "Array object expected"
+ msgid "Enumerator object expected"
+ msgstr "Ожидается объект типа «Array»"
+ 
+-#: dlls/jscript/jscript.rc:66
++#: dlls/jscript/jscript.rc:65
+ #, fuzzy
+ #| msgid "Boolean object expected"
+ msgid "Regular Expression object expected"
+ msgstr "Ожидается объект типа «bool»"
+ 
+-#: dlls/jscript/jscript.rc:67
++#: dlls/jscript/jscript.rc:66
+ msgid "Syntax error in regular expression"
+ msgstr "Синтаксическая ошибка в регулярном выражении"
+ 
+-#: dlls/jscript/jscript.rc:68
++#: dlls/jscript/jscript.rc:67
+ #, fuzzy
+ #| msgid "Expected identifier"
+ msgid "Unexpected quantifier"
+ msgstr "Ожидается идентификатор"
+ 
+-#: dlls/jscript/jscript.rc:69
++#: dlls/jscript/jscript.rc:68
+ msgid "Exception thrown and not caught"
+-msgstr "Исключение создано, но не перехвачено"
++msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:71
++#: dlls/jscript/jscript.rc:70
+ msgid "URI to be encoded contains invalid characters"
+ msgstr "В кодируемом URI обнаружен неверный символ"
+ 
+-#: dlls/jscript/jscript.rc:70
++#: dlls/jscript/jscript.rc:69
+ msgid "URI to be decoded is incorrect"
+ msgstr "Декодируемый URI неверен"
+ 
+-#: dlls/jscript/jscript.rc:72
++#: dlls/jscript/jscript.rc:71
+ msgid "Number of fraction digits is out of range"
+ msgstr "Количество знаков после запятой вне диапазона"
+ 
+-#: dlls/jscript/jscript.rc:73
++#: dlls/jscript/jscript.rc:72
+ msgid "Precision is out of range"
+ msgstr "Точность представления вне диапазона"
+ 
+-#: dlls/jscript/jscript.rc:74
+-#, fuzzy
+-#| msgid "Array object expected"
+-msgid "Array or arguments object expected"
+-msgstr "Ожидается объект типа «Array»"
+-
+-#: dlls/jscript/jscript.rc:75
++#: dlls/jscript/jscript.rc:73
+ msgid "Array length must be a finite positive integer"
+ msgstr "Длиной массива должно быть конечное положительное число"
+ 
+-#: dlls/jscript/jscript.rc:76
++#: dlls/jscript/jscript.rc:74
+ msgid "Array object expected"
+ msgstr "Ожидается объект типа «Array»"
+ 
+-#: dlls/jscript/jscript.rc:77
++#: dlls/jscript/jscript.rc:75
+ msgid ""
+ "'writable' attribute on the property descriptor cannot be set to 'true' on "
+ "this object"
+ msgstr "Невозможно установить атрибут «writable» в «true» для этого объекта"
+ 
+-#: dlls/jscript/jscript.rc:78
++#: dlls/jscript/jscript.rc:76
+ msgid "Cyclic __proto__ value"
+ msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:79
++#: dlls/jscript/jscript.rc:77
+ msgid "Cannot create property for a non-extensible object"
+-msgstr "Невозможно создать для нерасширяемого объекта"
++msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:80
++#: dlls/jscript/jscript.rc:78
+ msgid "Cannot define property '|': object is not extensible"
+ msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:81
++#: dlls/jscript/jscript.rc:79
+ msgid "Cannot redefine non-configurable property '|'"
+ msgstr "Невозможно переопределить ненастраиваемое свойство «|»"
+ 
+-#: dlls/jscript/jscript.rc:82
++#: dlls/jscript/jscript.rc:80
+ msgid "Cannot modify non-writable property '|'"
+ msgstr "Невозможно изменить свойство «|»"
+ 
+-#: dlls/jscript/jscript.rc:84
+-msgid "Typed array constructor argument is invalid"
+-msgstr ""
+-
+-#: dlls/jscript/jscript.rc:83
+-#, fuzzy
+-#| msgid "'this' is not a Map object"
+-msgid "'this' is not a typed array object"
+-msgstr "«this» не объект типа «Map»"
+-
+-#: dlls/jscript/jscript.rc:85
+-msgid "Invalid offset/length when creating typed array"
+-msgstr ""
+-
+-#: dlls/jscript/jscript.rc:86
+-msgid "Invalid begin/end value in typed array subarray method"
+-msgstr ""
+-
+-#: dlls/jscript/jscript.rc:87
+-#, fuzzy
+-#| msgid "Invalid module type for %1.\n"
+-msgid "Invalid source in typed array set"
+-msgstr "Неверный тип модуля в %1.\n"
+-
+-#: dlls/jscript/jscript.rc:88
++#: dlls/jscript/jscript.rc:81
+ #, fuzzy
+ #| msgid "'this' is not a Map object"
+ msgid "'this' is not a DataView object"
+ msgstr "«this» не объект типа «Map»"
+ 
+-#: dlls/jscript/jscript.rc:89
++#: dlls/jscript/jscript.rc:82
+ msgid "Required argument offset or value in DataView method is not specified"
+ msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:90
++#: dlls/jscript/jscript.rc:83
+ msgid "DataView operation access beyond specified buffer length"
+ msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:91
++#: dlls/jscript/jscript.rc:84
+ msgid "DataView constructor argument offset is invalid"
+ msgstr ""
+ 
+-#: dlls/jscript/jscript.rc:92
++#: dlls/jscript/jscript.rc:85
+ #, fuzzy
+ #| msgid "'this' is not a Map object"
+ msgid "'this' is not a | object"
+ msgstr "«this» не объект типа «Map»"
+ 
+-#: dlls/jscript/jscript.rc:93
++#: dlls/jscript/jscript.rc:86
+ #, fuzzy
+ #| msgid "'this' is not a Map object"
+ msgid "'key' is not an object"
+ msgstr "«this» не объект типа «Map»"
+ 
+-#: dlls/jscript/jscript.rc:94
++#: dlls/jscript/jscript.rc:87
+ #, fuzzy
+ #| msgid "Array object expected"
+ msgid "ArrayBuffer object expected"
+ msgstr "Ожидается объект типа «Array»"
+ 
+-#: dlls/jscript/jscript.rc:95
++#: dlls/jscript/jscript.rc:88
+ msgid "Property cannot have both accessors and a value"
+ msgstr "Свойство не может одновременно иметь методы для доступа и значение"
+ 
+-#: include/wine/wine_common_ver.rc:123
++#: include/wine/wine_common_ver.rc:138
+ msgid "Wine kernel DLL"
+ msgstr "Библиотека ядра Wine"
+ 
+-#: include/wine/wine_common_ver.rc:128 dlls/winemac.drv/winemac.rc:32
++#: include/wine/wine_common_ver.rc:143 dlls/winemac.drv/winemac.rc:32
+ #: programs/wineboot/wineboot.rc:42 programs/winecfg/winecfg.rc:143
+ msgid "Wine"
+ msgstr "Wine"
+@@ -7289,24 +7202,32 @@ msgid "This network connection does not exist.\n"
+ msgstr "Указанное сетевое соединение не существует.\n"
+ 
+ #: dlls/kernelbase/winerror.mc:3748
++#, fuzzy
++#| msgid "Invalid at interrupt time.\n"
+ msgid "Call interrupted.\n"
+-msgstr "Вызов прерван.\n"
++msgstr "Нельзя обратиться к семафору во время обработки прерывания.\n"
+ 
+ #: dlls/kernelbase/winerror.mc:3753
++#, fuzzy
++#| msgid "Invalid handle.\n"
+ msgid "Invalid file handle.\n"
+-msgstr "Неверный файловый дескриптор.\n"
++msgstr "Неверный дескриптор.\n"
+ 
+ #: dlls/kernelbase/winerror.mc:3763
++#, fuzzy
++#| msgid "Invalid network address.\n"
+ msgid "Invalid pointer address.\n"
+-msgstr "Неверный адрес указателя.\n"
++msgstr "Неверный сетевой адрес.\n"
+ 
+ #: dlls/kernelbase/winerror.mc:3768
++#, fuzzy
++#| msgid "Invalid name.\n"
+ msgid "Invalid argument.\n"
+-msgstr "Неверный аргумент.\n"
++msgstr "Неверное имя.\n"
+ 
+ #: dlls/kernelbase/winerror.mc:3778
+ msgid "Cannot assign requested address.\n"
+-msgstr "Не удалось задать указанный адрес.\n"
++msgstr ""
+ 
+ #: dlls/kernelbase/winerror.mc:3783
+ msgid "Connection reset by peer.\n"
+@@ -7511,7 +7432,7 @@ msgstr "Конверт"
+ 
+ #: dlls/localspl/localspl.rc:73
+ msgid "Envelope Monarch"
+-msgstr "Конверт Monarch"
++msgstr ""
+ 
+ #: dlls/localspl/localspl.rc:74
+ msgid "6 3/4 Envelope"
+@@ -8097,7 +8018,7 @@ msgid "Vector property is required.\n"
+ msgstr "Требуется свойство векторного типа.\n"
+ 
+ #: dlls/mferror/mferror.mc:389
+-msgid "Operation was canceled.\n"
++msgid "Operation was cancelled.\n"
+ msgstr "Операция была отменена.\n"
+ 
+ #: dlls/mferror/mferror.mc:396
+@@ -8322,7 +8243,7 @@ msgstr "Вся сеть"
+ msgid "Sound Selection"
+ msgstr "Выбор звука"
+ 
+-#: dlls/msacm32/msacm32.rc:39 programs/winedbg/winedbg.rc:78
++#: dlls/msacm32/msacm32.rc:39 programs/winedbg/winedbg.rc:77
+ msgid "&Save As..."
+ msgstr "&Сохранить как..."
+ 
+@@ -9297,12 +9218,12 @@ msgstr "за экраном"
+ 
+ #: dlls/oleacc/oleacc.rc:115
+ msgctxt "object state"
+-msgid "sizable"
++msgid "sizeable"
+ msgstr "изменяемого размера"
+ 
+ #: dlls/oleacc/oleacc.rc:116
+ msgctxt "object state"
+-msgid "movable"
++msgid "moveable"
+ msgstr "перемещаемое"
+ 
+ #: dlls/oleacc/oleacc.rc:117
+@@ -9381,167 +9302,169 @@ msgstr "Включено"
+ msgid "Off"
+ msgstr "Выключено"
+ 
+-#: dlls/oledb32/version.rc:53
++#: dlls/oledb32/version.rc:56
+ msgid "Provider"
+ msgstr "Провайдер"
+ 
+-#: dlls/oledb32/version.rc:56
++#: dlls/oledb32/version.rc:59
+ msgid "Select the data you want to connect to:"
+ msgstr "Выберите формат для подключения:"
+ 
+-#: dlls/oledb32/version.rc:63
++#: dlls/oledb32/version.rc:66
+ msgid "Connection"
+ msgstr "Подключение"
+ 
+-#: dlls/oledb32/version.rc:66
++#: dlls/oledb32/version.rc:69
+ #, fuzzy
+ #| msgid "Select the data you want to connect to:"
+ msgid "Specify the following to connect to ODBC data:"
+ msgstr "Выберите формат для подключения:"
+ 
+-#: dlls/oledb32/version.rc:67
++#: dlls/oledb32/version.rc:70
+ msgid "1. Specify the source of data:"
+-msgstr "1. Укажите источник данных:"
++msgstr ""
+ 
+-#: dlls/oledb32/version.rc:68
++#: dlls/oledb32/version.rc:71
+ #, fuzzy
+ #| msgid "Please enter your name"
+ msgid "Use &data source name"
+ msgstr "Введите ваше имя"
+ 
+-#: dlls/oledb32/version.rc:71
++#: dlls/oledb32/version.rc:74
+ msgid "Use c&onnection string"
+ msgstr "Использовать &строку подключения"
+ 
+-#: dlls/oledb32/version.rc:72
++#: dlls/oledb32/version.rc:75
+ msgid "&Connection string:"
+ msgstr "Строка &подключения:"
+ 
+-#: dlls/oledb32/version.rc:74
++#: dlls/oledb32/version.rc:77
+ #, fuzzy
+ #| msgid "A&dd..."
+ msgid "B&uild..."
+ msgstr "&Добавить..."
+ 
+-#: dlls/oledb32/version.rc:75
++#: dlls/oledb32/version.rc:78
+ msgid "2. Enter information to log on to the server"
+-msgstr "2. Введите информация для доступа к серверу"
++msgstr ""
+ 
+-#: dlls/oledb32/version.rc:76
++#: dlls/oledb32/version.rc:79
+ msgid "User &name:"
+ msgstr "По&льзователь:"
+ 
+-#: dlls/oledb32/version.rc:80
++#: dlls/oledb32/version.rc:83
+ msgid "&Blank password"
+ msgstr "Пу&стой пароль"
+ 
+-#: dlls/oledb32/version.rc:81
++#: dlls/oledb32/version.rc:84
+ msgid "Allow &saving password"
+ msgstr "Разрешить &сохранять пароль"
+ 
+-#: dlls/oledb32/version.rc:82
++#: dlls/oledb32/version.rc:85
+ msgid "3. Enter the &initial catalog to use:"
+-msgstr "3. Укажите &начальный каталог:"
++msgstr ""
+ 
+-#: dlls/oledb32/version.rc:84
++#: dlls/oledb32/version.rc:87
+ msgid "&Test Connection"
+ msgstr "&Проверка подключения"
+ 
+-#: dlls/oledb32/version.rc:89
++#: dlls/oledb32/version.rc:92
+ msgid "Advanced"
+ msgstr "Мастер"
+ 
+-#: dlls/oledb32/version.rc:92
++#: dlls/oledb32/version.rc:95
+ msgid "Network settings"
+ msgstr "Сетевые настройки"
+ 
+-#: dlls/oledb32/version.rc:93
++#: dlls/oledb32/version.rc:96
+ #, fuzzy
+ #| msgid "Bad impersonation level.\n"
+ msgid "&Impersonation level:"
+ msgstr "Ошибочный уровень олицетворения.\n"
+ 
+-#: dlls/oledb32/version.rc:95
++#: dlls/oledb32/version.rc:98
+ msgid "P&rotection level:"
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:98
++#: dlls/oledb32/version.rc:101
+ #, fuzzy
+ #| msgid "Connected"
+ msgid "Connect:"
+ msgstr "Подключено"
+ 
+-#: dlls/oledb32/version.rc:100
++#: dlls/oledb32/version.rc:103
+ msgid "seconds."
+ msgstr "сек."
+ 
+-#: dlls/oledb32/version.rc:101
++#: dlls/oledb32/version.rc:104
+ msgid "A&ccess:"
+ msgstr "До&ступ:"
+ 
+-#: dlls/oledb32/version.rc:107
++#: dlls/oledb32/version.rc:110
+ msgid "All"
+ msgstr "Все"
+ 
+-#: dlls/oledb32/version.rc:111
++#: dlls/oledb32/version.rc:114
+ msgid ""
+ "These are the initialization properties for this type of data. To edit a "
+ "value, select a property, then choose Edit Value below."
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:112
++#: dlls/oledb32/version.rc:115
++#, fuzzy
++#| msgid "&Edit..."
+ msgid "&Edit Value..."
+-msgstr "&Изменить знаяение..."
++msgstr "&Изменить..."
+ 
+-#: dlls/oledb32/version.rc:46
++#: dlls/oledb32/version.rc:49
+ #, fuzzy
+ #| msgid "Data Link Properties"
+ msgid "Data Link Error"
+ msgstr "Свойства подключения"
+ 
+-#: dlls/oledb32/version.rc:47
++#: dlls/oledb32/version.rc:50
+ msgid "Please select a provider."
+ msgstr "Выберите провайдер."
+ 
+-#: dlls/oledb32/version.rc:48
++#: dlls/oledb32/version.rc:51
+ msgid ""
+ "Provider is no longer available. Ensure that the provider is installed "
+ "properly."
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:33
++#: dlls/oledb32/version.rc:36
+ msgid "Data Link Properties"
+ msgstr "Свойства подключения"
+ 
+-#: dlls/oledb32/version.rc:34
++#: dlls/oledb32/version.rc:37
+ msgid "OLE DB Provider(s)"
+ msgstr "Провайдеры OLE DB"
+ 
+-#: dlls/oledb32/version.rc:38
++#: dlls/oledb32/version.rc:41
+ msgid "Read"
+ msgstr "Чтение"
+ 
+-#: dlls/oledb32/version.rc:39
++#: dlls/oledb32/version.rc:42
+ msgid "ReadWrite"
+ msgstr "Чтение и запись"
+ 
+-#: dlls/oledb32/version.rc:40
++#: dlls/oledb32/version.rc:43
+ msgid "Share Deny None"
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:41
++#: dlls/oledb32/version.rc:44
+ msgid "Share Deny Read"
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:42
++#: dlls/oledb32/version.rc:45
+ msgid "Share Deny Write"
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:43
++#: dlls/oledb32/version.rc:46
+ msgid "Share Exclusive"
+ msgstr ""
+ 
+-#: dlls/oledb32/version.rc:44
++#: dlls/oledb32/version.rc:47
+ msgid "Write"
+ msgstr "Запись"
+ 
+@@ -9726,39 +9649,11 @@ msgstr "Неизвестный источник"
+ msgid "the program which created it"
+ msgstr "программа, которая его создала"
+ 
+-#: dlls/sane.ds/sane.rc:55 dlls/sane.ds/sane.rc:45
++#: dlls/sane.ds/sane.rc:41
+ msgid "Scanning"
+ msgstr "Сканирование"
+ 
+-#: dlls/sane.ds/sane.rc:58
+-#, fuzzy
+-#| msgid "feature from:"
+-msgid "Manufacturer:"
+-msgstr "функции из:"
+-
+-#: dlls/sane.ds/sane.rc:60
+-#, fuzzy
+-#| msgid "Product Updates:"
+-msgid "Product family:"
+-msgstr "Обновления:"
+-
+-#: dlls/sane.ds/sane.rc:62
+-#, fuzzy
+-#| msgid "Product Updates:"
+-msgid "Product name:"
+-msgstr "Обновления:"
+-
+-#: dlls/sane.ds/sane.rc:64
+-#, fuzzy
+-#| msgid "Screen resolution"
+-msgid "Resolution:"
+-msgstr "Разрешение экрана"
+-
+-#: dlls/sane.ds/sane.rc:66 programs/wordpad/wordpad.rc:181
+-msgid "Page"
+-msgstr "Страница"
+-
+-#: dlls/sane.ds/sane.rc:68
++#: dlls/sane.ds/sane.rc:44
+ msgid "SCANNING... Please Wait"
+ msgstr "СКАНИРОВАНИЕ... пожалуйста, подождите"
+ 
+@@ -9788,35 +9683,6 @@ msgctxt "unit: microseconds"
+ msgid "us"
+ msgstr "мкс"
+ 
+-#: dlls/sane.ds/sane.rc:43
+-msgid "LineArt"
+-msgstr ""
+-
+-#: dlls/sane.ds/sane.rc:44 dlls/setupapi/setupapi.rc:32
+-#: programs/ipconfig/ipconfig.rc:34
+-msgid "Unknown"
+-msgstr "Неизвестно"
+-
+-#: dlls/sane.ds/sane.rc:46
+-msgid ""
+-"The Automatic Document Feeder (ADF) is empty. Please insert the sheets to be "
+-"scanned."
+-msgstr ""
+-
+-#: dlls/sane.ds/sane.rc:47
+-msgid ""
+-"The scanner reports a paper jam. Check for additional information on device "
+-"display."
+-msgstr ""
+-
+-#: dlls/sane.ds/sane.rc:48
+-msgid "The scanner cover is open. Please close the scanner."
+-msgstr ""
+-
+-#: dlls/sane.ds/sane.rc:49
+-msgid "The scanner is busy. Try again later."
+-msgstr ""
+-
+ #: dlls/serialui/serialui.rc:28
+ msgid "Settings for %s"
+ msgstr "Настройки %s"
+@@ -9869,6 +9735,10 @@ msgstr "Копировать файлы изготовителя из:"
+ msgid "The file '%1' on %2 is needed"
+ msgstr "Файл «%1» на %2 необходим"
+ 
++#: dlls/setupapi/setupapi.rc:32 programs/ipconfig/ipconfig.rc:34
++msgid "Unknown"
++msgstr "Неизвестно"
++
+ #: dlls/setupapi/setupapi.rc:33
+ msgid "Copy files from:"
+ msgstr "Копировать файлы из:"
+@@ -10403,8 +10273,7 @@ msgctxt "display name"
+ msgid "Desktop"
+ msgstr "Рабочий стол"
+ 
+-#: dlls/shell32/shell32.rc:152 dlls/urlmon/urlmon.rc:56
+-#: programs/regedit/regedit.rc:243
++#: dlls/shell32/shell32.rc:152 programs/regedit/regedit.rc:243
+ msgid "My Computer"
+ msgstr "Мой компьютер"
+ 
+@@ -10414,7 +10283,7 @@ msgstr "Панель Управления"
+ 
+ #: dlls/shell32/shell32.rc:162
+ msgid "Ne&w"
+-msgstr "&Новый"
++msgstr ""
+ 
+ #: dlls/shell32/shell32.rc:164
+ msgid "E&xplore"
+@@ -10422,7 +10291,7 @@ msgstr "&Проводник"
+ 
+ #: dlls/shell32/shell32.rc:167
+ msgid "Run as &Administrator"
+-msgstr "Выполнить от имени &Администратора"
++msgstr ""
+ 
+ #: dlls/shell32/shell32.rc:189
+ msgid "Restart"
+@@ -10761,7 +10630,7 @@ msgctxt "time unit: seconds"
+ msgid " sec"
+ msgstr " сек"
+ 
+-#: dlls/twaindsm/twain.rc:29
++#: dlls/twain_32/twain.rc:29
+ msgid "Select Source"
+ msgstr "Выберите источник"
+ 
+@@ -10836,18 +10705,24 @@ msgid "(UTC+05:45) Kathmandu"
+ msgstr "(UTC+05:45) Катманду"
+ 
+ #: dlls/tzres/tzres.rc:72
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Taipei Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Cape Verde Standard Time"
+-msgstr "Кабо-Верде стандартное время"
++msgstr "Тайбэйское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:73
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Taipei Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Cape Verde Daylight Time"
+-msgstr "Кабо-Верде летнее время"
++msgstr "Тайбэйское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:74
+ msgid "(UTC-01:00) Cabo Verde Is."
+-msgstr "(UTC-01:00) Кабо-Верде о."
++msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:165
+ msgctxt "maximum 31 characters"
+@@ -10864,11 +10739,15 @@ msgid "(UTC-05:00) Haiti"
+ msgstr "(UTC-05:00) Гаити"
+ 
+ #: dlls/tzres/tzres.rc:93
++#, fuzzy
++#| msgid "Central Europe Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central European Standard Time"
+ msgstr "Центральноевропейское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:94
++#, fuzzy
++#| msgid "Central Europe Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central European Daylight Time"
+ msgstr "Центральноевропейское летнее время"
+@@ -10915,11 +10794,15 @@ msgid "(UTC+07:00) Barnaul, Gorno-Altaysk"
+ msgstr "(UTC+07:00) Барнаул, Горно-Алтайск"
+ 
+ #: dlls/tzres/tzres.rc:90
++#, fuzzy
++#| msgid "Central Europe Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Europe Standard Time"
+ msgstr "Центральноевропейское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:91
++#, fuzzy
++#| msgid "Central Europe Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Europe Daylight Time"
+ msgstr "Центральноевропейское летнее время"
+@@ -11047,11 +10930,15 @@ msgid "(UTC+02:00) Juba"
+ msgstr "(UTC+02:00) Джуба"
+ 
+ #: dlls/tzres/tzres.rc:84
++#, fuzzy
++#| msgid "Central Asia Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Asia Standard Time"
+ msgstr "Центральноазиатское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:85
++#, fuzzy
++#| msgid "Central Asia Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Asia Daylight Time"
+ msgstr "Центральноазиатское летнее время"
+@@ -11135,7 +11022,7 @@ msgstr "Гренландское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:242
+ msgid "(UTC-03:30) Newfoundland"
+-msgstr "(UTC-03:30) Ньюфаундленд"
++msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:330
+ msgctxt "maximum 31 characters"
+@@ -11192,6 +11079,8 @@ msgid "(UTC-08:00) Pacific Time (US & Canada)"
+ msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:51
++#, fuzzy
++#| msgid "Azerbaijan Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Azerbaijan Standard Time"
+ msgstr "Азербайджанское стандартное время"
+@@ -11240,6 +11129,8 @@ msgid "(UTC+13:00) Samoa"
+ msgstr "(UTC+13:00) Самоа"
+ 
+ #: dlls/tzres/tzres.rc:183
++#, fuzzy
++#| msgid "Kaliningrad Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Kaliningrad Standard Time"
+ msgstr "Калининградское стандартное время"
+@@ -11274,6 +11165,8 @@ msgid "(UTC-08:00) Baja California"
+ msgstr "(UTC-08:00) Нижняя Калифорния"
+ 
+ #: dlls/tzres/tzres.rc:210
++#, fuzzy
++#| msgid "Middle East Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Middle East Standard Time"
+ msgstr "Ближневосточное стандартное время"
+@@ -11366,7 +11259,7 @@ msgstr "(UTC-06:00) Центральное время (США и Канада)"
+ #: dlls/tzres/tzres.rc:285 dlls/tzres/tzres.rc:286
+ msgctxt "maximum 31 characters"
+ msgid "Russia Time Zone 3"
+-msgstr "Россия часовой пояс 3"
++msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:287
+ msgid "(UTC+04:00) Izhevsk, Samara"
+@@ -11475,14 +11368,20 @@ msgid "(UTC-09:30) Marquesas Islands"
+ msgstr "(UTC-09:30) Маркизские острова"
+ 
+ #: dlls/tzres/tzres.rc:225
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Samoa Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Myanmar Standard Time"
+-msgstr "Мьянма стандартное время"
++msgstr "Стандартное время Самоа"
+ 
+ #: dlls/tzres/tzres.rc:226
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Samoa Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Myanmar Daylight Time"
+-msgstr "Мьянма летнее время"
++msgstr "Летнее время Самоа"
+ 
+ #: dlls/tzres/tzres.rc:227
+ msgid "(UTC+06:30) Yangon (Rangoon)"
+@@ -11579,9 +11478,11 @@ msgid "Canada Central Standard Time"
+ msgstr "Центральное канадское время"
+ 
+ #: dlls/tzres/tzres.rc:70
++#, fuzzy
++#| msgid "Canada Central Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Canada Central Daylight Time"
+-msgstr "Центральная Канада летнее время"
++msgstr "Центральное канадское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:71
+ msgid "(UTC-06:00) Saskatchewan"
+@@ -11616,6 +11517,8 @@ msgid "(UTC+08:00) Taipei"
+ msgstr "(UTC+08:00) Тайбэй"
+ 
+ #: dlls/tzres/tzres.rc:408
++#, fuzzy
++#| msgid "W. Europe Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "W. Europe Standard Time"
+ msgstr "Западноевропейское стандартное время"
+@@ -11686,11 +11589,15 @@ msgid "(UTC+04:00) Yerevan"
+ msgstr "(UTC+04:00) Ереван"
+ 
+ #: dlls/tzres/tzres.rc:48
++#, fuzzy
++#| msgid "AUS Eastern Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "AUS Eastern Standard Time"
+ msgstr "Восточноавстралийское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:49
++#, fuzzy
++#| msgid "AUS Eastern Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "AUS Eastern Daylight Time"
+ msgstr "Восточноавстралийское летнее время"
+@@ -11752,11 +11659,15 @@ msgid "(UTC+09:00) Chita"
+ msgstr "(UTC+09:00) Чита"
+ 
+ #: dlls/tzres/tzres.rc:123
++#, fuzzy
++#| msgid "E. Europe Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "E. Europe Standard Time"
+ msgstr "Восточноевропейское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:124
++#, fuzzy
++#| msgid "E. Europe Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "E. Europe Daylight Time"
+ msgstr "Восточноевропейское летнее время"
+@@ -11766,14 +11677,20 @@ msgid "(UTC+02:00) Chisinau"
+ msgstr "(UTC+02:00) Кишинёв"
+ 
+ #: dlls/tzres/tzres.rc:102
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Central Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Standard Time (Mexico)"
+-msgstr "Центральное время (Мексика)"
++msgstr "Центральное время"
+ 
+ #: dlls/tzres/tzres.rc:103
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Central Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central Daylight Time (Mexico)"
+-msgstr "Центральное летнее время (Мексика)"
++msgstr "Центральное летнее время"
+ 
+ #: dlls/tzres/tzres.rc:104
+ msgid "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+@@ -11828,14 +11745,18 @@ msgid "(UTC-07:00) Mountain Time (US & Canada)"
+ msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:366
++#, fuzzy
++#| msgid "AUS Eastern Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "US Eastern Standard Time"
+-msgstr "США восточное время"
++msgstr "Восточноавстралийское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:367
++#, fuzzy
++#| msgid "AUS Eastern Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "US Eastern Daylight Time"
+-msgstr "США восточное летнее время"
++msgstr "Восточноавстралийское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:368
+ msgid "(UTC-05:00) Indiana (East)"
+@@ -11856,6 +11777,8 @@ msgid "(UTC+11:00) Sakhalin"
+ msgstr "(UTC+11:00) Сахалин"
+ 
+ #: dlls/tzres/tzres.rc:252
++#, fuzzy
++#| msgid "North Korea Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "North Korea Standard Time"
+ msgstr "Северокорейское стандартное время"
+@@ -11884,11 +11807,15 @@ msgid "(UTC+10:00) Hobart"
+ msgstr "(UTC+10:00) Хобарт"
+ 
+ #: dlls/tzres/tzres.rc:81
++#, fuzzy
++#| msgid "Central America Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central America Standard Time"
+ msgstr "Центральноамериканское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:82
++#, fuzzy
++#| msgid "Central America Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Central America Daylight Time"
+ msgstr "Центральноамериканское летнее время"
+@@ -11927,6 +11854,8 @@ msgid "(UTC-07:00) Arizona"
+ msgstr "(UTC-07:00) Аризона"
+ 
+ #: dlls/tzres/tzres.rc:321
++#, fuzzy
++#| msgid "South Africa Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "South Africa Standard Time"
+ msgstr "Южноафриканское стандартное время"
+@@ -11970,14 +11899,20 @@ msgid "(UTC-09:00) Coordinated Universal Time-09"
+ msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:327
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Syria Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Sri Lanka Standard Time"
+-msgstr "Шри-Ланка стандартное время"
++msgstr "Сирийское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:328
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Syria Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Sri Lanka Daylight Time"
+-msgstr "Шри-Ланка летнее время"
++msgstr "Сирийское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:329
+ msgid "(UTC+05:30) Sri Jayawardenepura"
+@@ -12132,6 +12067,8 @@ msgid "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+ msgstr "(UTC+01:00) Брюссель, Копенгаген, Мадрид, Париж"
+ 
+ #: dlls/tzres/tzres.rc:141
++#, fuzzy
++#| msgid "Ekaterinburg Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Ekaterinburg Standard Time"
+ msgstr "Екатеринбургское стандартное время"
+@@ -12148,21 +12085,27 @@ msgstr "(UTC+05:00) Екатеринбург"
+ #: dlls/tzres/tzres.rc:282 dlls/tzres/tzres.rc:283
+ msgctxt "maximum 31 characters"
+ msgid "Russia Time Zone 11"
+-msgstr "Россия часовой пояс 11"
++msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:284
+ msgid "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+ msgstr "(UTC+12:00) Анадырь, Петропавловск-Камчатский"
+ 
+ #: dlls/tzres/tzres.rc:417
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Pakistan Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "West Bank Standard Time"
+-msgstr "Западный берег стандартное время"
++msgstr "Пакистанское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:418
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Pakistan Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "West Bank Daylight Time"
+-msgstr "Западный берег летнее время"
++msgstr "Пакистанское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:419
+ msgid "(UTC+02:00) Gaza, Hebron"
+@@ -12271,14 +12214,20 @@ msgid "(UTC+02:00) Jerusalem"
+ msgstr "(UTC+02:00) Иерусалим"
+ 
+ #: dlls/tzres/tzres.rc:60
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Magadan Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Bangladesh Standard Time"
+-msgstr "Бангладеш стандартное время"
++msgstr "Магаданское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:61
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Magadan Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Bangladesh Daylight Time"
+-msgstr "Бангладеш летнее время"
++msgstr "Магаданское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:62
+ msgid "(UTC+06:00) Dhaka"
+@@ -12305,28 +12254,38 @@ msgid "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+ msgstr "(UTC-05:00) Богота, Лима, Кито, Риу-Бранку"
+ 
+ #: dlls/tzres/tzres.rc:414
++#, fuzzy
++#| msgid "Central Asia Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "West Asia Standard Time"
+-msgstr "Западноазиатское стандартное время"
++msgstr "Центральноазиатское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:415
++#, fuzzy
++#| msgid "Central Asia Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "West Asia Daylight Time"
+-msgstr "Западноазиатское летнее время"
++msgstr "Центральноазиатское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:416
+ msgid "(UTC+05:00) Ashgabat, Tashkent"
+ msgstr "(UTC+05:00) Ашхабад, Ташкент"
+ 
+ #: dlls/tzres/tzres.rc:15
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Astrakhan Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Alaskan Standard Time"
+-msgstr "Аляска стандартное время"
++msgstr "Астраханское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:16
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Astrakhan Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Alaskan Daylight Time"
+-msgstr "Аляска летнее время"
++msgstr "Астраханское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:17
+ msgid "(UTC-09:00) Alaska"
+@@ -12449,28 +12408,40 @@ msgid "(UTC-10:00) Hawaii"
+ msgstr "(UTC-10:00) Гавайи"
+ 
+ #: dlls/tzres/tzres.rc:315
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Syria Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "SE Asia Standard Time"
+-msgstr "Юговосточная Азия стандартное время"
++msgstr "Сирийское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:316
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Syria Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "SE Asia Daylight Time"
+-msgstr "Юговосточная Азия летнее время"
++msgstr "Сирийское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:317
+ msgid "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+ msgstr "(UTC+07:00) Бангкок, Ханой, Джакарта"
+ 
+ #: dlls/tzres/tzres.rc:273
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Jordan Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "Qyzylorda Standard Time"
+-msgstr "Кызылорда стандартное время"
++msgstr "Иорданское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:274
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Jordan Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "Qyzylorda Daylight Time"
+-msgstr "Кызылорда летнее время"
++msgstr "Иорданское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:275
+ msgid "(UTC+05:00) Qyzylorda"
+@@ -12497,14 +12468,20 @@ msgid "(UTC+07:00) Hovd"
+ msgstr "(UTC+07:00) Ховд"
+ 
+ #: dlls/tzres/tzres.rc:237
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Greenland Standard Time"
+ msgctxt "maximum 31 characters"
+ msgid "New Zealand Standard Time"
+-msgstr "Новая Зеландия стандартное время"
++msgstr "Гренландское стандартное время"
+ 
+ #: dlls/tzres/tzres.rc:238
++#, fuzzy
++#| msgctxt "maximum 31 characters"
++#| msgid "Greenland Daylight Time"
+ msgctxt "maximum 31 characters"
+ msgid "New Zealand Daylight Time"
+-msgstr "Новая Зеландия летнее время"
++msgstr "Гренландское летнее время"
+ 
+ #: dlls/tzres/tzres.rc:239
+ msgid "(UTC+12:00) Auckland, Wellington"
+@@ -12625,7 +12602,7 @@ msgstr "(UTC-06:00) Остров Пасхи"
+ #: dlls/tzres/tzres.rc:279 dlls/tzres/tzres.rc:280
+ msgctxt "maximum 31 characters"
+ msgid "Russia Time Zone 10"
+-msgstr "Россия часовой пояс 10"
++msgstr ""
+ 
+ #: dlls/tzres/tzres.rc:281
+ msgid "(UTC+11:00) Chokurdakh"
+@@ -12937,49 +12914,6 @@ msgstr "Установить (%d)"
+ msgid "Install"
+ msgstr "Установить"
+ 
+-#: dlls/urlmon/urlmon.rc:58
+-msgid "Local intranet"
+-msgstr "Локальный сеть"
+-
+-#: dlls/urlmon/urlmon.rc:60
+-#, fuzzy
+-#| msgid "Trusted Publishers"
+-msgid "Trusted sites"
+-msgstr "Доверенные издатели"
+-
+-#: dlls/urlmon/urlmon.rc:62
+-msgid "Internet"
+-msgstr "Интернет"
+-
+-#: dlls/urlmon/urlmon.rc:64
+-msgid "Restricted sites"
+-msgstr ""
+-
+-#: dlls/urlmon/urlmon.rc:57
+-msgid "Your computer"
+-msgstr "Ваш компьютер"
+-
+-#: dlls/urlmon/urlmon.rc:59
+-msgid ""
+-"This zone contains all Web sites that are on your organization's intranet."
+-msgstr ""
+-
+-#: dlls/urlmon/urlmon.rc:61
+-msgid ""
+-"This zone contains Web sites that you trust not to damage your computer or "
+-"data."
+-msgstr ""
+-
+-#: dlls/urlmon/urlmon.rc:63
+-msgid "This zone contains all Web sites you haven't placed in other zones."
+-msgstr ""
+-
+-#: dlls/urlmon/urlmon.rc:65
+-msgid ""
+-"This zone contains Web sites that could potentially damage your computer or "
+-"data."
+-msgstr ""
+-
+ #: dlls/user32/user32.rc:30 dlls/user32/user32.rc:43
+ #: programs/taskmgr/taskmgr.rc:138
+ msgctxt "window"
+@@ -13078,8 +13012,10 @@ msgid "Too many files"
+ msgstr "Слишком много файлов"
+ 
+ #: dlls/vbscript/vbscript.rc:40
++#, fuzzy
++#| msgid "Access denied.\n"
+ msgid "Permission denied"
+-msgstr "Доступ запрещён"
++msgstr "Доступ запрещён.\n"
+ 
+ #: dlls/vbscript/vbscript.rc:41
+ msgid "Path/File access error"
+@@ -13090,8 +13026,10 @@ msgid "Path not found"
+ msgstr "Путь не найден"
+ 
+ #: dlls/vbscript/vbscript.rc:43
++#, fuzzy
++#| msgid "(value not set)"
+ msgid "Object variable not set"
+-msgstr "Значение переменной (значение не задано)"
++msgstr "(значение не задано)"
+ 
+ #: dlls/vbscript/vbscript.rc:44
+ msgid "Invalid use of Null"
+@@ -13121,7 +13059,7 @@ msgstr "Объект не поддерживает именованные арг
+ msgid "Object doesn't support current locale setting"
+ msgstr "Объект не поддерживает выбор локали"
+ 
+-#: dlls/vbscript/vbscript.rc:53
++#: dlls/vbscript/vbscript.rc:53 dlls/vbscript/vbscript.rc:54
+ msgid "Named argument not found"
+ msgstr "Именованный аргумент не найден"
+ 
+@@ -13143,7 +13081,7 @@ msgstr ""
+ 
+ #: dlls/vbscript/vbscript.rc:60
+ msgid "Invalid or unqualified reference"
+-msgstr "Некорректная или неполная ссылка"
++msgstr ""
+ 
+ #: dlls/vbscript/vbscript.rc:62
+ msgid "Microsoft VBScript compilation error"
+@@ -13434,8 +13372,8 @@ msgid ""
+ "A MIDI map was not found. There may be a problem with the driver, or the "
+ "MIDIMAP.CFG file may be corrupt or missing."
+ msgstr ""
+-"Карта (map) MIDI не найдена. Возможно, это ошибка драйвера, или файл "
+-"MIDIMAP.CFG отсутствует или повреждён."
++"Карта (map) MIDI не найдена. Возможно, это ошибка драйвера, или файл MIDIMAP."
++"CFG отсутствует или повреждён."
+ 
+ #: dlls/winmm/winmm.rc:55
+ msgid ""
+@@ -14265,8 +14203,8 @@ msgstr "&Аналоговые"
+ msgid "Digi&tal"
+ msgstr "&Цифровые"
+ 
+-#: programs/clock/clock.rc:35 programs/notepad/notepad.rc:59
+-#: programs/winecfg/winecfg.rc:315 programs/winefile/winefile.rc:63
++#: programs/clock/clock.rc:35 programs/notepad/notepad.rc:53
++#: programs/winecfg/winecfg.rc:313 programs/winefile/winefile.rc:63
+ #: programs/wordpad/wordpad.rc:84
+ msgid "&Font..."
+ msgstr "&Шрифт..."
+@@ -15116,24 +15054,16 @@ msgid "Syntax error: unexpected %1\n"
+ msgstr "Синтаксическая ошибка\n"
+ 
+ #: programs/cmd/cmd.rc:408
++#, fuzzy
++#| msgid "End of file.\n"
+ msgid "End of line"
+-msgstr "Конец строки"
++msgstr "Достигнут конец файла.\n"
+ 
+ #: programs/cmd/cmd.rc:409
+-msgid "End of file"
+-msgstr "Конец файла"
+-
+-#: programs/cmd/cmd.rc:410
+-#, fuzzy
+-#| msgid "%1!d! file(s) copied\n"
+-msgid "%t%1!u! file(s) copied\n"
+-msgstr "Скопировано %1!d! файл(ов)\n"
+-
+-#: programs/cmd/cmd.rc:411 programs/xcopy/xcopy.rc:83
+ #, fuzzy
+-#| msgid "The file cannot be accessed.\n"
+-msgid "File cannot be copied onto itself.\n"
+-msgstr "Система не может обратиться к файлу.\n"
++#| msgid "End of file.\n"
++msgid "End of file"
++msgstr "Достигнут конец файла.\n"
+ 
+ #: programs/conhost/conhost.rc:54
+ msgid "Cursor size"
+@@ -15321,8 +15251,11 @@ msgid ""
+ msgstr "Вы уверены что хотите удалить эти значения?"
+ 
+ #: programs/explorer/explorer.rc:38
++#, fuzzy
++#| msgctxt "display name"
++#| msgid "Desktop"
+ msgid "Wine Desktop"
+-msgstr "Рабочий стол Wine"
++msgstr "Рабочий стол"
+ 
+ #: programs/findstr/findstr.rc:28
+ #, fuzzy
+@@ -15338,7 +15271,7 @@ msgstr "Неверная командная строка.\n"
+ 
+ #: programs/findstr/findstr.rc:30
+ msgid "FINDSTR: Cannot open %s\n"
+-msgstr "FINDSTR: Невозможно открыть %s\n"
++msgstr ""
+ 
+ #: programs/findstr/findstr.rc:31
+ msgid "FINDSTR: /%c ignored\n"
+@@ -15457,8 +15390,10 @@ msgid "Usage: klist <tickets | tgt | purge | get [service principal name]>\n"
+ msgstr ""
+ 
+ #: programs/klist/klist.rc:29
++#, fuzzy
++#| msgid "Unknown error"
+ msgid "Unknown error\n"
+-msgstr "Неизвестная ошибка\n"
++msgstr "Неизвестная ошибка"
+ 
+ #: programs/klist/klist.rc:30
+ #, fuzzy
+@@ -15767,12 +15702,6 @@ msgstr "&Открыть...\tCtrl+O"
+ msgid "&Save\tCtrl+S"
+ msgstr "&Сохранить\tCtrl+S"
+ 
+-#: programs/notepad/notepad.rc:33
+-#, fuzzy
+-#| msgid "Save As..."
+-msgid "Save &As..."
+-msgstr "Сохранить как..."
+-
+ #: programs/notepad/notepad.rc:35 programs/regedit/regedit.rc:39
+ #: programs/wordpad/wordpad.rc:36
+ msgid "&Print...\tCtrl+P"
+@@ -15802,53 +15731,42 @@ msgstr "&Копировать\tCtrl+C"
+ msgid "&Paste\tCtrl+V"
+ msgstr "Вст&авить\tCtrl+V"
+ 
+-#: programs/notepad/notepad.rc:47
+-#, fuzzy
+-#| msgid "&Delete\tDel"
+-msgid "De&lete\tDel"
++#: programs/notepad/notepad.rc:47 programs/progman/progman.rc:37
++#: programs/regedit/regedit.rc:57 programs/regedit/regedit.rc:111
++#: programs/regedit/regedit.rc:139 programs/winefile/winefile.rc:32
++msgid "&Delete\tDel"
+ msgstr "&Удалить\tDel"
+ 
+-#: programs/notepad/notepad.rc:49 programs/regedit/regedit.rc:62
+-#: programs/regedit/regedit.rc:109 programs/wordpad/wordpad.rc:53
+-msgid "&Find...\tCtrl+F"
+-msgstr "&Найти...\tCtrl+F"
++#: programs/notepad/notepad.rc:49
++msgid "Select &all\tCtrl+A"
++msgstr "Выделить в&сё\tCtrl+A"
+ 
+ #: programs/notepad/notepad.rc:50
+-#, fuzzy
+-#| msgid "Find &next\tF3"
+-msgid "Find &Next\tF3"
+-msgstr "На&йти далее\tF3"
++msgid "&Time/Date\tF5"
++msgstr "Врем&я и дата\tF5"
+ 
+-#: programs/notepad/notepad.rc:51 programs/wordpad/wordpad.rc:55
++#: programs/notepad/notepad.rc:52
++msgid "&Wrap long lines"
++msgstr "&Перенос по словам"
++
++#: programs/notepad/notepad.rc:56
++msgid "&Search...\tCtrl+F"
++msgstr "&Найти...\tCtrl+F"
++
++#: programs/notepad/notepad.rc:57
++msgid "&Search next\tF3"
++msgstr "Найти &далее\tF3"
++
++#: programs/notepad/notepad.rc:58 programs/wordpad/wordpad.rc:55
+ msgid "&Replace...\tCtrl+H"
+ msgstr "&Заменить...\tCtrl+H"
+ 
+-#: programs/notepad/notepad.rc:52
++#: programs/notepad/notepad.rc:59
+ #, fuzzy
+ #| msgid "&New...\tCtrl+N"
+ msgid "&Go To...\tCtrl+G"
+ msgstr "Созд&ать...\tCtrl+N"
+ 
+-#: programs/notepad/notepad.rc:54
+-#, fuzzy
+-#| msgid "Select &all\tCtrl+A"
+-msgid "Select &All\tCtrl+A"
+-msgstr "Выделить в&сё\tCtrl+A"
+-
+-#: programs/notepad/notepad.rc:55
+-#, fuzzy
+-#| msgid "&Time/Date\tF5"
+-msgid "Time/&Date\tF5"
+-msgstr "Врем&я и дата\tF5"
+-
+-#: programs/notepad/notepad.rc:57 programs/wordpad/wordpad.rc:82
+-msgid "F&ormat"
+-msgstr "Фор&мат"
+-
+-#: programs/notepad/notepad.rc:58
+-msgid "&Word Wrap"
+-msgstr ""
+-
+ #: programs/notepad/notepad.rc:63 programs/oleview/oleview.rc:68
+ #: programs/oleview/oleview.rc:90 programs/winefile/winefile.rc:67
+ #: programs/wordpad/wordpad.rc:74 programs/wordpad/wordpad.rc:275
+@@ -15860,134 +15778,136 @@ msgstr "&Строка состояния"
+ msgid "&Contents\tF1"
+ msgstr "&Содержание\tF1"
+ 
+-#: programs/notepad/notepad.rc:68
++#: programs/notepad/notepad.rc:67
+ msgid "&About Notepad"
+ msgstr "&О Notepad"
+ 
+-#: programs/notepad/notepad.rc:108
++#: programs/notepad/notepad.rc:107
+ msgid "Page Setup"
+ msgstr "Параметры страницы"
+ 
+-#: programs/notepad/notepad.rc:110
++#: programs/notepad/notepad.rc:109
+ msgid "&Header:"
+ msgstr "В&ерхний колонтитул:"
+ 
+-#: programs/notepad/notepad.rc:112
++#: programs/notepad/notepad.rc:111
+ msgid "&Footer:"
+ msgstr "Н&ижний колонтитул:"
+ 
+-#: programs/notepad/notepad.rc:115
++#: programs/notepad/notepad.rc:114
+ msgid "Margins (millimeters)"
+ msgstr "Поля (мм)"
+ 
+-#: programs/notepad/notepad.rc:116
++#: programs/notepad/notepad.rc:115
+ msgid "&Left:"
+ msgstr "&Левое:"
+ 
+-#: programs/notepad/notepad.rc:118
++#: programs/notepad/notepad.rc:117
+ msgid "&Top:"
+ msgstr "&Верхнее:"
+ 
+-#: programs/notepad/notepad.rc:133
++#: programs/notepad/notepad.rc:132
+ msgid "Go To Line"
+-msgstr "Перейти к строке"
++msgstr ""
+ 
+-#: programs/notepad/notepad.rc:135
++#: programs/notepad/notepad.rc:134
++#, fuzzy
++#| msgid "CRL Number"
+ msgid "&Line Number:"
+-msgstr "&Номер строки:"
++msgstr "Номер CRL"
+ 
+-#: programs/notepad/notepad.rc:138
++#: programs/notepad/notepad.rc:137
+ msgid "Go To"
+-msgstr "Перейти"
++msgstr ""
+ 
+-#: programs/notepad/notepad.rc:146
++#: programs/notepad/notepad.rc:145
+ msgid "Encoding:"
+ msgstr "Кодировка:"
+ 
+-#: programs/notepad/notepad.rc:152 programs/wordpad/wordpad.rc:289
++#: programs/notepad/notepad.rc:151 programs/wordpad/wordpad.rc:289
+ msgctxt "accelerator Select All"
+ msgid "A"
+ msgstr "A"
+ 
+-#: programs/notepad/notepad.rc:153 programs/wordpad/wordpad.rc:291
++#: programs/notepad/notepad.rc:152 programs/wordpad/wordpad.rc:291
+ msgctxt "accelerator Copy"
+ msgid "C"
+ msgstr "C"
+ 
+-#: programs/notepad/notepad.rc:154 programs/regedit/regedit.rc:377
++#: programs/notepad/notepad.rc:153 programs/regedit/regedit.rc:377
+ #: programs/wordpad/wordpad.rc:287
+ msgctxt "accelerator Find"
+ msgid "F"
+ msgstr "F"
+ 
+-#: programs/notepad/notepad.rc:155 programs/wordpad/wordpad.rc:288
++#: programs/notepad/notepad.rc:154 programs/wordpad/wordpad.rc:288
+ msgctxt "accelerator Replace"
+ msgid "H"
+ msgstr "H"
+ 
+-#: programs/notepad/notepad.rc:156 programs/wordpad/wordpad.rc:297
++#: programs/notepad/notepad.rc:155 programs/wordpad/wordpad.rc:297
+ msgctxt "accelerator New"
+ msgid "N"
+ msgstr "N"
+ 
+-#: programs/notepad/notepad.rc:157 programs/wordpad/wordpad.rc:298
++#: programs/notepad/notepad.rc:156 programs/wordpad/wordpad.rc:298
+ msgctxt "accelerator Open"
+ msgid "O"
+ msgstr "O"
+ 
+-#: programs/notepad/notepad.rc:158 programs/regedit/regedit.rc:378
++#: programs/notepad/notepad.rc:157 programs/regedit/regedit.rc:378
+ #: programs/wordpad/wordpad.rc:300
+ msgctxt "accelerator Print"
+ msgid "P"
+ msgstr "P"
+ 
+-#: programs/notepad/notepad.rc:159 programs/wordpad/wordpad.rc:299
++#: programs/notepad/notepad.rc:158 programs/wordpad/wordpad.rc:299
+ msgctxt "accelerator Save"
+ msgid "S"
+ msgstr "S"
+ 
+-#: programs/notepad/notepad.rc:160
++#: programs/notepad/notepad.rc:159
+ msgctxt "accelerator Paste"
+ msgid "V"
+ msgstr "V"
+ 
+-#: programs/notepad/notepad.rc:161 programs/wordpad/wordpad.rc:290
++#: programs/notepad/notepad.rc:160 programs/wordpad/wordpad.rc:290
+ msgctxt "accelerator Cut"
+ msgid "X"
+ msgstr "X"
+ 
+-#: programs/notepad/notepad.rc:162 programs/wordpad/wordpad.rc:292
++#: programs/notepad/notepad.rc:161 programs/wordpad/wordpad.rc:292
+ msgctxt "accelerator Undo"
+ msgid "Z"
+ msgstr "Z"
+ 
+-#: programs/notepad/notepad.rc:163
++#: programs/notepad/notepad.rc:162
+ msgctxt "accelerator GoTo"
+ msgid "G"
+ msgstr ""
+ 
+-#: programs/notepad/notepad.rc:75
++#: programs/notepad/notepad.rc:74
+ msgid "Page &p"
+ msgstr "Страница &p"
+ 
+-#: programs/notepad/notepad.rc:77
++#: programs/notepad/notepad.rc:76
+ msgid "Notepad"
+ msgstr "Блокнот"
+ 
+-#: programs/notepad/notepad.rc:78 programs/progman/progman.rc:64
++#: programs/notepad/notepad.rc:77 programs/progman/progman.rc:64
+ #: programs/winhlp32/winhlp32.rc:82
+ msgid "ERROR"
+ msgstr "ОШИБКА"
+ 
+-#: programs/notepad/notepad.rc:80
++#: programs/notepad/notepad.rc:79
+ msgid "Untitled"
+ msgstr "(без заголовка)"
+ 
+-#: programs/notepad/notepad.rc:83 programs/winedbg/winedbg.rc:42
++#: programs/notepad/notepad.rc:82 programs/winedbg/winedbg.rc:42
+ msgid "Text files (*.txt)"
+ msgstr "Текстовые файлы (*.txt)"
+ 
+-#: programs/notepad/notepad.rc:86
++#: programs/notepad/notepad.rc:85
+ msgid ""
+ "File '%s' does not exist.\n"
+ "\n"
+@@ -15997,7 +15917,7 @@ msgstr ""
+ "\n"
+ "Хотите создать новый файл?"
+ 
+-#: programs/notepad/notepad.rc:88
++#: programs/notepad/notepad.rc:87
+ msgid ""
+ "File '%s' has been modified.\n"
+ "\n"
+@@ -16007,23 +15927,23 @@ msgstr ""
+ "\n"
+ "Хотите сохранить изменения?"
+ 
+-#: programs/notepad/notepad.rc:89
++#: programs/notepad/notepad.rc:88
+ msgid "'%s' could not be found."
+ msgstr "«%s» не найден."
+ 
+-#: programs/notepad/notepad.rc:93
++#: programs/notepad/notepad.rc:92
+ msgid "Unicode (UTF-16)"
+ msgstr "Юникод (UTF-16)"
+ 
+-#: programs/notepad/notepad.rc:94
++#: programs/notepad/notepad.rc:93
+ msgid "Unicode (UTF-16 big-endian)"
+ msgstr "Юникод (UTF-16 big-endian)"
+ 
+-#: programs/notepad/notepad.rc:95
++#: programs/notepad/notepad.rc:94
+ msgid "Unicode (UTF-8)"
+ msgstr "Юникод (UTF-8)"
+ 
+-#: programs/notepad/notepad.rc:102
++#: programs/notepad/notepad.rc:101
+ msgid ""
+ "%1\n"
+ "This file contains Unicode characters which will be lost if\n"
+@@ -16039,9 +15959,9 @@ msgstr ""
+ "один из вариантов сохранения в формате Юникод.\n"
+ "Продолжить?"
+ 
+-#: programs/notepad/notepad.rc:91
++#: programs/notepad/notepad.rc:90
+ msgid "Ln %ld, Col %ld"
+-msgstr "Лн %ld, Ст %ld"
++msgstr ""
+ 
+ #: programs/oleview/oleview.rc:32
+ msgid "&Bind to file..."
+@@ -16392,12 +16312,6 @@ msgstr "&Переместить...\tF7"
+ msgid "&Copy...\tF8"
+ msgstr "&Копировать...\tF8"
+ 
+-#: programs/progman/progman.rc:37 programs/regedit/regedit.rc:57
+-#: programs/regedit/regedit.rc:111 programs/regedit/regedit.rc:139
+-#: programs/winefile/winefile.rc:32
+-msgid "&Delete\tDel"
+-msgstr "&Удалить\tDel"
+-
+ #: programs/progman/progman.rc:38
+ msgid "&Properties\tAlt+Enter"
+ msgstr "&Свойства\tAlt+Enter"
+@@ -16613,7 +16527,7 @@ msgid "reg: The operation completed successfully\n"
+ msgstr "reg: операция успешно завершена\n"
+ 
+ #: programs/reg/reg.rc:131
+-msgid "reg: The registry operation was canceled\n"
++msgid "reg: The registry operation was cancelled\n"
+ msgstr "reg: операция с реестром была отменена\n"
+ 
+ #: programs/reg/reg.rc:174
+@@ -17007,8 +16921,10 @@ msgstr "&Параметр DWORD"
+ 
+ #: programs/regedit/regedit.rc:52 programs/regedit/regedit.rc:105
+ #: programs/regedit/regedit.rc:128
++#, fuzzy
++#| msgid "&DWORD Value"
+ msgid "&QWORD Value"
+-msgstr "П&араметр QWORD"
++msgstr "&Параметр DWORD"
+ 
+ #: programs/regedit/regedit.rc:53 programs/regedit/regedit.rc:106
+ #: programs/regedit/regedit.rc:129
+@@ -17029,6 +16945,11 @@ msgstr "&Переименовать\tF2"
+ msgid "&Copy Key Name"
+ msgstr "&Копировать имя раздела"
+ 
++#: programs/regedit/regedit.rc:62 programs/regedit/regedit.rc:109
++#: programs/wordpad/wordpad.rc:53
++msgid "&Find...\tCtrl+F"
++msgstr "&Найти...\tCtrl+F"
++
+ #: programs/regedit/regedit.rc:63
+ msgid "Find Ne&xt\tF3"
+ msgstr "Найти &далее\tF3"
+@@ -17556,12 +17477,16 @@ msgid "Collapse"
+ msgstr "Свернуть"
+ 
+ #: programs/regedit/regedit.rc:178
++#, fuzzy
++#| msgid "Adds a new 32-bit value"
+ msgid "Adds a new 64-bit value"
+-msgstr "Добавление 64-битного параметра"
++msgstr "Добавление 32-битного параметра"
+ 
+ #: programs/regedit/regedit.rc:221
++#, fuzzy
++#| msgid "Edit DWORD"
+ msgid "Edit QWORD"
+-msgstr "Изменение параметра QWORD"
++msgstr "Изменение параметра DWORD"
+ 
+ #: programs/regsvr32/regsvr32.rc:33
+ msgid ""
+@@ -17826,7 +17751,7 @@ msgid ""
+ "Sent termination signal to process with PID %1!u!, child of PID %2!u!.\n"
+ msgstr ""
+ 
+-#: include/wine/wine_common_ver.rc:123
++#: include/wine/wine_common_ver.rc:138
+ #, fuzzy
+ #| msgid "page tab list"
+ msgid "Wine tasklist"
+@@ -17834,7 +17759,7 @@ msgstr "список вкладок страницы"
+ 
+ #: programs/tasklist/tasklist.rc:29
+ msgid "Usage: tasklist [/?]\n"
+-msgstr "Ипользование: tasklist [/?]\n"
++msgstr ""
+ 
+ #: programs/tasklist/tasklist.rc:30 programs/taskmgr/taskmgr.rc:272
+ msgid "Image Name"
+@@ -18668,40 +18593,6 @@ msgstr "Работает"
+ msgid "Task"
+ msgstr "Задача"
+ 
+-#: programs/timeout/timeout.rc:28
+-msgid "Usage: timeout /T <timeout> [</NOBREAK>]\n"
+-msgstr ""
+-
+-#: programs/timeout/timeout.rc:29
+-#, fuzzy
+-#| msgid "Invalid command line.\n"
+-msgid "TIMEOUT: Bad command line\n"
+-msgstr "Неверная командная строка.\n"
+-
+-#: programs/timeout/timeout.rc:30
+-msgid "waiting since %d sec. "
+-msgstr ""
+-
+-#: programs/timeout/timeout.rc:31
+-msgid "press CTRL+C..."
+-msgstr ""
+-
+-#: programs/timeout/timeout.rc:32
+-#, fuzzy
+-#| msgid "Press any key to continue... "
+-msgid "press a key to continue..."
+-msgstr "Нажмите любую клавишу для продолжения... "
+-
+-#: programs/timeout/timeout.rc:33
+-msgid "ERROR: not possible to redirect input\n"
+-msgstr ""
+-
+-#: programs/timeout/timeout.rc:34
+-msgid ""
+-"ERROR: Timeout value out of range or invalid number. Valid range is -1 to "
+-"99999.\n"
+-msgstr ""
+-
+ #: programs/uninstaller/uninstaller.rc:29
+ msgid "Wine Application Uninstaller"
+ msgstr "Удаление приложений Wine"
+@@ -19005,84 +18896,78 @@ msgid "Driver diagnostics"
+ msgstr "Диагностика драйвера"
+ 
+ #: programs/winecfg/winecfg.rc:271
+-msgid "&Test Sound"
+-msgstr "&Проверить звук"
+-
+-#: programs/winecfg/winecfg.rc:272
+ msgid "Defaults"
+ msgstr "По умолчанию"
+ 
+-#: programs/winecfg/winecfg.rc:273
++#: programs/winecfg/winecfg.rc:272
+ msgid "Output device:"
+ msgstr "Устройство вывода:"
+ 
+-#: programs/winecfg/winecfg.rc:274
++#: programs/winecfg/winecfg.rc:273
+ msgid "Voice output device:"
+ msgstr "Уст-во речевого вывода:"
+ 
+-#: programs/winecfg/winecfg.rc:275
++#: programs/winecfg/winecfg.rc:274
+ msgid "Input device:"
+ msgstr "Устройство ввода:"
+ 
+-#: programs/winecfg/winecfg.rc:276
++#: programs/winecfg/winecfg.rc:275
+ msgid "Voice input device:"
+ msgstr "Уст-во речевого ввода:"
+ 
+-#: programs/winecfg/winecfg.rc:277
+-#, fuzzy
+-#| msgid "Output device:"
+-msgid "MIDI output device:"
+-msgstr "Устройство вывода:"
++#: programs/winecfg/winecfg.rc:280
++msgid "&Test Sound"
++msgstr "&Проверить звук"
+ 
+-#: programs/winecfg/winecfg.rc:283 programs/winecfg/winecfg.rc:89
++#: programs/winecfg/winecfg.rc:281 programs/winecfg/winecfg.rc:89
+ msgid "Speaker configuration"
+ msgstr "Конфигурация каналов"
+ 
+-#: programs/winecfg/winecfg.rc:286
++#: programs/winecfg/winecfg.rc:284
+ msgid "Speakers:"
+ msgstr "Каналы:"
+ 
+-#: programs/winecfg/winecfg.rc:294
++#: programs/winecfg/winecfg.rc:292
+ msgid "Appearance"
+ msgstr "Внешний вид"
+ 
+-#: programs/winecfg/winecfg.rc:295
++#: programs/winecfg/winecfg.rc:293
+ msgid "&Theme:"
+ msgstr "&Тема:"
+ 
+-#: programs/winecfg/winecfg.rc:297
++#: programs/winecfg/winecfg.rc:295
+ #, fuzzy
+ #| msgid "&Theme:"
+ msgid "&WinRT theme:"
+ msgstr "&Тема:"
+ 
+-#: programs/winecfg/winecfg.rc:299
++#: programs/winecfg/winecfg.rc:297
+ msgid "&Install theme..."
+ msgstr "Установить тему..."
+ 
+-#: programs/winecfg/winecfg.rc:304
++#: programs/winecfg/winecfg.rc:302
+ msgid "It&em:"
+ msgstr "Элемент:"
+ 
+-#: programs/winecfg/winecfg.rc:306
++#: programs/winecfg/winecfg.rc:304
+ msgid "C&olor:"
+ msgstr "Цвет:"
+ 
+-#: programs/winecfg/winecfg.rc:312
++#: programs/winecfg/winecfg.rc:310
+ msgid "MIME types"
+ msgstr "Типы MIME"
+ 
+-#: programs/winecfg/winecfg.rc:313
++#: programs/winecfg/winecfg.rc:311
+ #, fuzzy
+ #| msgid "Manage file &associations"
+ msgid "Manage file and protocol &associations"
+ msgstr "Управлять &ассоциациями файлов"
+ 
+-#: programs/winecfg/winecfg.rc:316
++#: programs/winecfg/winecfg.rc:314
+ msgid "Folders"
+ msgstr "Папки"
+ 
+-#: programs/winecfg/winecfg.rc:319
++#: programs/winecfg/winecfg.rc:317
+ msgid "&Link to:"
+ msgstr "Привязать к:"
+ 
+@@ -19179,12 +19064,14 @@ msgid "Mono"
+ msgstr "Моно"
+ 
+ #: programs/winecfg/winecfg.rc:98
++#, fuzzy
++#| msgid "Right"
+ msgid "Light"
+-msgstr "Светлая"
++msgstr "По правому краю"
+ 
+ #: programs/winecfg/winecfg.rc:99
+ msgid "Dark"
+-msgstr "Темная"
++msgstr ""
+ 
+ #: programs/winecfg/winecfg.rc:53
+ msgid ""
+@@ -19432,11 +19319,11 @@ msgstr ""
+ "wineconsole: не удалось запустить программу «%s».\n"
+ "Неверно указана команда.\n"
+ 
+-#: programs/winedbg/winedbg.rc:51 programs/winedbg/winedbg.rc:38
++#: programs/winedbg/winedbg.rc:50 programs/winedbg/winedbg.rc:38
+ msgid "Program Error"
+ msgstr "Программная ошибка"
+ 
+-#: programs/winedbg/winedbg.rc:56
++#: programs/winedbg/winedbg.rc:55
+ msgid ""
+ "The program %s has encountered a serious problem and needs to close. We are "
+ "sorry for the inconvenience."
+@@ -19444,7 +19331,7 @@ msgstr ""
+ "В программе %s обнаружена серьёзная ошибка. Программа будет закрыта. "
+ "Приносим извинения за неудобство."
+ 
+-#: programs/winedbg/winedbg.rc:60
++#: programs/winedbg/winedbg.rc:59
+ msgid ""
+ "This can be caused by a problem in the program or a deficiency in Wine. You "
+ "may want to check the <a href=\"https://appdb.winehq.org\">Application "
+@@ -19454,15 +19341,15 @@ msgstr ""
+ "можете посетить <a href=\"https://appdb.winehq.org\">Application Database</"
+ "a> и поискать советы о запуске этой программы."
+ 
+-#: programs/winedbg/winedbg.rc:63
++#: programs/winedbg/winedbg.rc:62
+ msgid "Show &Details"
+ msgstr "&Подробно"
+ 
+-#: programs/winedbg/winedbg.rc:68
++#: programs/winedbg/winedbg.rc:67
+ msgid "Program Error Details"
+ msgstr "Подробности об ошибке"
+ 
+-#: programs/winedbg/winedbg.rc:75
++#: programs/winedbg/winedbg.rc:74
+ msgid ""
+ "If this problem is not present under Windows and has not been reported yet, "
+ "you can save the detailed information to a file using the \"Save As\" "
+@@ -19895,10 +19782,6 @@ msgstr "Ошибка: неверный синтаксис PATH\n"
+ msgid "Supply a command\n"
+ msgstr "Неверная команда.\n"
+ 
+-#: programs/wmic/wmic.rc:33
+-msgid "Example usage: wmic ALIAS get PROPERTY[,PROPERTY2,...]\n"
+-msgstr ""
+-
+ #: programs/wordpad/wordpad.rc:31
+ msgid "&New...\tCtrl+N"
+ msgstr "Созд&ать...\tCtrl+N"
+@@ -19967,6 +19850,10 @@ msgstr "Вст&авка"
+ msgid "&Date and time..."
+ msgstr "&Дата и время..."
+ 
++#: programs/wordpad/wordpad.rc:82
++msgid "F&ormat"
++msgstr "Фор&мат"
++
+ #: programs/wordpad/wordpad.rc:85
+ msgid "&Lists"
+ msgstr "&Списки"
+@@ -20198,6 +20085,10 @@ msgstr "Приблизить"
+ msgid "Zoom out"
+ msgstr "Отдалить"
+ 
++#: programs/wordpad/wordpad.rc:181
++msgid "Page"
++msgstr "Страница"
++
+ #: programs/wordpad/wordpad.rc:182
+ msgid "Pages"
+ msgstr "Страницы"

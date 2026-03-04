@@ -1,0 +1,5 @@
+diff --git a/dlls/twaindsm/twaindsm.spec b/dlls/twaindsm/twaindsm.spec
+--- a/dlls/twaindsm/twaindsm.spec
++++ /dev/null
+@@ -1 +0,0 @@
+-@ stdcall DSM_Entry(ptr ptr long long long ptr)

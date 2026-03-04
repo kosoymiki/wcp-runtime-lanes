@@ -1,0 +1,22 @@
+diff --git a/programs/wordpad/wordpad.c b/programs/wordpad/wordpad.c
+index 428db1862e4f20450ffd888ffc635b2865b3fdb3..8617c2477c1e9f74b5daaabf31b891f2272381c2 100644
+--- a/programs/wordpad/wordpad.c
++++ b/programs/wordpad/wordpad.c
+@@ -765,7 +765,7 @@ static void preview_exit(HWND hMainWnd)
+     HWND hEditorWnd = GetDlgItem(hMainWnd, IDC_EDITOR);
+ 
+     set_bar_states();
+-    ShowWindow(hEditorWnd, SW_SHOW);
++    ShowWindow(hEditorWnd, TRUE);
+ 
+     close_preview(hMainWnd);
+ 
+@@ -2249,7 +2249,7 @@ static LRESULT OnCommand( HWND hWnd, WPARAM wParam, LPARAM lParam)
+             barState[index] = 1 << BANDID_STATUSBAR;
+             set_bar_states();
+             barState[index] = tmp;
+-            ShowWindow(hEditorWnd, SW_HIDE);
++            ShowWindow(hEditorWnd, FALSE);
+ 
+             init_preview(hWnd, wszFileName);
+ 

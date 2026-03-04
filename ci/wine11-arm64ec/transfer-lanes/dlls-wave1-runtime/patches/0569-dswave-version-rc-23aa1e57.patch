@@ -1,0 +1,13 @@
+diff --git a/dlls/dswave/version.rc b/dlls/dswave/version.rc
+--- a/dlls/dswave/version.rc
++++ b/dlls/dswave/version.rc
+@@ -19,6 +19,9 @@
+ #define WINE_FILEDESCRIPTION_STR "Wine DirectMusic Wave"
+ #define WINE_FILENAME_STR "dswave.dll"
+ #define WINE_FILEVERSION 5,3,0,900
++#define WINE_FILEVERSION_STR "5.3.0.900"
++#define WINE_PRODUCTVERSION 5,3,0,900
++#define WINE_PRODUCTVERSION_STR "5.3"
+ #define WINE_EXTRAVALUES VALUE "OLESelfRegister",""
+ 
+ #include "wine/wine_common_ver.rc"

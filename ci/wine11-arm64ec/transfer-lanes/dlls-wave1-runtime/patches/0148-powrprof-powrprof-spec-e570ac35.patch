@@ -1,0 +1,11 @@
+diff --git a/dlls/powrprof/powrprof.spec b/dlls/powrprof/powrprof.spec
+--- a/dlls/powrprof/powrprof.spec
++++ b/dlls/powrprof/powrprof.spec
+@@ -17,7 +17,6 @@
+ @ stdcall PowerSetActiveScheme (ptr ptr)
+ @ stdcall PowerReadDCValue (ptr ptr ptr ptr ptr ptr ptr)
+ @ stdcall PowerReadFriendlyName (ptr ptr ptr ptr ptr ptr)
+-@ stdcall PowerRegisterForEffectivePowerModeNotifications(long ptr ptr ptr)
+ @ stdcall PowerRegisterSuspendResumeNotification(long ptr ptr)
+ @ stdcall PowerUnregisterSuspendResumeNotification(ptr)
+ @ stdcall PowerSettingRegisterNotification(ptr long ptr ptr)

@@ -1,0 +1,21 @@
+diff --git a/dlls/ntdll/threadpool.c b/dlls/ntdll/threadpool.c
+--- a/dlls/ntdll/threadpool.c
++++ b/dlls/ntdll/threadpool.c
+@@ -1313,7 +1313,7 @@
+             assert( num_handles == 0 );
+             RtlLeaveCriticalSection( &waitqueue.cs );
+             timeout.QuadPart = (ULONGLONG)THREADPOOL_WORKER_TIMEOUT * -10000;
+-            status = NtWaitForMultipleObjects( 1, &bucket->update_event, WaitAny, bucket->alertable, &timeout );
++            status = NtWaitForMultipleObjects( 1, &bucket->update_event, TRUE, bucket->alertable, &timeout );
+             RtlEnterCriticalSection( &waitqueue.cs );
+ 
+             if (status == STATUS_TIMEOUT && !bucket->objcount)
+@@ -1323,7 +1323,7 @@
+         {
+             handles[num_handles] = bucket->update_event;
+             RtlLeaveCriticalSection( &waitqueue.cs );
+-            status = NtWaitForMultipleObjects( num_handles + 1, handles, WaitAny, bucket->alertable, &timeout );
++            status = NtWaitForMultipleObjects( num_handles + 1, handles, TRUE, bucket->alertable, &timeout );
+             RtlEnterCriticalSection( &waitqueue.cs );
+ 
+             if (status >= STATUS_WAIT_0 && status < STATUS_WAIT_0 + num_handles)

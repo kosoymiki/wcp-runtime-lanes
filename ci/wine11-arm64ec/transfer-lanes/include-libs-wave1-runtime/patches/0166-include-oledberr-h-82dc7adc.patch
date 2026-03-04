@@ -1,0 +1,12 @@
+diff --git a/include/oledberr.h b/include/oledberr.h
+index 4fd2ad42dcd37b28791d01ad20cf380f760857c3..b3445d50c1064ee25a724598f292ff6a3cacfdc2 100644
+--- a/include/oledberr.h
++++ b/include/oledberr.h
+@@ -49,7 +49,6 @@
+ #define DB_E_NOTFOUND                       0x80040e19
+ 
+ #define DB_E_UNSUPPORTEDCONVERSION          0x80040e1d
+-#define DB_E_BADSTARTPOSITION               0x80040e1e
+ 
+ #define DB_E_ERRORSOCCURRED                 0x80040e21
+ 

@@ -1,0 +1,12 @@
+diff --git a/dlls/hhctrl.ocx/webbrowser.c b/dlls/hhctrl.ocx/webbrowser.c
+--- a/dlls/hhctrl.ocx/webbrowser.c
++++ b/dlls/hhctrl.ocx/webbrowser.c
+@@ -81,8 +81,6 @@
+             IOleObject_Release(This->ole_obj);
+         if(This->web_browser)
+             IWebBrowser2_Release(This->web_browser);
+-        if(This->WebBrowser_events_sink)
+-            IDispatch_Release(&This->WebBrowser_events_sink->WebBrowserEvents2Impl_iface);
+         free(This);
+     }
+ 

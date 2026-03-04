@@ -1,0 +1,65 @@
+diff --git a/dlls/winemac.drv/macdrv_main.c b/dlls/winemac.drv/macdrv_main.c
+--- a/dlls/winemac.drv/macdrv_main.c
++++ b/dlls/winemac.drv/macdrv_main.c
+@@ -43,21 +43,22 @@
+ C_ASSERT(NUM_EVENT_TYPES <= sizeof(macdrv_event_mask) * 8);
+ 
+ int topmost_float_inactive = TOPMOST_FLOAT_INACTIVE_NONFULLSCREEN;
+-bool capture_displays_for_fullscreen = false;
++int capture_displays_for_fullscreen = 0;
++BOOL skip_single_buffer_flushes = FALSE;
+ BOOL allow_vsync = TRUE;
+ BOOL allow_set_gamma = TRUE;
+-bool left_option_is_alt = false;
+-bool right_option_is_alt = false;
+-bool left_command_is_ctrl = false;
+-bool right_command_is_ctrl = false;
++int left_option_is_alt = 0;
++int right_option_is_alt = 0;
++int left_command_is_ctrl = 0;
++int right_command_is_ctrl = 0;
+ BOOL allow_software_rendering = FALSE;
+-bool allow_immovable_windows = true;
+-bool use_confinement_cursor_clipping = true;
+-bool cursor_clipping_locks_windows = true;
+-bool use_precise_scrolling = true;
++int allow_immovable_windows = TRUE;
++int use_confinement_cursor_clipping = TRUE;
++int cursor_clipping_locks_windows = TRUE;
++int use_precise_scrolling = TRUE;
+ int gl_surface_mode = GL_SURFACE_IN_FRONT_OPAQUE;
+-bool retina_enabled = false;
+-bool enable_app_nap = false;
++int retina_enabled = FALSE;
++int enable_app_nap = FALSE;
+ 
+ UINT64 app_icon_callback = 0;
+ UINT64 app_quit_request_callback = 0;
+@@ -133,12 +134,12 @@
+ 
+         sid = ((TOKEN_USER *)sid_data)->User.Sid;
+         len = snprintf(buffer, sizeof(buffer), "\\Registry\\User\\S-%u-%u", sid->Revision,
+-                        MAKELONG(MAKEWORD(sid->IdentifierAuthority.Value[5],
+-                                           sid->IdentifierAuthority.Value[4]),
+-                                  MAKEWORD(sid->IdentifierAuthority.Value[3],
+-                                            sid->IdentifierAuthority.Value[2])));
++                      (unsigned int)MAKELONG(MAKEWORD(sid->IdentifierAuthority.Value[5],
++                                                      sid->IdentifierAuthority.Value[4]),
++                                             MAKEWORD(sid->IdentifierAuthority.Value[3],
++                                                      sid->IdentifierAuthority.Value[2])));
+         for (i = 0; i < sid->SubAuthorityCount; i++)
+-            len += snprintf(buffer + len, sizeof(buffer) - len, "-%u", sid->SubAuthority[i]);
++            len += snprintf(buffer + len, sizeof(buffer) - len, "-%u", (unsigned int)sid->SubAuthority[i]);
+ 
+         ascii_to_unicode(bufferW, buffer, len);
+         hkcu = reg_open_key(NULL, bufferW, len * sizeof(WCHAR));
+@@ -320,6 +321,9 @@
+ 
+     if (!get_config_key(hkey, appkey, "CaptureDisplaysForFullscreen", buffer, sizeof(buffer)))
+         capture_displays_for_fullscreen = IS_OPTION_TRUE(buffer[0]);
++
++    if (!get_config_key(hkey, appkey, "SkipSingleBufferFlushes", buffer, sizeof(buffer)))
++        skip_single_buffer_flushes = IS_OPTION_TRUE(buffer[0]);
+ 
+     if (!get_config_key(hkey, appkey, "AllowVerticalSync", buffer, sizeof(buffer)))
+         allow_vsync = IS_OPTION_TRUE(buffer[0]);

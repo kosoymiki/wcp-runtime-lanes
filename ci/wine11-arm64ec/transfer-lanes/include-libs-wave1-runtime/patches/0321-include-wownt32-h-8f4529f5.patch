@@ -1,0 +1,14 @@
+diff --git a/include/wownt32.h b/include/wownt32.h
+index b95dce97171e5c0a7d54e48c2c0a6ee18c91f02c..0afe23d360ad8dc244fdee726724bd9f98b1ad70 100644
+--- a/include/wownt32.h
++++ b/include/wownt32.h
+@@ -149,9 +149,6 @@ WORD   WINAPI WOWHandle16(HANDLE,WOW_HANDLE_TYPE);
+ 
+ /* Wine extensions: call register function, context ptr is passed in the return value LPDWORD */
+ #define WCB16_REGS       2
+-/* Wine extension: simulate a hardware interrupt by running the callback without waiting for the
+- * current task to yield */
+-#define WCB16_INTERRUPT  4
+ 
+ DWORD WINAPI WOWCallback16(DWORD,DWORD);
+ BOOL  WINAPI WOWCallback16Ex(DWORD,DWORD,DWORD,LPVOID,LPDWORD);

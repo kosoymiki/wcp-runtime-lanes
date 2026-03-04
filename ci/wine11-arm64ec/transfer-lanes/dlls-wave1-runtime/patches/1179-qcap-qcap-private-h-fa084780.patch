@@ -1,0 +1,45 @@
+diff --git a/dlls/qcap/qcap_private.h b/dlls/qcap/qcap_private.h
+--- a/dlls/qcap/qcap_private.h
++++ b/dlls/qcap/qcap_private.h
+@@ -22,6 +22,8 @@
+ #define _QCAP_PRIVATE_H_DEFINED
+ 
+ #define COBJMACROS
++#define NONAMELESSSTRUCT
++#define NONAMELESSUNION
+ #include <stdbool.h>
+ #include "dshow.h"
+ #include "winternl.h"
+@@ -34,6 +36,7 @@
+ HRESULT avi_mux_create(IUnknown *outer, IUnknown **out);
+ HRESULT capture_graph_create(IUnknown *outer, IUnknown **out);
+ HRESULT file_writer_create(IUnknown *outer, IUnknown **out);
++HRESULT inf_tee_create(IUnknown *outer, IUnknown **out);
+ HRESULT smart_tee_create(IUnknown *outer, IUnknown **out);
+ HRESULT vfw_capture_create(IUnknown *outer, IUnknown **out);
+ 
+@@ -97,16 +100,6 @@
+     int                         *count;
+ };
+ 
+-struct get_frame_intervals_params
+-{
+-    video_capture_device_t       device;
+-    unsigned int                 caps_index;
+-    unsigned int                 width;
+-    unsigned int                 height;
+-    unsigned int                *count;
+-    LONGLONG                    *intervals;
+-};
+-
+ struct get_prop_range_params
+ {
+     video_capture_device_t       device;
+@@ -151,7 +144,6 @@
+     unix_get_media_type,
+     unix_get_caps,
+     unix_get_caps_count,
+-    unix_get_frame_intervals,
+     unix_get_prop_range,
+     unix_get_prop,
+     unix_set_prop,

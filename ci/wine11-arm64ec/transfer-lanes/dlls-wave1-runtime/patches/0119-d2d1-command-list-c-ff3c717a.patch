@@ -1,0 +1,11 @@
+diff --git a/dlls/d2d1/command_list.c b/dlls/d2d1/command_list.c
+--- a/dlls/d2d1/command_list.c
++++ b/dlls/d2d1/command_list.c
+@@ -795,7 +795,6 @@
+ 
+     command = d2d_command_list_require_space(command_list, sizeof(*command));
+     command->c.op = D2D_COMMAND_DRAW_GEOMETRY;
+-    command->geometry = geometry;
+     command->brush = brush;
+     command->stroke_width = stroke_width;
+     command->stroke_style = stroke_style;

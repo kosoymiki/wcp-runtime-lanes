@@ -1,0 +1,11 @@
+diff --git a/dlls/winewayland.drv/unixlib.h b/dlls/winewayland.drv/unixlib.h
+--- a/dlls/winewayland.drv/unixlib.h
++++ b/dlls/winewayland.drv/unixlib.h
+@@ -27,7 +27,6 @@
+ {
+     waylanddrv_unix_func_init,
+     waylanddrv_unix_func_read_events,
+-    waylanddrv_unix_func_init_clipboard,
+     waylanddrv_unix_func_count,
+ };
+ 

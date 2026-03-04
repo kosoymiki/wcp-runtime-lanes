@@ -1,0 +1,54 @@
+diff --git a/dlls/win32u/bitmap.c b/dlls/win32u/bitmap.c
+--- a/dlls/win32u/bitmap.c
++++ b/dlls/win32u/bitmap.c
+@@ -31,7 +31,6 @@
+ #include "winbase.h"
+ #include "wingdi.h"
+ #include "ntgdi_private.h"
+-#include "wine/opengl_driver.h"
+ #include "wine/debug.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(bitmap);
+@@ -281,7 +280,7 @@
+     if (!bmp) return 0;
+ 
+     if (count < 0) {
+-	WARN("(%d): Negative number of bytes passed???\n", count );
++	WARN("(%d): Negative number of bytes passed???\n", (int)count );
+ 	count = -count;
+     }
+ 
+@@ -312,7 +311,7 @@
+     }
+ 
+     TRACE("(%p, %d, %p) %dx%d %d bpp fetched height: %d\n",
+-          hbitmap, count, bits, bmp->dib.dsBm.bmWidth, bmp->dib.dsBm.bmHeight,
++          hbitmap, (int)count, bits, bmp->dib.dsBm.bmWidth, bmp->dib.dsBm.bmHeight,
+           bmp->dib.dsBm.bmBitsPixel, src.height );
+ 
+     if (src_stride == dst_stride)
+@@ -371,7 +370,6 @@
+  */
+ HGDIOBJ WINAPI NtGdiSelectBitmap( HDC hdc, HGDIOBJ handle )
+ {
+-    struct opengl_drawable *drawable = NULL;
+     HGDIOBJ ret;
+     BITMAPOBJ *bitmap;
+     DC *dc;
+@@ -421,8 +419,6 @@
+     }
+     else
+     {
+-        drawable = dc->opengl_drawable;
+-        dc->opengl_drawable = NULL;
+         dc->hBitmap = handle;
+         GDI_inc_ref_count( handle );
+         dc->dirty = 0;
+@@ -438,7 +434,6 @@
+ 
+  done:
+     release_dc_ptr( dc );
+-    if (ret && drawable) opengl_drawable_release( drawable );
+     return ret;
+ }
+ 

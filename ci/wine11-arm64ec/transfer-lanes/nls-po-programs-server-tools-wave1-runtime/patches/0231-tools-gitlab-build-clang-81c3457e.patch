@@ -1,0 +1,22 @@
+diff --git a/tools/gitlab/build-clang b/tools/gitlab/build-clang
+new file mode 100755
+index 0000000000000000000000000000000000000000..1127e768cb05eb279e2814514f20c55d81e8c1a1
+--- /dev/null
++++ b/tools/gitlab/build-clang
+@@ -0,0 +1,16 @@
++#!/bin/bash
++
++echo "Building $(git log -1)"
++echo "---"
++
++set -Eeuxo pipefail
++
++./tools/make_requests
++./tools/make_specfiles
++./tools/make_makefiles
++autoreconf -f
++
++cd build64
++../configure -q -C --enable-werror --enable-archs=i386,x86_64,aarch64 --with-mingw=clang
++make -s
++cd ..

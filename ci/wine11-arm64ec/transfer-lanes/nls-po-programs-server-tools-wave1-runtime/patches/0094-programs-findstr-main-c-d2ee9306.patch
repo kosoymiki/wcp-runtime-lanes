@@ -1,0 +1,24 @@
+diff --git a/programs/findstr/main.c b/programs/findstr/main.c
+index 7e8a3299e89b6ea4350519d7234eb4aa0b88f40d..c0fc9114be51676a7522ba76b632f2f48b3a2cc6 100644
+--- a/programs/findstr/main.c
++++ b/programs/findstr/main.c
+@@ -185,7 +185,7 @@ int __cdecl wmain(int argc, WCHAR *argv[])
+     struct findstr_file *file_head = NULL, *current_file, *next_file;
+     char line[MAXSTRING];
+     WCHAR *string, *ptr, *buffer;
+-    BOOL has_string = FALSE, has_file = FALSE, case_sensitive = TRUE, regular_expression = TRUE;
++    BOOL has_string = FALSE, has_file = FALSE, case_sensitive = TRUE, regular_expression = FALSE;
+     int ret = 1, i, j;
+ 
+     for (i = 0; i < argc; i++)
+@@ -238,10 +238,6 @@ int __cdecl wmain(int argc, WCHAR *argv[])
+                 case 'i':
+                     case_sensitive = FALSE;
+                     break;
+-                case 'L':
+-                case 'l':
+-                    regular_expression = FALSE;
+-                    break;
+                 case 'R':
+                 case 'r':
+                     regular_expression = TRUE;

@@ -1,0 +1,12 @@
+diff --git a/dlls/shell32/brsfolder.c b/dlls/shell32/brsfolder.c
+--- a/dlls/shell32/brsfolder.c
++++ b/dlls/shell32/brsfolder.c
+@@ -327,7 +327,7 @@
+ 
+ 	TRACE("%p %p %lx %p\n", lpsf, lpi, dwFlags, lpFriendlyName);
+ 	if (SUCCEEDED(IShellFolder_GetDisplayNameOf(lpsf, lpi, dwFlags, &str)))
+-          bSuccess = SUCCEEDED(StrRetToBufW(&str, lpi, lpFriendlyName, MAX_PATH));
++          bSuccess = StrRetToStrNW(lpFriendlyName, MAX_PATH, &str, lpi);
+ 	else
+ 	  bSuccess = FALSE;
+ 

@@ -1,0 +1,184 @@
+diff --git a/dlls/winemac.drv/event.c b/dlls/winemac.drv/event.c
+--- a/dlls/winemac.drv/event.c
++++ b/dlls/winemac.drv/event.c
+@@ -26,8 +26,6 @@
+ 
+ #include "config.h"
+ 
+-#include <poll.h>
+-
+ #include "ntstatus.h"
+ #define WIN32_NO_STATUS
+ #include "macdrv.h"
+@@ -36,8 +34,8 @@
+ WINE_DEFAULT_DEBUG_CHANNEL(event);
+ WINE_DECLARE_DEBUG_CHANNEL(imm);
+ 
+-pthread_mutex_t ime_composition_rect_mutex = PTHREAD_MUTEX_INITIALIZER;
+-CGRect ime_composition_rect;
++static pthread_mutex_t ime_mutex = PTHREAD_MUTEX_INITIALIZER;
++static RECT ime_composition_rect;
+ 
+ /* return the name of an Mac event */
+ static const char *dbgstr_event(int type)
+@@ -61,6 +59,7 @@
+         "QUERY_EVENT_NO_PREEMPT_WAIT",
+         "REASSERT_WINDOW_POSITION",
+         "RELEASE_CAPTURE",
++        "SENT_TEXT_INPUT",
+         "STATUS_ITEM_MOUSE_BUTTON",
+         "STATUS_ITEM_MOUSE_MOVE",
+         "WINDOW_BROUGHT_FORWARD",
+@@ -137,6 +136,7 @@
+         event_mask |= event_mask_for_type(QUERY_EVENT_NO_PREEMPT_WAIT);
+         event_mask |= event_mask_for_type(REASSERT_WINDOW_POSITION);
+         event_mask |= event_mask_for_type(RELEASE_CAPTURE);
++        event_mask |= event_mask_for_type(SENT_TEXT_INPUT);
+         event_mask |= event_mask_for_type(WINDOW_BROUGHT_FORWARD);
+         event_mask |= event_mask_for_type(WINDOW_CLOSE_REQUESTED);
+         event_mask |= event_mask_for_type(WINDOW_DRAG_BEGIN);
+@@ -176,11 +176,18 @@
+     }
+ 
+     if (event->im_set_text.complete) post_ime_update(hwnd, -1, NULL, text);
+-    else post_ime_update(hwnd,
+-                         MAKELONG(event->im_set_text.cursor_begin, event->im_set_text.cursor_end),
+-                         text, NULL);
++    else post_ime_update(hwnd, event->im_set_text.cursor_pos, text, NULL);
+ 
+     free(text);
++}
++
++/***********************************************************************
++ *              macdrv_sent_text_input
++ */
++static void macdrv_sent_text_input(const macdrv_event *event)
++{
++    TRACE_(imm)("handled: %s\n", event->sent_text_input.handled ? "TRUE" : "FALSE");
++    *event->sent_text_input.done = event->sent_text_input.handled ? 1 : -1;
+ }
+ 
+ 
+@@ -290,15 +297,38 @@
+ }
+ 
+ 
++/**************************************************************************
++ *              query_ime_char_rect
++ */
++BOOL query_ime_char_rect(macdrv_query* query)
++{
++    HWND hwnd = macdrv_get_window_hwnd(query->window);
++    void *himc = query->ime_char_rect.himc;
++    CFRange *range = &query->ime_char_rect.range;
++
++    TRACE_(imm)("win %p/%p himc %p range %ld-%ld\n", hwnd, query->window, himc, range->location,
++                range->length);
++
++    pthread_mutex_lock(&ime_mutex);
++    query->ime_char_rect.rect = cgrect_from_rect(ime_composition_rect);
++    pthread_mutex_unlock(&ime_mutex);
++
++    TRACE_(imm)(" -> range %ld-%ld rect %s\n", range->location,
++                range->length, wine_dbgstr_cgrect(query->ime_char_rect.rect));
++
++    return TRUE;
++}
++
++
+ /***********************************************************************
+  *      SetIMECompositionRect (MACDRV.@)
+  */
+ BOOL macdrv_SetIMECompositionRect(HWND hwnd, RECT rect)
+ {
+     TRACE("hwnd %p, rect %s\n", hwnd, wine_dbgstr_rect(&rect));
+-    pthread_mutex_lock(&ime_composition_rect_mutex);
+-    ime_composition_rect = cgrect_from_rect(rect);
+-    pthread_mutex_unlock(&ime_composition_rect_mutex);
++    pthread_mutex_lock(&ime_mutex);
++    ime_composition_rect = rect;
++    pthread_mutex_unlock(&ime_mutex);
+     return TRUE;
+ }
+ 
+@@ -341,6 +371,10 @@
+             TRACE("QUERY_DRAG_DROP_DROP\n");
+             success = query_drag_drop_drop(query);
+             break;
++        case QUERY_IME_CHAR_RECT:
++            TRACE("QUERY_IME_CHAR_RECT\n");
++            success = query_ime_char_rect(query);
++            break;
+         case QUERY_PASTEBOARD_DATA:
+             TRACE("QUERY_PASTEBOARD_DATA\n");
+             success = query_pasteboard_data(hwnd, query->pasteboard_data.type);
+@@ -433,6 +467,9 @@
+     case RELEASE_CAPTURE:
+         macdrv_release_capture(hwnd, event);
+         break;
++    case SENT_TEXT_INPUT:
++        macdrv_sent_text_input(event);
++        break;
+     case STATUS_ITEM_MOUSE_BUTTON:
+         macdrv_status_item_mouse_button(event);
+         break;
+@@ -487,12 +524,24 @@
+ }
+ 
+ 
+-static int check_fd_events( int fd, int events )
+-{
+-    struct pollfd pfd = {.fd = fd, .events = events};
+-    if (poll( &pfd, 1, 0 ) <= 0) return 0;
+-    return pfd.revents;
+-}
++/***********************************************************************
++ *              process_events
++ */
++static int process_events(macdrv_event_queue queue, macdrv_event_mask mask)
++{
++    macdrv_event *event;
++    int count = 0;
++
++    while (macdrv_copy_event_from_queue(queue, mask, &event))
++    {
++        count++;
++        macdrv_handle_event(event);
++        macdrv_release_event(event);
++    }
++    if (count) TRACE("processed %d events\n", count);
++    return count;
++}
++
+ 
+ /***********************************************************************
+  *              ProcessEvents   (MACDRV.@)
+@@ -501,10 +550,8 @@
+ {
+     struct macdrv_thread_data *data = macdrv_thread_data();
+     macdrv_event_mask event_mask = get_event_mask(mask);
+-    macdrv_event *event;
+-    int count = 0;
+-
+-    TRACE("mask %x\n", mask);
++
++    TRACE("mask %x\n", (unsigned int)mask);
+ 
+     if (!data) return FALSE;
+ 
+@@ -514,13 +561,5 @@
+         data->current_event->type != WINDOW_DRAG_BEGIN)
+         event_mask = 0;  /* don't process nested events */
+ 
+-    while (macdrv_copy_event_from_queue(data->queue, event_mask, &event))
+-    {
+-        count++;
+-        macdrv_handle_event(event);
+-        macdrv_release_event(event);
+-    }
+-
+-    if (count) TRACE("processed %d events\n", count);
+-    return mask == QS_ALLINPUT && !check_fd_events(macdrv_get_event_queue_fd(data->queue), POLLIN);
+-}
++    return process_events(data->queue, event_mask);
++}

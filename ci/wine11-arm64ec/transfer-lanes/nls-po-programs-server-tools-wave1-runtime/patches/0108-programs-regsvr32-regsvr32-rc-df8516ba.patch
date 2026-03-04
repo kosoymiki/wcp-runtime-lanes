@@ -1,0 +1,14 @@
+diff --git a/programs/regsvr32/regsvr32.rc b/programs/regsvr32/regsvr32.rc
+index 063cbd531d99fe19cf9f811e0a2db9af15baa789..1d9ec45eb90c906617c445a55f710807f79f1104 100644
+--- a/programs/regsvr32/regsvr32.rc
++++ b/programs/regsvr32/regsvr32.rc
+@@ -60,5 +60,9 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+ #define WINE_FILENAME_STR "REGSVR32.EXE"
+ #define WINE_FILETYPE VFT_APP
+ #define WINE_FILEVERSION 5,1,2600,2180
++#define WINE_FILEVERSION_STR "5.1.2600.2180"
++
++#define WINE_PRODUCTVERSION 5,1,2600,2180
++#define WINE_PRODUCTVERSION_STR "5.1"
+ 
+ #include "wine/wine_common_ver.rc"

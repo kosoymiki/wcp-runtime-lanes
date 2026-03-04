@@ -1,0 +1,16 @@
+diff --git a/dlls/mfmediaengine/video_frame_sink.c b/dlls/mfmediaengine/video_frame_sink.c
+--- a/dlls/mfmediaengine/video_frame_sink.c
++++ b/dlls/mfmediaengine/video_frame_sink.c
+@@ -990,9 +990,9 @@
+ {
+     static const DWORD events[] =
+     {
+-        [SINK_STATE_STOPPED] = MEStreamSinkStopped,
+-        [SINK_STATE_PAUSED] = MEStreamSinkPaused,
+-        [SINK_STATE_RUNNING] = MEStreamSinkStarted,
++        MEStreamSinkStopped, /* SINK_STATE_STOPPED */
++        MEStreamSinkPaused,  /* SINK_STATE_PAUSED */
++        MEStreamSinkStarted, /* SINK_STATE_RUNNING */
+     };
+     HRESULT hr = S_OK;
+ 

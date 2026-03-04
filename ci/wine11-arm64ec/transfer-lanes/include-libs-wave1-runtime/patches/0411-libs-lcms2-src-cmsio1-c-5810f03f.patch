@@ -1,0 +1,13 @@
+diff --git a/libs/lcms2/src/cmsio1.c b/libs/lcms2/src/cmsio1.c
+index 90fbf71f57e5d6d88d4f3d71a4ed3d44628bfb49..4499d1f480d1df59237a92bb5f79e9325958a54d 100644
+--- a/libs/lcms2/src/cmsio1.c
++++ b/libs/lcms2/src/cmsio1.c
+@@ -1,7 +1,7 @@
+ //---------------------------------------------------------------------------------
+ //
+ //  Little Color Management System
+-//  Copyright (c) 1998-2024 Marti Maria Saguer
++//  Copyright (c) 1998-2023 Marti Maria Saguer
+ //
+ // Permission is hereby granted, free of charge, to any person obtaining
+ // a copy of this software and associated documentation files (the "Software"),

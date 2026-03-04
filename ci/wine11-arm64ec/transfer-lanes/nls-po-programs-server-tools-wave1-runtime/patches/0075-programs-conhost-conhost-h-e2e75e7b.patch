@@ -1,0 +1,12 @@
+diff --git a/programs/conhost/conhost.h b/programs/conhost/conhost.h
+index d3485156894927c5866f30733cd53ed44f66e174..76d897e8800a424b8fb7a293173854c4863c71cc 100644
+--- a/programs/conhost/conhost.h
++++ b/programs/conhost/conhost.h
+@@ -149,7 +149,6 @@ BOOL init_window( struct console *console );
+ void init_message_window( struct console *console );
+ void update_window_region( struct console *console, const RECT *update );
+ void update_window_config( struct console *console, BOOL delay );
+-void teardown_window( struct console *console );
+ 
+ static inline void empty_update_rect( struct screen_buffer *screen_buffer, RECT *rect )
+ {

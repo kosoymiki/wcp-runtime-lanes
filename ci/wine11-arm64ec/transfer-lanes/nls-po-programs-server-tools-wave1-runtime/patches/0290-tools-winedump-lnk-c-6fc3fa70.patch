@@ -1,0 +1,22 @@
+diff --git a/tools/winedump/lnk.c b/tools/winedump/lnk.c
+index bf6aebde5f7ed8ff44aa6b0440ce5c2448678ede..194b6b40403b57260af1034005a77efadf9a5539 100644
+--- a/tools/winedump/lnk.c
++++ b/tools/winedump/lnk.c
+@@ -29,7 +29,7 @@
+ #include "winbase.h"
+ #include "winedump.h"
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ typedef enum {
+     SLDF_HAS_ID_LIST = 0x00000001,
+@@ -154,7 +154,7 @@ typedef struct lnk_string_tag
+     } str;
+ } lnk_string;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ static unsigned offset;
+ 

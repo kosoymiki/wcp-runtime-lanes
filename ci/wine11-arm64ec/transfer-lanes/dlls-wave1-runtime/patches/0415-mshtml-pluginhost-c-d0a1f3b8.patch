@@ -1,0 +1,12 @@
+diff --git a/dlls/mshtml/pluginhost.c b/dlls/mshtml/pluginhost.c
+--- a/dlls/mshtml/pluginhost.c
++++ b/dlls/mshtml/pluginhost.c
+@@ -835,7 +835,7 @@
+     desc->id = id;
+     desc->flags = 0;
+     desc->name = plugin_container->props[id - MSHTML_DISPID_CUSTOM_MIN]->name;
+-    desc->iid = 0;
++    desc->prototype_id = 0;
+     return S_OK;
+ }
+ 

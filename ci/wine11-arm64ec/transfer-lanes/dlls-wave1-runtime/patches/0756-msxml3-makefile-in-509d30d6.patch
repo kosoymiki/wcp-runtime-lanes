@@ -1,0 +1,18 @@
+diff --git a/dlls/msxml3/Makefile.in b/dlls/msxml3/Makefile.in
+--- a/dlls/msxml3/Makefile.in
++++ b/dlls/msxml3/Makefile.in
+@@ -1,5 +1,5 @@
+ MODULE    = msxml3.dll
+-IMPORTS   = $(XSLT_PE_LIBS) $(XML2_PE_LIBS) uuid urlmon shlwapi oleaut32 ole32 user32 advapi32
++IMPORTS   = $(XSLT_PE_LIBS) $(XML2_PE_LIBS) uuid urlmon shlwapi oleaut32 ole32 user32 advapi32 rtworkq
+ EXTRAINCL = $(XSLT_PE_CFLAGS) $(XML2_PE_CFLAGS)
+ 
+ SOURCES = \
+@@ -35,6 +35,7 @@
+ 	version.rc \
+ 	xdr.c \
+ 	xmldoc.c \
++	xmlelem.c \
+ 	xmlparser.c \
+ 	xmlparser.idl \
+ 	xmlview.c \

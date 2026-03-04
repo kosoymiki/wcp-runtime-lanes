@@ -1,0 +1,12 @@
+diff --git a/dlls/dwmapi/Makefile.in b/dlls/dwmapi/Makefile.in
+--- a/dlls/dwmapi/Makefile.in
++++ b/dlls/dwmapi/Makefile.in
+@@ -2,6 +2,8 @@
+ IMPORTS   = user32
+ IMPORTLIB = dwmapi
+ 
++EXTRADLLFLAGS = -Wb,--prefer-native
++
+ SOURCES = \
+ 	dwmapi_main.c \
+ 	version.rc

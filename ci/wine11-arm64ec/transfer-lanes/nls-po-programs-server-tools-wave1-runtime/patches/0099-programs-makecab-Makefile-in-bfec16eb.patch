@@ -1,0 +1,12 @@
+diff --git a/programs/makecab/Makefile.in b/programs/makecab/Makefile.in
+deleted file mode 100644
+index f6edb6ee92ddb74fb540ffadf98493c63579f8a9..0000000000000000000000000000000000000000
+--- a/programs/makecab/Makefile.in
++++ /dev/null
+@@ -1,6 +0,0 @@
+-MODULE = makecab.exe
+-
+-EXTRADLLFLAGS = -mconsole -municode
+-
+-SOURCES = \
+-	makecab.c

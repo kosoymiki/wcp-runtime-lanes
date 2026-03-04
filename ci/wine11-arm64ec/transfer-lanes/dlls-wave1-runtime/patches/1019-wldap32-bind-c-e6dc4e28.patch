@@ -1,0 +1,30 @@
+diff --git a/dlls/wldap32/bind.c b/dlls/wldap32/bind.c
+--- a/dlls/wldap32/bind.c
++++ b/dlls/wldap32/bind.c
+@@ -140,9 +140,7 @@
+     SEC_WINNT_AUTH_IDENTITY_W *id = defaults;
+     struct sasl_interact *ptr = sasl_interact;
+ 
+-    TRACE( "%p, %08x, %p, %p\n", ld, flags, defaults, sasl_interact );
+-
+-    if (!defaults) return 0;
++    TRACE( "%p, %08xlx, %p, %p\n", ld, flags, defaults, sasl_interact );
+ 
+     while (ptr && ptr->id != SASL_CB_LIST_END)
+     {
+@@ -206,7 +204,6 @@
+             idW.User = (unsigned short *)strnAtoW( (char *)id->User, id->UserLength, &idW.UserLength );
+             idW.Domain = (unsigned short *)strnAtoW( (char *)id->Domain, id->DomainLength, &idW.DomainLength );
+             idW.Password = (unsigned short *)strnAtoW( (char *)id->Password, id->PasswordLength, &idW.PasswordLength );
+-            idW.Flags = SEC_WINNT_AUTH_IDENTITY_UNICODE;
+             id = &idW;
+         }
+ 
+@@ -496,7 +493,6 @@
+ 
+     if (SERVER_CTRLS(ld)) ldap_value_free_len( SERVER_CTRLS(ld) );
+ 
+-    free( ld->ld_host );
+     free( ld );
+     return ret;
+ }

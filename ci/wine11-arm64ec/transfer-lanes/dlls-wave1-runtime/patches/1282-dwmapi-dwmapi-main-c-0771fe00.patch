@@ -1,0 +1,58 @@
+diff --git a/dlls/dwmapi/dwmapi_main.c b/dlls/dwmapi/dwmapi_main.c
+--- a/dlls/dwmapi/dwmapi_main.c
++++ b/dlls/dwmapi/dwmapi_main.c
+@@ -193,15 +193,24 @@
+         return E_HANDLE;
+     if (!IsWindow(hwnd))
+         return E_HANDLE;
++    if (!pv_attribute)
++        return E_INVALIDARG;
+ 
+     switch (attribute) {
++    case DWMWA_NCRENDERING_ENABLED:
++        if (size < sizeof(BOOL))
++            return E_INVALIDARG;
++
++        WARN("DWMWA_NCRENDERING_ENABLED: always returning FALSE.\n");
++        *(BOOL*)(pv_attribute) = FALSE;
++        hr = S_OK;
++        break;
++
+     case DWMWA_EXTENDED_FRAME_BOUNDS:
+     {
+         RECT *rect = (RECT *)pv_attribute;
+         DPI_AWARENESS_CONTEXT context;
+ 
+-        if (!rect)
+-            return E_INVALIDARG;
+         if (size < sizeof(*rect))
+             return E_NOT_SUFFICIENT_BUFFER;
+         if (GetWindowLongW(hwnd, GWL_STYLE) & WS_CHILD)
+@@ -217,6 +226,15 @@
+         SetThreadDpiAwarenessContext(context);
+         break;
+     }
++    case DWMWA_CLOAKED:
++        if (size < sizeof(DWORD))
++            return E_INVALIDARG;
++
++        FIXME("DWMWA_CLOAKED: always returning 0.\n");
++        *(DWORD*)(pv_attribute) = 0;
++        hr = S_OK;
++        break;
++
+     default:
+         FIXME("attribute %ld not implemented.\n", attribute);
+         hr = E_NOTIMPL;
+@@ -300,9 +318,9 @@
+     static BOOL once;
+ 
+     if (!once++)
+-        FIXME("stub.\n");
++        FIXME("() stub\n");
+     else
+-        TRACE("stub.\n");
++        TRACE(".\n");
+ 
+     display_frequency = get_display_frequency();
+     NtQueryPerformanceCounter(&qpc, &qpf);

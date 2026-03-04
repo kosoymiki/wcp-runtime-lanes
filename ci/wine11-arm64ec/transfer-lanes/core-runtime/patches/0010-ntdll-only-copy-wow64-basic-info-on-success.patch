@@ -1,0 +1,32 @@
+diff --git a/dlls/ntdll/unix/process.c b/dlls/ntdll/unix/process.c
+--- a/dlls/ntdll/unix/process.c
++++ b/dlls/ntdll/unix/process.c
+@@ -1622,22 +1622,25 @@ NTSTATUS WINAPI NtWow64QueryInformationProcess64( HANDLE handle, PROCESSINFOCLAS
+                 if (!info) ret = STATUS_ACCESS_VIOLATION;
+                 else
+                 {
+                     SERVER_START_REQ(get_process_info)
+                     {
+                         req->handle = wine_server_obj_handle( handle );
+                         if ((ret = wine_server_call( req )) == STATUS_SUCCESS)
+                         {
+                             pbi.ExitStatus = reply->exit_code;
+                             pbi.PebBaseAddress = (ULONG)wine_server_get_ptr( reply->peb );
+                             pbi.AffinityMask = reply->affinity & affinity_mask;
+                             pbi.BasePriority = reply->base_priority;
+                             pbi.UniqueProcessId = reply->pid;
+                             pbi.InheritedFromUniqueProcessId = reply->ppid;
+                         }
+                     }
+                     SERVER_END_REQ;
+ 
+-                    memcpy( info, &pbi, sizeof(PROCESS_BASIC_INFORMATION64) );
+-                    len = sizeof(PROCESS_BASIC_INFORMATION64);
++                    if (ret == STATUS_SUCCESS)
++                    {
++                        memcpy( info, &pbi, sizeof(PROCESS_BASIC_INFORMATION64) );
++                        len = sizeof(PROCESS_BASIC_INFORMATION64);
++                    }
+                 }
+                 if (size > sizeof(PROCESS_BASIC_INFORMATION64)) ret = STATUS_INFO_LENGTH_MISMATCH;
+             }

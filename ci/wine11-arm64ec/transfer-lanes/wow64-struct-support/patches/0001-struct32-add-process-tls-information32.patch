@@ -1,0 +1,34 @@
+diff --git a/dlls/wow64/struct32.h b/dlls/wow64/struct32.h
+--- a/dlls/wow64/struct32.h
++++ b/dlls/wow64/struct32.h
+@@ -359,6 +359,30 @@ typedef struct
+     ULONG   CheckSum;
+ } SECTION_IMAGE_INFORMATION32;
+ 
++typedef struct
++{
++    ULONG Flags;
++    union
++    {
++        ULONG TlsVector;
++        ULONG TlsModulePointer;
++    };
++    ULONG ThreadId;
++} THREAD_TLS_INFORMATION32;
++
++typedef struct
++{
++    ULONG Flags;
++    ULONG OperationType;
++    ULONG ThreadDataCount;
++    union
++    {
++        ULONG TlsIndex;
++        ULONG TlsVectorLength;
++    };
++    THREAD_TLS_INFORMATION32 ThreadData[1];
++} PROCESS_TLS_INFORMATION32;
++
+ typedef struct
+ {
+     ULONG Sid;

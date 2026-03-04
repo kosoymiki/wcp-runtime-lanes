@@ -1,0 +1,13 @@
+diff --git a/include/msvcrt/fenv.h b/include/msvcrt/fenv.h
+index 6930b381ded8e4a17072a3f67ab2d9a58053e50f..2039a1fb4c8e55e32e50fe29812420ca5bf57b4d 100644
+--- a/include/msvcrt/fenv.h
++++ b/include/msvcrt/fenv.h
+@@ -42,8 +42,6 @@ _ACRTIMP int __cdecl fesetexceptflag(const fexcept_t*, int);
+ _ACRTIMP int __cdecl feclearexcept(int);
+ _ACRTIMP int __cdecl fetestexcept(int);
+ 
+-_ACRTIMP int __cdecl feupdateenv(const fenv_t*);
+-
+ #ifdef __cplusplus
+ }
+ #endif

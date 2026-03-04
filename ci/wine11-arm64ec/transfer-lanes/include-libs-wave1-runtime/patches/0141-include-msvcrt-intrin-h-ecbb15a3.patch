@@ -1,0 +1,24 @@
+diff --git a/include/msvcrt/intrin.h b/include/msvcrt/intrin.h
+index b20fb1b56d0fae179529b9990192181e3ac1280f..ba825b7b09eb4c5d919d424b4d37dee19401de75 100644
+--- a/include/msvcrt/intrin.h
++++ b/include/msvcrt/intrin.h
+@@ -90,19 +90,6 @@ unsigned __int64 __getReg(int);
+ 
+ #endif
+ 
+-#if defined(_MSC_VER)
+-unsigned char _BitScanForward(unsigned long*,unsigned long);
+-#endif
+-
+-#if defined(_MSC_VER) && (defined(__x86_64__) || defined(__aarch64__))
+-unsigned char _BitScanForward64(unsigned long*,unsigned __int64);
+-#endif
+-
+-#if defined(_MSC_VER) && defined(__x86_64__)
+-unsigned __int64 __shiftright128(unsigned __int64, unsigned __int64, unsigned char);
+-unsigned __int64 _umul128(unsigned __int64, unsigned __int64, unsigned __int64*);
+-#endif
+-
+ #ifdef __cplusplus
+ }
+ #endif

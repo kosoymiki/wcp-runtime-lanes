@@ -1,0 +1,22 @@
+diff --git a/include/ddk/hidport.h b/include/ddk/hidport.h
+index bd3ddb3f2a57ee051c075a4e989aa6fec57bde77..2c881c8792149dd2ce0acb46050fc228b7454271 100644
+--- a/include/ddk/hidport.h
++++ b/include/ddk/hidport.h
+@@ -49,7 +49,7 @@ typedef struct _HID_DEVICE_ATTRIBUTES
+     USHORT Reserved[11];
+ } HID_DEVICE_ATTRIBUTES, *PHID_DEVICE_ATTRIBUTES;
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ typedef struct _HID_DESCRIPTOR
+ {
+     UCHAR   bLength;
+@@ -63,7 +63,7 @@ typedef struct _HID_DESCRIPTOR
+         USHORT  wReportLength;
+     } DescriptorList[1];
+ } HID_DESCRIPTOR, *PHID_DESCRIPTOR;
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #define HID_HID_DESCRIPTOR_TYPE 0x21
+ #define HID_REPORT_DESCRIPTOR_TYPE 0x22

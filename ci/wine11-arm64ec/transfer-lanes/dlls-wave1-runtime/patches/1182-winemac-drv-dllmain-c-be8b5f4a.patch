@@ -1,0 +1,45 @@
+diff --git a/dlls/winemac.drv/dllmain.c b/dlls/winemac.drv/dllmain.c
+--- a/dlls/winemac.drv/dllmain.c
++++ b/dlls/winemac.drv/dllmain.c
+@@ -18,21 +18,17 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+  */
+ 
+-#include <stdarg.h>
+ #include "ntstatus.h"
+ #define WIN32_NO_STATUS
+-#include "windef.h"
+-#include "winbase.h"
+-#include "ntgdi.h"
++#include "macdrv_dll.h"
+ #include "macdrv_res.h"
+ #include "shellapi.h"
+-#include "unixlib.h"
+ #include "wine/debug.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(macdrv);
+ 
+ 
+-static HMODULE macdrv_module = 0;
++HMODULE macdrv_module = 0;
+ 
+ struct quit_info {
+     HWND               *wins;
+@@ -68,7 +64,7 @@
+     return TRUE;
+ }
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ typedef struct
+ {
+@@ -90,7 +86,7 @@
+     GRPICONDIRENTRY idEntries[1];
+ } GRPICONDIR;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ static void quit_reply(int reply)
+ {

@@ -1,0 +1,10 @@
+diff --git a/dlls/mouhid.sys/Makefile.in b/dlls/mouhid.sys/Makefile.in
+--- a/dlls/mouhid.sys/Makefile.in
++++ b/dlls/mouhid.sys/Makefile.in
+@@ -4,4 +4,5 @@
+ 
+ SOURCES = \
+ 	main.c \
+-	mouhid.rc
++	mouhid.rc \
++	mouhid.sys.spec

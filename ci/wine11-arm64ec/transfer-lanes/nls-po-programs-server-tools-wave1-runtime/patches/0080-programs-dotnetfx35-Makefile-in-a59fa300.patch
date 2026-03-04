@@ -1,0 +1,13 @@
+diff --git a/programs/dotnetfx35/Makefile.in b/programs/dotnetfx35/Makefile.in
+new file mode 100644
+index 0000000000000000000000000000000000000000..91d0876db6131d6e214c67a6f7632daf49f36167
+--- /dev/null
++++ b/programs/dotnetfx35/Makefile.in
+@@ -0,0 +1,7 @@
++MODULE    = dotnetfx35.exe
++IMPORTS   =
++
++EXTRADLLFLAGS = -mwindows -mno-cygwin
++
++SOURCES = \
++	main.c

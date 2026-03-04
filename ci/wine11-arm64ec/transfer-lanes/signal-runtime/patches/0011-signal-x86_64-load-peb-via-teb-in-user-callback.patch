@@ -1,0 +1,13 @@
+diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
+--- a/dlls/ntdll/signal_x86_64.c
++++ b/dlls/ntdll/signal_x86_64.c
+@@ -447,7 +447,8 @@ __ASM_GLOBAL_FUNC( KiUserCallbackDispatcher,
+                    "movl 0x28(%rsp),%edx\n\t"  /* len */
+                    "movl 0x2c(%rsp),%r8d\n\t"  /* id */
+ #ifdef __WINE_PE_BUILD
+-                   "movq %gs:0x60,%rax\n\t"     /* peb */
++                   "movq %gs:0x30,%rax\n\t"     /* NtCurrentTeb() */
++                   "movq 0x60(%rax),%rax\n\t"   /* peb */
+                    "movq 0x58(%rax),%rax\n\t"   /* peb->KernelCallbackTable */
+                    "call *(%rax,%r8,8)\n\t"     /* KernelCallbackTable[id] */
+                    ".seh_handler " __ASM_NAME("user_callback_handler") ", @except\n\t"

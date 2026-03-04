@@ -1,0 +1,11 @@
+diff --git a/dlls/crypt32/rootstore.c b/dlls/crypt32/rootstore.c
+--- a/dlls/crypt32/rootstore.c
++++ b/dlls/crypt32/rootstore.c
+@@ -745,6 +745,7 @@
+         /* Delete from cached so deleted certs do not participate in chain verification. */
+         CertDeleteCertificateFromStore( cert );
+         /* Restart enumeration as it is broken by deleting cert from store. */
++        CertFreeCertificateContext( cert );
+         cert = NULL;
+     }
+ 

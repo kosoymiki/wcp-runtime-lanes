@@ -1,0 +1,12 @@
+diff --git a/server/protocol.def b/server/protocol.def
+--- a/server/protocol.def
++++ b/server/protocol.def
+@@ -2021,6 +2021,7 @@
+ @REQ(read_process_memory)
+     obj_handle_t handle;       /* process handle */
+     client_ptr_t addr;         /* addr to read from */
+ @REPLY
++    int          unix_pid;     /* Unix pid of new process */
+     VARARG(data,bytes);        /* result data */
+ @END
+ 

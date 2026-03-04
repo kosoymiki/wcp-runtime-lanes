@@ -1,0 +1,6 @@
+dlls/win32u/sysparams.c
+dlls/win32u/window.c
+dlls/win32u/input.c
+dlls/win32u/message.c
+dlls/win32u/defwnd.c
+dlls/win32u/vulkan.c

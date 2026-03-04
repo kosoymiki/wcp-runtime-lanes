@@ -1,0 +1,35 @@
+diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
+--- a/dlls/ntdll/signal_arm64ec.c
++++ b/dlls/ntdll/signal_arm64ec.c
+@@ -37,6 +37,12 @@
+ #include "wine/debug.h"
+ #include "ntsyscalls.h"
+ 
++union ARM64EC_NT_XCONTEXT
++{
++    ARM64EC_NT_CONTEXT context;
++    BYTE buffer[0x800];
++};
++
+ WINE_DEFAULT_DEBUG_CHANNEL(seh);
+ WINE_DECLARE_DEBUG_CHANNEL(relay);
+ 
+@@ -1323,12 +1329,14 @@ void __attribute__((naked)) KiUserExceptionDispatcher( EXCEPTION_RECORD *rec, CO
+ static void __attribute__((used)) dispatch_apc( void (CALLBACK *func)(ULONG_PTR,ULONG_PTR,ULONG_PTR,CONTEXT*),
+                                                 ULONG_PTR arg1, ULONG_PTR arg2, ULONG_PTR arg3,
+                                                 BOOLEAN alertable, ARM64_NT_CONTEXT *arm_ctx )
+ {
+-    ARM64EC_NT_CONTEXT context;
++    union ARM64EC_NT_XCONTEXT context;
++    CONTEXT_EX *xctx;
+ 
+-    context_arm_to_x64( &context, arm_ctx );
+-    func( arg1, arg2, arg3, &context.AMD64_Context );
+-    NtContinue( &context.AMD64_Context, alertable );
++    RtlInitializeExtendedContext( &context, ctx_flags_arm_to_x64( arm_ctx->ContextFlags ), &xctx );
++    context_arm_to_x64( &context.context, arm_ctx );
++    func( arg1, arg2, arg3, &context.context.AMD64_Context );
++    NtContinue( &context.context.AMD64_Context, alertable );
+ }
+ __ASM_GLOBAL_FUNC( "#KiUserApcDispatcher",
+                    ".seh_context\n\t"

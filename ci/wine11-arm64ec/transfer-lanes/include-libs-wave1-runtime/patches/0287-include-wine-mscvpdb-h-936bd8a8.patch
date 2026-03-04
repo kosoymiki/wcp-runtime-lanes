@@ -1,0 +1,22 @@
+diff --git a/include/wine/mscvpdb.h b/include/wine/mscvpdb.h
+index 34752d9526b2fd6ae2508b4f05018ff499e73671..118ccdb68d48171916c4f1cc0a8673b7c8607883 100644
+--- a/include/wine/mscvpdb.h
++++ b/include/wine/mscvpdb.h
+@@ -96,7 +96,7 @@
+  * types, they are not completely linked together.
+  */
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ /* ======================================== *
+  *             Internal types
+@@ -2704,7 +2704,7 @@ typedef struct
+     unsigned num_sections;
+ } DBI_PUBLIC_HEADER;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ /* ===================================================
+  * The old CodeView stuff (for NB09 and NB11)

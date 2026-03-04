@@ -1,0 +1,10 @@
+diff --git a/LICENSE b/LICENSE
+index 3909c6e050cd238630e2bb9baa7de3ea199bf61e..58d15edce070a7febbf6727add316b9d366d3a10 100644
+--- a/LICENSE
++++ b/LICENSE
+@@ -1,4 +1,4 @@
+-Copyright (c) 1993-2026 the Wine project authors (see the file AUTHORS
++Copyright (c) 1993-2025 the Wine project authors (see the file AUTHORS
+ for a complete list)
+ 
+ Wine is free software; you can redistribute it and/or modify it under

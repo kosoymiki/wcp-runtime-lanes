@@ -1,0 +1,2 @@
+dlls/ntdll/ntdll.spec
+dlls/ntdll/ntdll_misc.h

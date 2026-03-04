@@ -1,0 +1,9 @@
+diff --git a/libs/lcms2/AUTHORS b/libs/lcms2/AUTHORS
+index 107c1ffc5e6e4d48aea9afb51dc4328e002e6c73..68222c69bf55a95a885b0d87b342e456cedfbb4f 100644
+--- a/libs/lcms2/AUTHORS
++++ b/libs/lcms2/AUTHORS
+@@ -56,4 +56,3 @@ Christian Albrecht
+ Dimitrios Anastassakis 
+ Lemke Software 
+ Tim Zaman
+-Amir Montazery and Open Source Technology Improvement Fund (ostif.org), Google, for fuzzer fundings.

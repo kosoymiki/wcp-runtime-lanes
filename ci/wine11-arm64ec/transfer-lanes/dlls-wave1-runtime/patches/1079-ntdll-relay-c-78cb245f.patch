@@ -1,0 +1,35 @@
+diff --git a/dlls/ntdll/relay.c b/dlls/ntdll/relay.c
+--- a/dlls/ntdll/relay.c
++++ b/dlls/ntdll/relay.c
+@@ -169,7 +169,12 @@
+     HANDLE root, hkey;
+ 
+     RtlOpenCurrentUser( KEY_ALL_ACCESS, &root );
+-    InitializeObjectAttributes( &attr, &name, OBJ_CASE_INSENSITIVE, root, NULL );
++    attr.Length = sizeof(attr);
++    attr.RootDirectory = root;
++    attr.ObjectName = &name;
++    attr.Attributes = 0;
++    attr.SecurityDescriptor = NULL;
++    attr.SecurityQualityOfService = NULL;
+ 
+     /* @@ Wine registry key: HKCU\Software\Wine\Debug */
+     if (NtOpenKey( &hkey, KEY_ALL_ACCESS, &attr )) hkey = 0;
+@@ -934,7 +939,7 @@
+ WINE_DECLARE_DEBUG_CHANNEL(seh);
+ WINE_DECLARE_DEBUG_CHANNEL(snoop);
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ typedef	struct
+ {
+@@ -974,7 +979,7 @@
+ 	struct tagSNOOP_RETURNENTRIES	*next;
+ } SNOOP_RETURNENTRIES;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ extern void WINAPI SNOOP_Entry(void);
+ extern void WINAPI SNOOP_Return(void);

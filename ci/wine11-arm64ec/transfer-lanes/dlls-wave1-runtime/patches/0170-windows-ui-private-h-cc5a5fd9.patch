@@ -1,0 +1,11 @@
+diff --git a/dlls/windows.ui/private.h b/dlls/windows.ui/private.h
+--- a/dlls/windows.ui/private.h
++++ b/dlls/windows.ui/private.h
+@@ -36,7 +36,6 @@
+ #define WIDL_using_Windows_UI_ViewManagement
+ #include "windows.ui.viewmanagement.h"
+ 
+-extern IActivationFactory *accessibilitysettings_factory;
+ extern IActivationFactory *uisettings_factory;
+ extern IActivationFactory *uiviewsettings_factory;
+ extern IActivationFactory *inputpane_factory;

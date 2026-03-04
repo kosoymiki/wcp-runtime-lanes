@@ -1,0 +1,12 @@
+diff --git a/include/msvcrt/search.h b/include/msvcrt/search.h
+index 1bfd6a2c99ad4a34e981968f1553ba0a8f25751f..4abb806fa258a1562b58dafa9f371220c545862f 100644
+--- a/include/msvcrt/search.h
++++ b/include/msvcrt/search.h
+@@ -29,7 +29,6 @@ extern "C" {
+ _ACRTIMP void* __cdecl _lfind(const void*,const void*,unsigned int*,unsigned int,int (__cdecl *)(const void*,const void*));
+ _ACRTIMP void* __cdecl _lsearch(const void*,void*,unsigned int*,unsigned int,int (__cdecl *)(const void*,const void*));
+ _ACRTIMP void* __cdecl bsearch(const void*,const void*,size_t,size_t,int (__cdecl *)(const void*,const void*));
+-_ACRTIMP void* __cdecl bsearch_s(const void*,const void*,rsize_t,rsize_t,int (__cdecl *)(void*,const void*,const void*),void*);
+ _ACRTIMP void  __cdecl qsort(void*,size_t,size_t,int (__cdecl *)(const void*,const void*));
+ 
+ #ifdef __cplusplus

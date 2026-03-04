@@ -1,0 +1,11 @@
+diff --git a/dlls/windowscodecs/Makefile.in b/dlls/windowscodecs/Makefile.in
+--- a/dlls/windowscodecs/Makefile.in
++++ b/dlls/windowscodecs/Makefile.in
+@@ -33,6 +33,7 @@
+ 	regsvr.c \
+ 	scaler.c \
+ 	stream.c \
++	tgaformat.c \
+ 	ungif.c \
+ 	uuid.c \
+ 	version.rc \

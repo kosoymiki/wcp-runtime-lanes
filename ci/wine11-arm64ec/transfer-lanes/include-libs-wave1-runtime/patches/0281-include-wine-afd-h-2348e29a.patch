@@ -1,0 +1,22 @@
+diff --git a/include/wine/afd.h b/include/wine/afd.h
+index 88aa768c846812466b61e7d11231ccce8582bfa5..aba559ebd8a8edad2421a0c906de7c2ba1ddd929 100644
+--- a/include/wine/afd.h
++++ b/include/wine/afd.h
+@@ -115,7 +115,7 @@ struct afd_recv_params_32
+     int msg_flags;
+ };
+ 
+-#pragma pack(push,4)
++#include <pshpack4.h>
+ struct afd_poll_params
+ {
+     LONGLONG timeout;
+@@ -157,7 +157,7 @@ struct afd_poll_params_32
+         int status;
+     } sockets[1];
+ };
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ struct afd_event_select_params
+ {

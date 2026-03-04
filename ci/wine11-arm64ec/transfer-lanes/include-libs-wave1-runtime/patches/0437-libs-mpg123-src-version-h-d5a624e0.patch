@@ -1,0 +1,15 @@
+diff --git a/libs/mpg123/src/version.h b/libs/mpg123/src/version.h
+index b0fe3a50fbaccc5a44e59def64e8da2562484f78..7356ed97540f6e2c80fe3c13b6656c7280afb6ce 100644
+--- a/libs/mpg123/src/version.h
++++ b/libs/mpg123/src/version.h
+@@ -15,8 +15,8 @@
+ 
+ // only single spaces as separator to ease parsing by build scripts
+ #define MPG123_MAJOR 1
+-#define MPG123_MINOR 33
+-#define MPG123_PATCH 0
++#define MPG123_MINOR 32
++#define MPG123_PATCH 9
+ // Don't get too wild with that to avoid confusing m4. No brackets.
+ // Also, it should fit well into a sane file name for the tarball.
+ #define MPG123_SUFFIX ""

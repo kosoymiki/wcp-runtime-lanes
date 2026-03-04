@@ -1,0 +1,18 @@
+diff --git a/include/windows.security.enterprisedata.idl b/include/windows.security.enterprisedata.idl
+index 3a1b4f8205e66bbe708696225cba4afc4d2dfaae..fe0a401d980807b7f3a2ede0c0a23a6ed45d1543 100644
+--- a/include/windows.security.enterprisedata.idl
++++ b/include/windows.security.enterprisedata.idl
+@@ -20,11 +20,13 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+ import "windowscontracts.idl";
+ import "windows.foundation.idl";
++#endif
+ 
+ namespace Windows.Security.EnterpriseData {
+     typedef enum ProtectionPolicyEvaluationResult ProtectionPolicyEvaluationResult;

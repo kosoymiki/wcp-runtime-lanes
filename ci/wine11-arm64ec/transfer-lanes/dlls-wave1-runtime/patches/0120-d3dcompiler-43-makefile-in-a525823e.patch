@@ -1,0 +1,11 @@
+diff --git a/dlls/d3dcompiler_43/Makefile.in b/dlls/d3dcompiler_43/Makefile.in
+--- a/dlls/d3dcompiler_43/Makefile.in
++++ b/dlls/d3dcompiler_43/Makefile.in
+@@ -13,7 +13,6 @@
+ 	blob.c \
+ 	bytecodewriter.c \
+ 	compiler.c \
+-	linker.c \
+ 	reflection.c \
+ 	utils.c \
+ 	version.rc

@@ -1,0 +1,8 @@
+diff --git a/dlls/cryptext/tests/Makefile.in b/dlls/cryptext/tests/Makefile.in
+--- a/dlls/cryptext/tests/Makefile.in
++++ /dev/null
+@@ -1,4 +0,0 @@
+-TESTDLL = cryptext.dll
+-
+-SOURCES = \
+-	cryptext.c

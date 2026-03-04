@@ -1,0 +1,87 @@
+diff --git a/dlls/crypt32/chain.c b/dlls/crypt32/chain.c
+--- a/dlls/crypt32/chain.c
++++ b/dlls/crypt32/chain.c
+@@ -117,19 +117,16 @@
+     CertificateChainEngine *engine;
+     HCERTSTORE worldStores[4];
+ 
+-    if (root) {
+-        root = CertDuplicateStore(root);
+-    } else {
++    if(!root) {
+         if(config->cbSize >= sizeof(CERT_CHAIN_ENGINE_CONFIG) && config->hExclusiveRoot)
+             root = CertDuplicateStore(config->hExclusiveRoot);
+         else if (config->hRestrictedRoot)
+             root = CertDuplicateStore(config->hRestrictedRoot);
+         else
+             root = CertOpenStore(CERT_STORE_PROV_SYSTEM_W, 0, 0, system_store, L"Root");
+-    }
+-
+-    if(!root)
+-        return NULL;
++        if(!root)
++            return NULL;
++    }
+ 
+     engine = CryptMemAlloc(sizeof(CertificateChainEngine));
+     if(!engine) {
+@@ -176,7 +173,7 @@
+             if(default_cu_engine != handle)
+                 CertFreeCertificateChainEngine(handle);
+         }
+-        CertControlStore(default_cu_engine->hWorld, 0, CERT_STORE_CTRL_RESYNC, NULL);
++
+         return default_cu_engine;
+     }
+ 
+@@ -190,7 +187,7 @@
+             if(default_lm_engine != handle)
+                 CertFreeCertificateChainEngine(handle);
+         }
+-        CertControlStore(default_lm_engine->hWorld, 0, CERT_STORE_CTRL_RESYNC, NULL);
++
+         return default_lm_engine;
+     }
+ 
+@@ -1665,8 +1662,6 @@
+         dump_name_constraints(ext);
+     else if (!strcmp(ext->pszObjId, szOID_CERT_POLICIES))
+         dump_cert_policies(ext);
+-    else if (!strcmp(ext->pszObjId, szOID_APPLICATION_CERT_POLICIES))
+-        FIXME("szOID_APPLICATION_CERT_POLICIES\n");
+     else if (!strcmp(ext->pszObjId, szOID_ENHANCED_KEY_USAGE))
+         dump_enhanced_key_usage(ext);
+     else if (!strcmp(ext->pszObjId, szOID_NETSCAPE_CERT_TYPE))
+@@ -1740,6 +1735,13 @@
+          &usage, &size);
+         if (!ret)
+             return FALSE;
++        else if (usage.cbData > 2)
++        {
++            /* The key usage extension only defines 9 bits => no more than 2
++             * bytes are needed to encode all known usages.
++             */
++            return FALSE;
++        }
+         else
+         {
+             /* The only bit relevant to chain validation is the keyCertSign
+@@ -1817,8 +1819,6 @@
+             else if (!strcmp(oid, szOID_SUBJECT_ALT_NAME2))
+                 ret = TRUE;
+             else if (!strcmp(oid, szOID_CERT_POLICIES))
+-                ret = TRUE;
+-            else if (!strcmp(oid, szOID_APPLICATION_CERT_POLICIES))
+                 ret = TRUE;
+             else if (!strcmp(oid, szOID_ENHANCED_KEY_USAGE))
+                 ret = TRUE;
+@@ -3860,7 +3860,8 @@
+         if (!set)
+             set = CryptInitOIDFunctionSet(
+              CRYPT_OID_VERIFY_CERTIFICATE_CHAIN_POLICY_FUNC, 0);
+-        CryptGetOIDFunctionAddress(set, 0, szPolicyOID, 0, (void **)&verifyPolicy, &hFunc);
++        CryptGetOIDFunctionAddress(set, X509_ASN_ENCODING, szPolicyOID, 0,
++         (void **)&verifyPolicy, &hFunc);
+     }
+     if (verifyPolicy)
+         ret = verifyPolicy(szPolicyOID, pChainContext, pPolicyPara,

@@ -1,0 +1,57 @@
+diff --git a/dlls/win32u/cursoricon.c b/dlls/win32u/cursoricon.c
+--- a/dlls/win32u/cursoricon.c
++++ b/dlls/win32u/cursoricon.c
+@@ -39,7 +39,7 @@
+ 
+ struct cursoricon_object
+ {
+-    HICON                   handle;     /* cursor full handle */
++    struct user_object      obj;        /* object header */
+     struct list             entry;      /* entry in shared icons list */
+     struct free_icon_params params;     /* opaque params used by 16-bit code */
+     UNICODE_STRING          module;     /* module for icons loaded from resources */
+@@ -123,8 +123,6 @@
+     SERVER_END_REQ;
+     if (!ret) return 0;
+ 
+-    check_for_events( QS_INPUT );
+-
+     if (!(obj = get_icon_ptr( old_cursor ))) return 0;
+     release_user_handle_ptr( obj );
+     return old_cursor;
+@@ -154,8 +152,7 @@
+ 
+     if (!(obj = calloc( 1, sizeof(*obj) ))) return NULL;
+     obj->is_icon = is_icon;
+-    if (!(handle = alloc_user_handle( obj, NTUSER_OBJ_ICON ))) free( obj );
+-    else obj->handle = handle;
++    if (!(handle = alloc_user_handle( &obj->obj, NTUSER_OBJ_ICON ))) free( obj );
+     return handle;
+ }
+ 
+@@ -215,7 +212,6 @@
+             free( obj->ani.frames );
+         }
+         if (!IS_INTRESOURCE( obj->resname )) free( obj->resname );
+-        if (obj->module.Length) free(obj->module.Buffer);
+         free( obj );
+         KeUserDispatchCallback( &params.dispatch, sizeof(params), &ret_ptr, &ret_len );
+         user_driver->pDestroyCursorIcon( handle );
+@@ -361,7 +357,7 @@
+         if (memcmp( ptr->module.Buffer, module->Buffer, module->Length )) continue;
+         /* We pass rsrc as desc argument, this is not compatible with Windows */
+         if (ptr->rsrc != desc) continue;
+-        ret = ptr->handle;
++        ret = ptr->obj.handle;
+         break;
+     }
+     user_unlock();
+@@ -401,7 +397,7 @@
+ 
+     if (!(obj = get_icon_ptr( cursor ))) return 0;
+ 
+-    TRACE( "%p => %d %p %p\n", cursor, istep, rate_jiffies, num_steps );
++    TRACE( "%p => %d %p %p\n", cursor, (int)istep, rate_jiffies, num_steps );
+ 
+     icon_steps = obj->is_ani ? obj->ani.num_steps : 1;
+     if (istep < icon_steps || !obj->is_ani)

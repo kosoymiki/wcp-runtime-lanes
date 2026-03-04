@@ -1,0 +1,23 @@
+diff --git a/programs/winecfg/x11drvdlg.c b/programs/winecfg/x11drvdlg.c
+index 9db8da5a4f43056433586316a64ad09d646d7a44..aea52717a78ddb9b55822d796885714b69ab7191 100644
+--- a/programs/winecfg/x11drvdlg.c
++++ b/programs/winecfg/x11drvdlg.c
+@@ -317,6 +317,7 @@ static void update_font_preview(HWND hDlg)
+ 
+     if (dpi >= MINDPI && dpi <= MAXDPI)
+     {
++        static const WCHAR tahomaW[] = {'T','a','h','o','m','a',0};
+         LOGFONTW lf;
+         HFONT hfont;
+ 
+@@ -324,8 +325,8 @@ static void update_font_preview(HWND hDlg)
+ 
+         GetObjectW(hfont, sizeof(lf), &lf);
+ 
+-        if (wcscmp(lf.lfFaceName, L"Tahoma") != 0)
+-            wcscpy(lf.lfFaceName, L"Tahoma");
++        if (wcscmp(lf.lfFaceName, tahomaW) != 0)
++            lstrcpyW(lf.lfFaceName, tahomaW);
+         else
+             DeleteObject(hfont);
+         lf.lfHeight = MulDiv(-10, dpi, 72);

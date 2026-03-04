@@ -1,0 +1,22 @@
+diff --git a/include/msacmdrv.h b/include/msacmdrv.h
+index 3c17f9866de9d6d784e087767867eb5b86b27c5c..09249fc3480cd43eaccc39407cd2ff837ce84de2 100644
+--- a/include/msacmdrv.h
++++ b/include/msacmdrv.h
+@@ -110,7 +110,7 @@ typedef struct _ACMDRVSTREAMINSTANCE
+ } ACMDRVSTREAMINSTANCE, *PACMDRVSTREAMINSTANCE;
+ 
+ typedef struct _ACMDRVSTREAMHEADER *PACMDRVSTREAMHEADER;
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ typedef struct _ACMDRVSTREAMHEADER {
+   DWORD                cbStruct;
+   DWORD                fdwStatus;
+@@ -137,7 +137,7 @@ typedef struct _ACMDRVSTREAMHEADER {
+   LPBYTE               pbPreparedDst;
+   DWORD                cbPreparedDstLength;
+ } ACMDRVSTREAMHEADER;
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ typedef struct _ACMDRVSTREAMSIZE
+ {

@@ -1,0 +1,1025 @@
+diff --git a/dlls/kernel32/tests/process.c b/dlls/kernel32/tests/process.c
+--- a/dlls/kernel32/tests/process.c
++++ b/dlls/kernel32/tests/process.c
+@@ -36,6 +36,7 @@
+ #include "tlhelp32.h"
+ 
+ #include "wine/test.h"
++#include "wine/heap.h"
+ 
+ /* PROCESS_ALL_ACCESS in Vista+ PSDKs is incompatible with older Windows versions */
+ #define PROCESS_ALL_ACCESS_NT4 (PROCESS_ALL_ACCESS & ~0xf000)
+@@ -96,8 +97,6 @@
+ static DWORD  (WINAPI *pGetActiveProcessorCount)(WORD);
+ static DWORD  (WINAPI *pGetMaximumProcessorCount)(WORD);
+ static BOOL   (WINAPI *pGetProcessInformation)(HANDLE,PROCESS_INFORMATION_CLASS,void*,DWORD);
+-static void (WINAPI *pClosePseudoConsole)(HPCON);
+-static HRESULT (WINAPI *pCreatePseudoConsole)(COORD,HANDLE,HANDLE,DWORD,HPCON*);
+ 
+ /* ############################### */
+ static char     base[MAX_PATH];
+@@ -207,6 +206,13 @@
+             (decode_char(str[4 * i + 3]) << 0);
+     ptr[len] = '\0';
+     return ptr;
++}
++
++static void wait_and_close_child_process(PROCESS_INFORMATION *pi)
++{
++    wait_child_process(pi->hProcess);
++    CloseHandle(pi->hThread);
++    CloseHandle(pi->hProcess);
+ }
+ 
+ static void reload_child_info(const char* resfile)
+@@ -278,8 +284,6 @@
+     pGetActiveProcessorCount = (void *)GetProcAddress(hkernel32, "GetActiveProcessorCount");
+     pGetMaximumProcessorCount = (void *)GetProcAddress(hkernel32, "GetMaximumProcessorCount");
+     pGetProcessInformation = (void *)GetProcAddress(hkernel32, "GetProcessInformation");
+-    pCreatePseudoConsole = (void *)GetProcAddress(hkernel32, "CreatePseudoConsole");
+-    pClosePseudoConsole = (void *)GetProcAddress(hkernel32, "ClosePseudoConsole");
+ 
+     return TRUE;
+ }
+@@ -621,11 +625,11 @@
+     WCHAR* result = getChildStringW( sect, key );
+ 
+     len = MultiByteToWideChar( CP_ACP, 0, expect, -1, NULL, 0);
+-    expectW = malloc(len*sizeof(WCHAR));
++    expectW = HeapAlloc(GetProcessHeap(),0,len*sizeof(WCHAR));
+     MultiByteToWideChar( CP_ACP, 0, expect, -1, expectW, len);
+ 
+     len = WideCharToMultiByte( CP_ACP, 0, result, -1, NULL, 0, NULL, NULL);
+-    resultA = malloc(len*sizeof(CHAR));
++    resultA = HeapAlloc(GetProcessHeap(),0,len*sizeof(CHAR));
+     WideCharToMultiByte( CP_ACP, 0, result, -1, resultA, len, NULL, NULL);
+ 
+     if (sensitive)
+@@ -634,8 +638,8 @@
+     else
+         ok_(__FILE__, line)( lstrcmpiW(result, expectW) == 0, "%s:%s expected '%s', got '%s'\n",
+                          sect, key, expect ? expect : "(null)", resultA );
+-    free(expectW);
+-    free(resultA);
++    HeapFree(GetProcessHeap(),0,expectW);
++    HeapFree(GetProcessHeap(),0,resultA);
+ }
+ 
+ static void ok_child_int( int line, const char *sect, const char *key, UINT expect )
+@@ -675,7 +679,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     GetStartupInfoA(&si);
+@@ -711,7 +715,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -747,7 +751,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -783,7 +787,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -819,7 +823,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -857,7 +861,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -893,7 +897,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("StartupInfoA", "cb", startup.cb);
+@@ -953,7 +957,7 @@
+     ok(startup.lpTitle == NULL, "lpTitle is not NULL\n");
+     ok(startup.dwFlags == STARTF_USESHOWWINDOW, "unexpected dwFlags %04lx\n", startup.dwFlags);
+     ok(startup.wShowWindow == SW_SHOWNORMAL, "unexpected wShowWindow %d\n", startup.wShowWindow);
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("Arguments", "argcA", 5);
+@@ -967,7 +971,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\" \"a\\\"b\\\\\" c\\\" d", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("Arguments", "argcA", 7);
+@@ -993,7 +997,7 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(ret, "CreateProcess (%s) failed : %ld\n", buffer, GetLastError());
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     sprintf(buffer, "./%s", exename);
+@@ -1010,7 +1014,7 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(ret, "CreateProcess (%s) failed : %ld\n", buffer, GetLastError());
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     sprintf(buffer, ".\\%s", exename);
+@@ -1026,7 +1030,7 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(ret, "CreateProcess (%s) failed : %ld\n", buffer, GetLastError());
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     if (p) sprintf(buffer, "..%s/%s", p, exename);
+@@ -1048,7 +1052,7 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(buffer, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(ret, "CreateProcess (%s) failed : %ld\n", buffer, GetLastError());
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildString("Arguments", "argvA0", "dummy");
+@@ -1074,7 +1078,10 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(buffer, NULL, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_PATH_NOT_FOUND, "Expected ERROR_PATH_NOT_FOUND, got %ld\n", GetLastError());
++    ok(GetLastError() == ERROR_PATH_NOT_FOUND ||
++       broken(GetLastError() == ERROR_FILE_NOT_FOUND) /* Win9x/WinME */ ||
++       broken(GetLastError() == ERROR_ACCESS_DENIED) /* Win98 */,
++       "Expected ERROR_PATH_NOT_FOUND, got %ld\n", GetLastError());
+ 
+     buffer2[0] = '\0';
+ 
+@@ -1082,44 +1089,20 @@
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(buffer, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_PATH_NOT_FOUND, "Expected ERROR_PATH_NOT_FOUND, got %ld\n", GetLastError());
++    ok(GetLastError() == ERROR_PATH_NOT_FOUND ||
++       broken(GetLastError() == ERROR_FILE_NOT_FOUND) /* Win9x/WinME */ ||
++       broken(GetLastError() == ERROR_ACCESS_DENIED) /* Win98 */,
++       "Expected ERROR_PATH_NOT_FOUND, got %ld\n", GetLastError());
+ 
+     /* Test empty command line parameter. */
+     SetLastError(0xdeadbeef);
+     ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+     ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-
+-    strcpy(buffer2, " " );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-    strcpy(buffer2, " notepad.exe" );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-    strcpy(buffer2, "\tnotepad.exe" );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-    strcpy(buffer2, "\"\"" );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-    strcpy(buffer2, "\" \"" );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_INVALID_PARAMETER, "Expected ERROR_INVALID_PARAMETER, got %ld\n", GetLastError());
+-    strcpy(buffer2, "\"\t\"" );
+-    SetLastError(0xdeadbeef);
+-    ret = CreateProcessA(NULL, buffer2, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info);
+-    ok(!ret, "CreateProcessA unexpectedly succeeded\n");
+-    ok(GetLastError() == ERROR_FILE_NOT_FOUND, "Expected ERROR_FILE_NOT_FOUND, got %ld\n", GetLastError());
++    ok(GetLastError() == ERROR_FILE_NOT_FOUND ||
++       GetLastError() == ERROR_PATH_NOT_FOUND /* NT4 */ ||
++       GetLastError() == ERROR_BAD_PATHNAME /* Win98 */ ||
++       GetLastError() == ERROR_INVALID_PARAMETER /* Win7 */,
++       "Expected ERROR_FILE_NOT_FOUND, got %ld\n", GetLastError());
+ 
+     strcpy(buffer, "doesnotexist.exe");
+     strcpy(buffer2, "does not exist.exe");
+@@ -1175,7 +1158,7 @@
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     GetWindowsDirectoryA( windir, sizeof(windir) );
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, windir, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildIString("Misc", "CurrDirA", windir);
+@@ -1203,10 +1186,11 @@
+     STARTUPINFOA        startup;
+     PROCESS_INFORMATION info;
+     HANDLE              process, thread, snapshot;
++    DWORD               nested_pid;
+     PROCESSENTRY32      pe;
+     THREADENTRY32       te;
++    DWORD               ret;
+     int                 i;
+-    DWORD ret, nested_pid, exit_code;
+ 
+     memset(&startup, 0, sizeof(startup));
+     startup.cb = sizeof(startup);
+@@ -1216,7 +1200,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess failed\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildInt("Toolhelp", "cntUsage", 0);
+@@ -1232,14 +1216,14 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process nested \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess failed\n");
+-    ret = WaitForSingleObject(info.hProcess, 1000);
+-    ok(ret == WAIT_OBJECT_0, "WaitForSingleObject returned %lu\n", ret);
++    wait_child_process(info.hProcess);
+ 
+     process = OpenProcess(PROCESS_ALL_ACCESS_NT4, FALSE, info.dwProcessId);
+     ok(process != NULL, "OpenProcess failed %lu\n", GetLastError());
+     CloseHandle(process);
+ 
+-    wait_child_process(&info);
++    CloseHandle(info.hProcess);
++    CloseHandle(info.hThread);
+ 
+     for (i = 0; i < 20; i++)
+     {
+@@ -1293,11 +1277,7 @@
+     ok(ret == 1, "expected 1, got %lu\n", ret);
+     CloseHandle(thread);
+ 
+-    ret = WaitForSingleObject(process, 30000);
+-    ok(!ret, "got %ld\n", ret);
+-    ret = GetExitCodeProcess(process, &exit_code);
+-    ok(!exit_code, "got exit code %#lx\n", exit_code);
+-
++    wait_child_process(process);
+     CloseHandle(process);
+ 
+     reload_child_info(resfile);
+@@ -1396,7 +1376,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\"", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     env = GetEnvironmentStringsA();
+@@ -1423,7 +1403,7 @@
+     }
+     /* Add space for additional environment variables */
+     child_env_len += 256;
+-    child_env = malloc(child_env_len);
++    child_env = HeapAlloc(GetProcessHeap(), 0, child_env_len);
+ 
+     ptr = child_env;
+     sprintf(ptr, "=%c:=%s", 'C', "C:\\FOO\\BAR");
+@@ -1449,12 +1429,12 @@
+     }
+     *ptr = '\0';
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0L, child_env, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     cmpEnvironment(child_env);
+ 
+-    free(child_env);
++    HeapFree(GetProcessHeap(), 0, child_env);
+     FreeEnvironmentStringsA(env);
+     release_memory();
+     DeleteFileA(resfile);
+@@ -1483,7 +1463,7 @@
+     ok(GetExitCodeThread(info.hThread, &exit_status) && exit_status == STILL_ACTIVE, "thread still running\n");
+     ok(ResumeThread(info.hThread) == 1, "Resuming thread\n");
+ 
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     GetStartupInfoA(&us);
+ 
+@@ -1543,7 +1523,7 @@
+     } while (de.dwDebugEventCode != EXIT_PROCESS_DEBUG_EVENT);
+ 
+     ok(dbg, "I have seen a debug event\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     GetStartupInfoA(&us);
+ 
+@@ -1621,7 +1601,7 @@
+     get_file_name(resfile);
+     sprintf(buffer, "\"%s\" process dump \"%s\" console", selfname, resfile);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, TRUE, 0, NULL, NULL, &startup, &info), "CreateProcess\n");
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     /* now get the modification the child has made, and resets parents expected values */
+@@ -1747,7 +1727,7 @@
+     /* the child may also send the final "n tests executed" string, so read it to avoid a deadlock */
+     ReadFile(hParentIn, buffer, sizeof(buffer), &w, NULL);
+ 
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     reload_child_info(resfile);
+     okChildString("StdHandle", "msg", msg);
+@@ -2698,7 +2678,6 @@
+     HANDLE job, job2;
+     PROCESS_INFORMATION pi;
+     BOOL ret, out;
+-    DWORD dwret;
+ 
+     if (!pIsProcessInJob)
+     {
+@@ -2751,18 +2730,17 @@
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    dwret = WaitForSingleObject(pi.hProcess, 1000);
+-    ok(dwret == WAIT_OBJECT_0, "WaitForSingleObject returned %lu\n", dwret);
++    wait_child_process(pi.hProcess);
+ 
+     out = FALSE;
+     ret = pIsProcessInJob(pi.hProcess, job, &out);
+     ok(ret, "IsProcessInJob error %lu\n", GetLastError());
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+-    Sleep(100);
+     test_assigned_proc(job, 0);
+     test_accounting(job, 1, 0, 0);
+ 
+-    wait_child_process(&pi);
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
+     CloseHandle(job);
+     CloseHandle(job2);
+ }
+@@ -2806,8 +2784,7 @@
+ 
+     /* Test adding an already terminated process to a job object */
+     create_process("exit", &pi);
+-    dwret = WaitForSingleObject(pi.hProcess, 1000);
+-    ok(dwret == WAIT_OBJECT_0, "WaitForSingleObject returned %lu\n", dwret);
++    wait_child_process(pi.hProcess);
+ 
+     SetLastError(0xdeadbeef);
+     ret = pAssignProcessToJobObject(job, pi.hProcess);
+@@ -2816,7 +2793,9 @@
+     test_assigned_proc(job, 0);
+     test_accounting(job, 1, 0, 0);
+ 
+-    wait_child_process(&pi);
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
++
+     CloseHandle(job);
+ }
+ 
+@@ -2846,7 +2825,7 @@
+     ok(ret, "AssignProcessToJobObject error %lu\n", GetLastError());
+ 
+     ReleaseSemaphore(sem, 1, NULL);
+-    wait_child_process(&pi[0]);
++    wait_and_close_child_process(&pi[0]);
+ 
+     create_process("wait", &pi[0]);
+     ret = pAssignProcessToJobObject(job, pi[0].hProcess);
+@@ -2995,15 +2974,19 @@
+     test_completion(port, JOB_OBJECT_MSG_NEW_PROCESS, (DWORD_PTR)job, pi.dwProcessId, 0);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_child_process(pi.hProcess);
+ 
+     test_completion(port, JOB_OBJECT_MSG_EXIT_PROCESS, (DWORD_PTR)job, pi.dwProcessId, 0);
+     TerminateProcess(pi2.hProcess, 0);
+-    wait_child_process(&pi2);
++    wait_child_process(pi2.hProcess);
++    CloseHandle(pi2.hProcess);
++    CloseHandle(pi2.hThread);
+ 
+     test_completion(port, JOB_OBJECT_MSG_EXIT_PROCESS, (DWORD_PTR)job, pi2.dwProcessId, 0);
+     test_completion(port, JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO, (DWORD_PTR)job, 0, 100);
+ 
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
+     CloseHandle(job);
+     CloseHandle(port);
+ }
+@@ -3130,7 +3113,7 @@
+     dwret = WaitForSingleObject(job, 100);
+     ok(dwret == WAIT_TIMEOUT, "WaitForSingleObject returned %lu\n", dwret);
+ 
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+     CloseHandle(job);
+     CloseHandle(sem);
+ }
+@@ -3171,7 +3154,7 @@
+     test_assigned_proc(job, 2, GetCurrentProcessId(), pi.dwProcessId);
+     test_accounting(job, 2, 2, 0);
+ 
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ }
+ 
+ static void test_BreakawayOk(HANDLE parent_job)
+@@ -3207,7 +3190,7 @@
+     if (ret)
+     {
+         TerminateProcess(pi.hProcess, 0);
+-        wait_child_process(&pi);
++        wait_and_close_child_process(&pi);
+     }
+ 
+     if (nested_jobs)
+@@ -3232,7 +3215,7 @@
+         ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+         TerminateProcess(pi.hProcess, 0);
+-        wait_child_process(&pi);
++        wait_and_close_child_process(&pi);
+     }
+ 
+     limit_info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_BREAKAWAY_OK;
+@@ -3255,7 +3238,7 @@
+     ok(ret, "IsProcessInJob error %lu\n", GetLastError());
+     ok(!out, "IsProcessInJob returned out=%u\n", out);
+ 
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     limit_info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
+     ret = pSetInformationJobObject(job, JobObjectExtendedLimitInformation, &limit_info, sizeof(limit_info));
+@@ -3273,7 +3256,7 @@
+         test_accounting(job, 1, 1, 0);
+     }
+ 
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     /* unset breakaway ok */
+     limit_info.BasicLimitInformation.LimitFlags = 0;
+@@ -3424,42 +3407,6 @@
+     return needs_close;
+ }
+ 
+-static BOOL build_startupinfoex( STARTUPINFOEXA *startup, unsigned args, HANDLE hstd[4], HPCON *pseudo_console )
+-{
+-    HANDLE output_read, input_write;
+-    HANDLE output_write, input_read;
+-    SIZE_T attr_size;
+-    COORD size = {80, 32};
+-    HRESULT hres;
+-    BOOL ret, needs_close;
+-
+-    ret = CreatePipe(&input_read, &input_write, NULL, 0);
+-    ok(ret, "Couldn't create pipe\n");
+-    ret = CreatePipe(&output_read, &output_write, NULL, 0);
+-    ok(ret, "Couldn't create pipe\n");
+-
+-    hres = pCreatePseudoConsole(size, input_read, output_write, 0, pseudo_console);
+-    ok(hres == S_OK, "CreatePseudoConsole failed: %08lx\n", hres);
+-
+-    memset(startup, 0, sizeof(*startup));
+-    needs_close = build_startupinfo(&startup->StartupInfo, args, hstd);
+-    startup->StartupInfo.cb = sizeof(*startup);
+-
+-    pInitializeProcThreadAttributeList(NULL, 1, 0, &attr_size);
+-    startup->lpAttributeList = HeapAlloc(GetProcessHeap(), 0, attr_size);
+-    pInitializeProcThreadAttributeList(startup->lpAttributeList, 1, 0, &attr_size);
+-    pUpdateProcThreadAttribute(startup->lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, *pseudo_console,
+-                               sizeof(*pseudo_console), NULL, NULL);
+-
+-    hstd[2] = output_read;
+-    hstd[3] = input_write;
+-
+-    CloseHandle(output_write);
+-    CloseHandle(input_read);
+-
+-    return needs_close;
+-}
+-
+ struct std_handle_test
+ {
+     /* input */
+@@ -3555,41 +3502,6 @@
+         /* all others handles type behave as H_DISK */
+         {ARG_STD         | ARG_CP_INHERIT | ARG_HANDLE_INHERIT | H_DISK,     HATTR_NULL},
+         {ARG_STARTUPINFO | ARG_CP_INHERIT | ARG_HANDLE_INHERIT | H_DISK,     HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_DISK},
+-    },
+-    pseudoconsole_cui[] =
+-    {
+-        /* all others handles type behave as H_DISK */
+-        {ARG_STARTUPINFO | ARG_CP_INHERIT | ARG_HANDLE_INHERIT | H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_DISK},
+-        {ARG_STD         | ARG_CP_INHERIT | ARG_HANDLE_INHERIT | H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_DISK},
+-
+-        /* all others handles type behave as H_DISK */
+-        {ARG_STARTUPINFO |                  ARG_HANDLE_INHERIT | H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                  ARG_HANDLE_INHERIT | H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_DISK},
+-
+-        /* all others handles type behave as H_DISK (except H_CONSOLE) */
+-        {ARG_STARTUPINFO |                                       H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                                       H_DISK,      HATTR_TYPE | FILE_TYPE_DISK},
+-
+-        /* all others handles type behave as H_DISK (except H_CONSOLE) */
+-        {ARG_STARTUPINFO |                  ARG_HANDLE_PROTECT | H_DISK,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                  ARG_HANDLE_PROTECT | H_DISK,      HATTR_TYPE | HATTR_PROTECT | FILE_TYPE_DISK},
+-
+-        /* all others handles type behave as H_DISK */
+-        {ARG_STARTUPINFO | ARG_CP_INHERIT |                      H_DISK,      HATTR_DANGLING, .is_broken = HATTR_TYPE | FILE_TYPE_UNKNOWN},
+-        {ARG_STD         | ARG_CP_INHERIT |                      H_DISK,      HATTR_DANGLING},
+-
+-        {ARG_STARTUPINFO |                                       H_DEVIL,     HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                                       H_DEVIL,     HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STARTUPINFO |                                       H_INVALID,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                                       H_INVALID,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STARTUPINFO |                                       H_NULL,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                                       H_NULL,      HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-
+-        /* looks like parent handle is not inherited */
+-        {ARG_STARTUPINFO |                                       H_CONSOLE,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                                       H_CONSOLE,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STARTUPINFO |                  ARG_HANDLE_PROTECT | H_CONSOLE,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+-        {ARG_STD         |                  ARG_HANDLE_PROTECT | H_CONSOLE,   HATTR_TYPE | HATTR_INHERIT | FILE_TYPE_CHAR},
+     };
+     static const struct
+     {
+@@ -3602,13 +3514,10 @@
+     tests[] =
+     {
+ #define X(d, cg, s) {(d), (cg), s, ARRAY_SIZE(s), #s}
+-        X(0,                                               TRUE,  nothing_cui),
+-        X(0,                                               FALSE, nothing_gui),
+-        X(DETACHED_PROCESS,                                TRUE,  detached_cui),
+-        X(DETACHED_PROCESS,                                FALSE, detached_gui),
+-        X(EXTENDED_STARTUPINFO_PRESENT,                    TRUE,  pseudoconsole_cui),
+-        X(EXTENDED_STARTUPINFO_PRESENT | DETACHED_PROCESS, TRUE,  detached_cui),
+-        /* not testing gui + pseudo console, behaves like without pseudo console */
++        X(0,                TRUE,  nothing_cui),
++        X(0,                FALSE, nothing_gui),
++        X(DETACHED_PROCESS, TRUE,  detached_cui),
++        X(DETACHED_PROCESS, FALSE, detached_gui),
+ #undef X
+     };
+ 
+@@ -3630,28 +3539,18 @@
+     {
+         const struct std_handle_test* std_tests = tests[j].tests;
+ 
+-        if ((tests[j].cp_flags & EXTENDED_STARTUPINFO_PRESENT) &&
+-            (!pCreatePseudoConsole || !pClosePseudoConsole || !pInitializeProcThreadAttributeList || !pUpdateProcThreadAttribute))
+-        {
+-            win_skip("No pseudo-console support, skipping test\n");
+-            continue;
+-        }
+         for (i = 0; i < tests[j].count; i++)
+         {
+-            STARTUPINFOEXA startup;
+-            HPCON pseudo_console;
+-            HANDLE hstd[4] = {};
++            STARTUPINFOA startup;
++            HANDLE hstd[2] = {};
+             BOOL needs_close;
+ 
+             winetest_push_context("%s[%u] ", tests[j].descr, i);
+-            if (tests[j].cp_flags & EXTENDED_STARTUPINFO_PRESENT)
+-                needs_close = build_startupinfoex( &startup, std_tests[i].args, hstd, &pseudo_console );
+-            else
+-                needs_close = build_startupinfo( &startup.StartupInfo, std_tests[i].args, hstd );
++            needs_close = build_startupinfo( &startup, std_tests[i].args, hstd );
+ 
+             ret = check_run_child(tests[j].use_cui ? cuiexec : guiexec,
+                                   tests[j].cp_flags, !!(std_tests[i].args & ARG_CP_INHERIT),
+-                                  &startup.StartupInfo);
++                                  &startup);
+             ok(ret, "Couldn't run child\n");
+             reload_child_info(resfile);
+ 
+@@ -3699,13 +3598,6 @@
+                 CloseHandle(hstd[0]);
+                 SetHandleInformation(hstd[1], HANDLE_FLAG_PROTECT_FROM_CLOSE, 0);
+                 CloseHandle(hstd[1]);
+-            }
+-            if (tests[j].cp_flags & EXTENDED_STARTUPINFO_PRESENT)
+-            {
+-                HeapFree(GetProcessHeap(), 0, startup.lpAttributeList);
+-                pClosePseudoConsole(pseudo_console);
+-                CloseHandle(hstd[2]);
+-                CloseHandle(hstd[3]);
+             }
+             winetest_pop_context();
+         }
+@@ -3891,7 +3783,7 @@
+      * is set by the TerminateProcess() call.
+      */
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ }
+ 
+ static void test_SuspendProcessState(void)
+@@ -4339,8 +4231,12 @@
+             break;
+         case ProcessCookie:
+             if (is_current)
++            {
+                 ok(status == STATUS_SUCCESS || status == STATUS_INVALID_PARAMETER /* before win8 */,
+                    "for info %lu got %08lx (ret_len %lu)\n", i, status, ret_len);
++                if (!status)
++                    ok( *(ULONG *)buf, "got 0.\n" );
++            }
+             else
+                 ok(status == STATUS_INVALID_PARAMETER /* before win8 */ || status == STATUS_ACCESS_DENIED,
+                    "for info %lu got %08lx (ret_len %lu)\n", i, status, ret_len);
+@@ -4394,11 +4290,11 @@
+     ok(!ret && GetLastError() == ERROR_INSUFFICIENT_BUFFER, "got %d, error %ld\n", ret, GetLastError());
+     ok(len > 0, "got %lu\n", len);
+ 
+-    info = calloc(len, 1);
++    info = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, len);
+     ret = pGetLogicalProcessorInformationEx(RelationAll, info, &len);
+     ok(ret, "got %d, error %ld\n", ret, GetLastError());
+     ok(info->Size > 0, "got %lu\n", info->Size);
+-    free(info);
++    HeapFree(GetProcessHeap(), 0, info);
+ }
+ 
+ static void test_GetSystemCpuSetInformation(void)
+@@ -4444,8 +4340,8 @@
+     ok(!ret && GetLastError() == ERROR_INSUFFICIENT_BUFFER, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+     ok(size == expected_size, "Got unexpected size %lu.\n", size);
+ 
+-    info = malloc(size);
+-    info_nt = malloc(size);
++    info = heap_alloc(size);
++    info_nt = heap_alloc(size);
+ 
+     status = pNtQuerySystemInformationEx(SystemCpuSetInformation, &process, sizeof(process), info_nt, expected_size, NULL);
+     ok(!status, "Got unexpected status %#lx.\n", status);
+@@ -4458,8 +4354,8 @@
+ 
+     ok(!memcmp(info, info_nt, expected_size), "Info does not match NtQuerySystemInformationEx().\n");
+ 
+-    free(info_nt);
+-    free(info);
++    heap_free(info_nt);
++    heap_free(info);
+ }
+ 
+ static void test_largepages(void)
+@@ -4499,7 +4395,6 @@
+     int i;
+     struct _PROC_THREAD_ATTRIBUTE_LIST list, expect_list;
+     HANDLE handles[4];
+-    GROUP_AFFINITY gaff = {.Group = 0, .Mask = 0xffff};
+ 
+     if (!pInitializeProcThreadAttributeList)
+     {
+@@ -4597,17 +4492,6 @@
+         expect_list.attrs[i].attr = PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE;
+         expect_list.attrs[i].size = sizeof(HPCON);
+         expect_list.attrs[i].value = handles;
+-    }
+-
+-    ret = pUpdateProcThreadAttribute(&list, 0, PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, &gaff, sizeof(gaff), NULL, NULL);
+-    ok(ret, "got %d gle %ld\n", ret, GetLastError());
+-    if (ret)
+-    {
+-        unsigned int i = expect_list.count++;
+-        expect_list.mask |= 1 << ProcThreadAttributeGroupAffinity;
+-        expect_list.attrs[i].attr = PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY;
+-        expect_list.attrs[i].size = sizeof(GROUP_AFFINITY);
+-        expect_list.attrs[i].value = &gaff;
+     }
+ 
+     ok(!memcmp(&list, &expect_list, size), "mismatch\n");
+@@ -4702,9 +4586,9 @@
+         ret = CreateProcessA(NULL, buffer, NULL, NULL, FALSE, EXTENDED_STARTUPINFO_PRESENT,
+                 NULL, NULL, (STARTUPINFOA *)&si, &info);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %u.\n", ret, GetLastError());
+-        wait_child_process(&info);
++        wait_and_close_child_process(&info);
+ #endif
+-        si.lpAttributeList = malloc(size);
++        si.lpAttributeList = heap_alloc(size);
+         ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+         handle = OpenProcess(PROCESS_CREATE_PROCESS, TRUE, GetCurrentProcessId());
+@@ -4714,12 +4598,12 @@
+         ret = CreateProcessA(NULL, buffer, NULL, NULL, TRUE, EXTENDED_STARTUPINFO_PRESENT,
+                 NULL, NULL, (STARTUPINFOA *)&si, &info);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+-        wait_child_process(&info);
++        wait_and_close_child_process(&info);
+         CloseHandle(handle);
+         pDeleteProcThreadAttributeList(si.lpAttributeList);
+-        free(si.lpAttributeList);
+-
+-        si.lpAttributeList = malloc(size);
++        heap_free(si.lpAttributeList);
++
++        si.lpAttributeList = heap_alloc(size);
+         ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+         handle = (HANDLE)0xdeadbeef;
+@@ -4731,9 +4615,9 @@
+         ok(!ret && GetLastError() == ERROR_INVALID_HANDLE, "Got unexpected ret %#x, GetLastError() %lu.\n",
+                 ret, GetLastError());
+         pDeleteProcThreadAttributeList(si.lpAttributeList);
+-        free(si.lpAttributeList);
+-
+-        si.lpAttributeList = malloc(size);
++        heap_free(si.lpAttributeList);
++
++        si.lpAttributeList = heap_alloc(size);
+         ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+         handle = NULL;
+@@ -4745,9 +4629,9 @@
+         ok(!ret && GetLastError() == ERROR_INVALID_HANDLE, "Got unexpected ret %#x, GetLastError() %lu.\n",
+                 ret, GetLastError());
+         pDeleteProcThreadAttributeList(si.lpAttributeList);
+-        free(si.lpAttributeList);
+-
+-        si.lpAttributeList = malloc(size);
++        heap_free(si.lpAttributeList);
++
++        si.lpAttributeList = heap_alloc(size);
+         ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+         handle = GetCurrentProcess();
+@@ -4760,11 +4644,11 @@
+         ok(ret || broken(!ret && GetLastError() == ERROR_INVALID_HANDLE),
+                 "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+         if (ret)
+-            wait_child_process(&info);
++            wait_and_close_child_process(&info);
+         pDeleteProcThreadAttributeList(si.lpAttributeList);
+-        free(si.lpAttributeList);
+-
+-        si.lpAttributeList = malloc(size);
++        heap_free(si.lpAttributeList);
++
++        si.lpAttributeList = heap_alloc(size);
+         ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+         ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+ 
+@@ -4783,7 +4667,7 @@
+     if (level)
+     {
+         pDeleteProcThreadAttributeList(si.lpAttributeList);
+-        free(si.lpAttributeList);
++        heap_free(si.lpAttributeList);
+         CloseHandle(parent);
+     }
+     else
+@@ -4791,7 +4675,7 @@
+         ret = WriteFile(write_pipe, &parent_data, sizeof(parent_data), &size, NULL);
+     }
+ 
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     if (!level)
+     {
+@@ -4843,7 +4727,7 @@
+ 
+     memset(&si, 0, sizeof(si));
+     si.StartupInfo.cb = sizeof(si);
+-    si.lpAttributeList = malloc(size);
++    si.lpAttributeList = heap_alloc(size);
+     ret = pInitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &size);
+     ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+ 
+@@ -4863,7 +4747,7 @@
+             (STARTUPINFOA *)&si, &info);
+     ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+ 
+-    wait_child_process(&info);
++    wait_and_close_child_process(&info);
+ 
+     CloseHandle(pipe[0]);
+     CloseHandle(pipe[1]);
+@@ -4884,9 +4768,7 @@
+     NTSTATUS status;
+ 
+     create_process("exit", &pi);
+-
+-    status = WaitForSingleObject( pi.hProcess, 30000 );
+-    ok( !status, "got %ld\n", status );
++    wait_child_process(pi.hProcess);
+     Sleep(100);
+ 
+     memset( data, 0, sizeof(data) );
+@@ -4928,8 +4810,8 @@
+         offset += spi->NextEntryOffset;
+     } while (spi->NextEntryOffset);
+     ok( !found, "process still enumerated\n" );
+-
+-    wait_child_process( &pi );
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
+ }
+ 
+ static void test_nested_jobs_child(unsigned int index)
+@@ -5007,7 +4889,9 @@
+     ok(ret, "AssignProcessToJobObject error %lu\n", GetLastError());
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_child_process(pi.hProcess);
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
+ 
+     dead_pid = pi.dwProcessId;
+ 
+@@ -5072,8 +4956,10 @@
+ 
+ done:
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
+-
++    wait_child_process(pi.hProcess);
++
++    CloseHandle(pi.hProcess);
++    CloseHandle(pi.hThread);
+     CloseHandle(job_parent);
+     CloseHandle(job);
+     CloseHandle(job_other);
+@@ -5130,7 +5016,9 @@
+             ok(GetLastError() == ERROR_ACCESS_DENIED, "Got unexpected error %lu.\n", GetLastError());
+ 
+             TerminateProcess(info[1].hProcess, 0);
+-            wait_child_process(&info[1]);
++            wait_child_process(info[1].hProcess);
++            CloseHandle(info[1].hProcess);
++            CloseHandle(info[1].hThread);
+ 
+             ret = pAssignProcessToJobObject(job2, info[0].hProcess);
+             ok(!ret, "AssignProcessToJobObject succeeded\n");
+@@ -5138,7 +5026,9 @@
+         }
+ 
+         TerminateProcess(info[0].hProcess, 0);
+-        wait_child_process(&info[0]);
++        wait_child_process(info[0].hProcess);
++        CloseHandle(info[0].hProcess);
++        CloseHandle(info[0].hThread);
+     }
+ 
+     if (already_in_job)
+@@ -5157,11 +5047,16 @@
+     sprintf(buffer, "\"%s\" process nested_jobs 0", selfname);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0, NULL, NULL, &si, &info[0]),
+             "CreateProcess failed\n");
+-    wait_child_process(&info[0]);
++    wait_child_process(info[0].hProcess);
+     sprintf(buffer, "\"%s\" process nested_jobs 1", selfname);
+     ok(CreateProcessA(NULL, buffer, NULL, NULL, FALSE, 0, NULL, NULL, &si, &info[1]),
+         "CreateProcess failed\n");
+-    wait_child_process(&info[1]);
++    wait_child_process(info[1].hProcess);
++    for (i = 0; i < 2; ++i)
++    {
++        CloseHandle(info[i].hProcess);
++        CloseHandle(info[i].hThread);
++    }
+ 
+     CloseHandle(job1);
+     CloseHandle(job2);
+@@ -5193,7 +5088,7 @@
+     ret = pInitializeProcThreadAttributeList(NULL, 1, 0, &size);
+     ok(!ret && GetLastError() == ERROR_INSUFFICIENT_BUFFER,
+             "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+-    attrs = malloc(size);
++    attrs = heap_alloc(size);
+ 
+ 
+     jobs[0] = (HANDLE)0xdeadbeef;
+@@ -5208,7 +5103,7 @@
+         /* Supported since Win10. */
+         win_skip("PROC_THREAD_ATTRIBUTE_JOB_LIST is not supported.\n");
+         pDeleteProcThreadAttributeList(attrs);
+-        free(attrs);
++        heap_free(attrs);
+         return;
+     }
+     ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+@@ -5263,7 +5158,7 @@
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     jobs[0] = pCreateJobObjectW(NULL, NULL);
+     ok(!!jobs[0], "CreateJobObjectA error %lu\n", GetLastError());
+@@ -5300,7 +5195,7 @@
+     ok(!out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     CloseHandle(jobs[1]);
+     jobs[1] = pCreateJobObjectW(NULL, NULL);
+@@ -5327,7 +5222,7 @@
+     ok(!out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     ret = pQueryInformationJobObject(jobs[0], JobObjectBasicAccountingInformation, &job_info,
+             sizeof(job_info), NULL);
+@@ -5418,7 +5313,7 @@
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     tmp = jobs[0];
+     jobs[0] = jobs[1];
+@@ -5463,7 +5358,7 @@
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     ret = pInitializeProcThreadAttributeList(attrs, 1, 0, &size);
+     ok(ret, "Got unexpected ret %#x, GetLastError() %lu.\n", ret, GetLastError());
+@@ -5486,13 +5381,13 @@
+     ok(out, "IsProcessInJob returned out=%u\n", out);
+ 
+     TerminateProcess(pi.hProcess, 0);
+-    wait_child_process(&pi);
++    wait_and_close_child_process(&pi);
+ 
+     CloseHandle(jobs[0]);
+     CloseHandle(jobs[1]);
+ 
+     pDeleteProcThreadAttributeList(attrs);
+-    free(attrs);
++    heap_free(attrs);
+ 
+     limit_info.BasicLimitInformation.LimitFlags = 0;
+     ret = pSetInformationJobObject(parent_job, JobObjectExtendedLimitInformation, &limit_info, sizeof(limit_info));

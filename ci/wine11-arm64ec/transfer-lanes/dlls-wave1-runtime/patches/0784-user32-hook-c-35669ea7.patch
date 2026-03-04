@@ -1,0 +1,19 @@
+diff --git a/dlls/user32/hook.c b/dlls/user32/hook.c
+--- a/dlls/user32/hook.c
++++ b/dlls/user32/hook.c
+@@ -385,6 +385,15 @@
+ 
+ 
+ /***********************************************************************
++ *		UnhookWindowsHook (USER32.@)
++ */
++BOOL WINAPI UnhookWindowsHook( INT id, HOOKPROC proc )
++{
++    return NtUserUnhookWindowsHook( id, proc );
++}
++
++
++/***********************************************************************
+  *           SetWinEventHook                            [USER32.@]
+  *
+  * Set up an event hook for a set of events.

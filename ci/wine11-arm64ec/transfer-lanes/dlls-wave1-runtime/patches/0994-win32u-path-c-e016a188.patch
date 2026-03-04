@@ -1,0 +1,29 @@
+diff --git a/dlls/win32u/path.c b/dlls/win32u/path.c
+--- a/dlls/win32u/path.c
++++ b/dlls/win32u/path.c
+@@ -234,7 +234,7 @@
+     /* FIXME: If newStroke is true, perhaps we want to check that we're
+      * getting a PT_MOVETO
+      */
+-    TRACE("(%d,%d) - %d\n", pPoint->x, pPoint->y, flags);
++    TRACE("(%d,%d) - %d\n", (int)pPoint->x, (int)pPoint->y, flags);
+ 
+     /* Reserve enough memory for an extra path entry */
+     if(!PATH_ReserveEntries(pPath, pPath->count+1))
+@@ -1447,7 +1447,7 @@
+ 
+         if (header->dwType != TT_POLYGON_TYPE)
+         {
+-            FIXME("Unknown header type %d\n", header->dwType);
++            FIXME("Unknown header type %d\n", (int)header->dwType);
+             return FALSE;
+         }
+ 
+@@ -2067,6 +2067,7 @@
+     NULL,                               /* pGetFontUnicodeRanges */
+     NULL,                               /* pGetGlyphIndices */
+     NULL,                               /* pGetGlyphOutline */
++    NULL,                               /* pGetICMProfile */
+     NULL,                               /* pGetImage */
+     NULL,                               /* pGetKerningPairs */
+     NULL,                               /* pGetNearestColor */

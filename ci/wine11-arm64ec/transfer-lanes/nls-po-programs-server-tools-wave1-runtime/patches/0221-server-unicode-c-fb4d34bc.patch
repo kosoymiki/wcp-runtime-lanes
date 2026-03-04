@@ -1,0 +1,32 @@
+diff --git a/server/unicode.c b/server/unicode.c
+index bb39b55e50c3180867463b0edff548c6a1a9d793..b4864310f83db4125fc53c787b2558b81b72b62c 100644
+--- a/server/unicode.c
++++ b/server/unicode.c
+@@ -29,9 +29,6 @@
+ #ifdef HAVE_SYS_SYSCTL_H
+ # include <sys/sysctl.h>
+ #endif
+-#ifdef __APPLE__
+-# include <mach-o/dyld.h>
+-#endif
+ 
+ #include "windef.h"
+ #include "winternl.h"
+@@ -293,17 +290,6 @@ static char *get_nls_dir(void)
+             dir = NULL;
+         }
+     }
+-#elif defined(__APPLE__)
+-    uint32_t dir_size = PATH_MAX;
+-    dir = malloc( dir_size );
+-    if (dir)
+-    {
+-        if (_NSGetExecutablePath( dir, &dir_size ))
+-        {
+-            free( dir );
+-            dir = NULL;
+-        }
+-    }
+ #else
+     dir = realpath( server_argv0, NULL );
+ #endif

@@ -1,0 +1,21 @@
+diff --git a/libs/vkd3d/libs/vkd3d/utils.c b/libs/vkd3d/libs/vkd3d/utils.c
+index 2d0510e5456a644dec8cca311368d0109bc495eb..c2832a61f67a5f435795e108e2de353412701cb2 100644
+--- a/libs/vkd3d/libs/vkd3d/utils.c
++++ b/libs/vkd3d/libs/vkd3d/utils.c
+@@ -703,7 +703,7 @@ const char *debug_vk_extent_3d(VkExtent3D extent)
+ 
+ const char *debug_vk_queue_flags(VkQueueFlags flags)
+ {
+-    char buffer[222];
++    char buffer[191];
+ 
+     buffer[0] = '\0';
+ #define FLAG_TO_STR(f) if (flags & f) { strcat(buffer, " | "#f); flags &= ~f; }
+@@ -716,7 +716,6 @@ const char *debug_vk_queue_flags(VkQueueFlags flags)
+ #define FLAG_TO_STR(f, n) if (flags & f) { strcat(buffer, " | "#n); flags &= ~f; }
+     FLAG_TO_STR(0x20, VK_QUEUE_VIDEO_DECODE_BIT_KHR)
+     FLAG_TO_STR(0x40, VK_QUEUE_VIDEO_ENCODE_BIT_KHR)
+-    FLAG_TO_STR(0x100, VK_QUEUE_OPTICAL_FLOW_BIT_NV)
+ #undef FLAG_TO_STR
+     if (flags)
+         FIXME("Unrecognized flag(s) %#x.\n", flags);

@@ -1,0 +1,20 @@
+diff --git a/include/windows.gaming.input.idl b/include/windows.gaming.input.idl
+index a79cc071ec24e229a2ede34ad3e65ccead0aed2e..5fc5265247df208af1d5f6bf90fccfe625ba5b25 100644
+--- a/include/windows.gaming.input.idl
++++ b/include/windows.gaming.input.idl
+@@ -20,6 +20,7 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+@@ -29,6 +30,7 @@ import "windows.devices.haptics.idl";
+ import "windows.gaming.input.forcefeedback.idl";
+ import "windows.system.idl";
+ import "windows.devices.power.idl";
++#endif
+ 
+ namespace Windows.Gaming.Input {
+     typedef enum ArcadeStickButtons ArcadeStickButtons;

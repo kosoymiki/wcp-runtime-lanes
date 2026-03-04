@@ -1,0 +1,13 @@
+diff --git a/documentation/README-fr.md b/documentation/README-fr.md
+index 2b179efc41629889d3c0af405af3deef34769a94..cde33aaae0582e98f6c92973d6e120cf733291b0 100644
+--- a/documentation/README-fr.md
++++ b/documentation/README-fr.md
+@@ -37,7 +37,7 @@ d'exploitation suivants :
+ - FreeBSD 12.4 ou ultérieur
+ - Solaris x86 9 ou ultérieur
+ - NetBSD-current
+-- macOS 10.12 ou ultérieur
++- Mac OS X 10.12 ou ultérieur
+ 
+ Étant donné que Wine nécessite une implémentation des « threads »
+ (processus légers) au niveau du noyau, seuls les systèmes d'exploitation

@@ -1,0 +1,9 @@
+diff --git a/dlls/msacm32.drv/Makefile.in b/dlls/msacm32.drv/Makefile.in
+--- a/dlls/msacm32.drv/Makefile.in
++++ b/dlls/msacm32.drv/Makefile.in
+@@ -2,5 +2,4 @@
+ IMPORTS   = msacm32 winmm user32
+ 
+ SOURCES = \
+-	msacm32.drv.spec \
+ 	wavemap.c

@@ -1,0 +1,17 @@
+diff --git a/libs/xml2/pattern.c b/libs/xml2/pattern.c
+index b0f7f160141537bfb8bbb3a89da20af915c60ad1..55ae2d3e5cf5e1fcc90da092696e490f6188cadf 100644
+--- a/libs/xml2/pattern.c
++++ b/libs/xml2/pattern.c
+@@ -1164,10 +1164,10 @@ xmlCompileStepPattern(xmlPatParserContextPtr ctxt) {
+ 			    goto error;
+ 			}
+ 		    } else {
+-			PUSH(XML_OP_ELEM, token, URL);
++			PUSH(XML_OP_CHILD, token, URL);
+ 		    }
+ 		} else
+-		    PUSH(XML_OP_ELEM, name, NULL);
++		    PUSH(XML_OP_CHILD, name, NULL);
+ 		return;
+ 	    } else if (xmlStrEqual(name, (const xmlChar *) "attribute")) {
+ 		XML_PAT_FREE_STRING(ctxt, name)

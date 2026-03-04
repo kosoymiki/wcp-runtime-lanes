@@ -1,0 +1,28 @@
+diff --git a/dlls/winemac.drv/cocoa_window.h b/dlls/winemac.drv/cocoa_window.h
+--- a/dlls/winemac.drv/cocoa_window.h
++++ b/dlls/winemac.drv/cocoa_window.h
+@@ -19,7 +19,6 @@
+  */
+ 
+ #import <AppKit/AppKit.h>
+-#import <QuartzCore/QuartzCore.h>
+ 
+ 
+ @class WineEventQueue;
+@@ -82,8 +81,6 @@
+     BOOL ignore_windowDeminiaturize;
+     BOOL ignore_windowResize;
+     BOOL fakingClose;
+-
+-    CAShapeLayer* contentViewMaskLayer;
+ }
+ 
+ @property (retain, readonly, nonatomic) WineEventQueue* queue;
+@@ -110,6 +107,6 @@
+ 
+     - (void) updateForCursorClipping;
+ 
+-    - (void) setRetinaMode:(BOOL)mode;
++    - (void) setRetinaMode:(int)mode;
+ 
+ @end

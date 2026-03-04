@@ -1,0 +1,23 @@
+diff --git a/include/windows.globalization.idl b/include/windows.globalization.idl
+index e7fafe3eb9ac596e0531fd2a52825e526aa46ccf..7282af63969b2fd744631c217d67068ed34ff4a8 100644
+--- a/include/windows.globalization.idl
++++ b/include/windows.globalization.idl
+@@ -17,16 +17,17 @@
+  */
+ 
+ #ifdef __WIDL__
+-#pragma makedep header install winmd
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+ import "windowscontracts.idl";
+ import "windows.foundation.idl";
+ import "windows.system.idl";
++#endif
+ 
+ namespace Windows {
+     namespace Globalization {

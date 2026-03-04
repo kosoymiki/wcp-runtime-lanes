@@ -1,0 +1,18 @@
+diff --git a/libs/xslt/libxslt/win32config.h b/libs/xslt/libxslt/win32config.h
+index a27808a2f48ed0efb60381f25494a34e680d1052..ce7978ba886628ed800165ae6ee1fd8ec7f1c589 100644
+--- a/libs/xslt/libxslt/win32config.h
++++ b/libs/xslt/libxslt/win32config.h
+@@ -9,8 +9,6 @@
+ #ifndef __LIBXSLT_WIN32_CONFIG__
+ #define __LIBXSLT_WIN32_CONFIG__
+ 
+-#define MODULE_EXTENSION ".dll"
+-
+ /* snprintf emulation taken from http://stackoverflow.com/a/8712996/1956010 */
+ #if defined(_MSC_VER) && _MSC_VER < 1900
+ 
+@@ -50,3 +48,4 @@ __inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)
+ #define HAVE_STAT
+ 
+ #endif /* __LIBXSLT_WIN32_CONFIG__ */
++

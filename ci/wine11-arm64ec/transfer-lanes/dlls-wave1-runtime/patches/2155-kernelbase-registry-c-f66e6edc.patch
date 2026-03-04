@@ -1,0 +1,552 @@
+diff --git a/dlls/kernelbase/registry.c b/dlls/kernelbase/registry.c
+--- a/dlls/kernelbase/registry.c
++++ b/dlls/kernelbase/registry.c
+@@ -42,6 +42,7 @@
+ #include "kernelbase.h"
+ #include "wine/debug.h"
+ #include "wine/exception.h"
++#include "wine/heap.h"
+ #include "wine/list.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(reg);
+@@ -111,30 +112,38 @@
+     return (len >= classes_root_len - 1 && !wcsnicmp( name->Buffer, classes_root, min( len, classes_root_len ) ));
+ }
+ 
+-static BOOL is_classes_wow6432node( HKEY key )
+-{
+-    char buffer[256], *buf_ptr = buffer;
++static KEY_NAME_INFORMATION *get_key_name( HKEY key, char *buffer, DWORD len )
++{
++    char *buf_ptr = buffer;
+     KEY_NAME_INFORMATION *info = (KEY_NAME_INFORMATION *)buffer;
+-    DWORD len = sizeof(buffer);
+-    UNICODE_STRING name;
+     NTSTATUS status;
+-    BOOL ret = FALSE;
+-
+-    /* Obtain the name of the root key */
+-    status = NtQueryKey( key, KeyNameInformation, info, len, &len );
+-    if (status && status != STATUS_BUFFER_OVERFLOW) return FALSE;
+-
+-    /* Retry with a dynamically allocated buffer */
++
++    status = NtQueryKey( key, KeyNameInformation, buf_ptr, len, &len );
++    if (status && status != STATUS_BUFFER_OVERFLOW) return NULL;
++
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, len ))) return FALSE;
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( len ))) return FALSE;
+         info = (KEY_NAME_INFORMATION *)buf_ptr;
+         status = NtQueryKey( key, KeyNameInformation, info, len, &len );
+     }
++    if (!status) return (KEY_NAME_INFORMATION *)buf_ptr;
++    if (buf_ptr != buffer) heap_free( buf_ptr );
++    return NULL;
++}
++
++static BOOL is_classes_wow6432node( HKEY key )
++{
++    KEY_NAME_INFORMATION *info;
++    char buffer[256];
++    UNICODE_STRING name;
++    BOOL ret = FALSE;
++
++    if (!(info = get_key_name( key, buffer, sizeof(buffer) ))) return FALSE;
+ 
+     /* Check if the key ends in Wow6432Node and if the root is the Classes key*/
+-    if (!status && info->NameLength / sizeof(WCHAR) >= 11)
++    if (info->NameLength / sizeof(WCHAR) >= 11)
+     {
+         name.Buffer = info->Name + info->NameLength / sizeof(WCHAR) - 11;
+         name.Length = 11 * sizeof(WCHAR);
+@@ -145,9 +154,39 @@
+             ret = is_classes_root( &name );
+         }
+     }
+-
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-
++    if ((char *)info != buffer) heap_free( info );
++
++    return ret;
++}
++
++static BOOL is_wow6432_shared( HANDLE key )
++{
++    static const WCHAR users_root[] = L"\\Registry\\User\\";
++    const DWORD users_root_len = ARRAY_SIZE( users_root ) - 1;
++    static const WCHAR software[] = L"\\Software";
++    const DWORD software_len = ARRAY_SIZE( software ) - 1;
++    KEY_NAME_INFORMATION *info;
++    char buffer[256];
++    BOOL ret = FALSE;
++    WCHAR *name;
++    DWORD len;
++
++    info = get_key_name( key, buffer, sizeof(buffer) );
++    len =  info->NameLength / sizeof(WCHAR);
++    if (len <= users_root_len) goto done;
++    name = info->Name;
++    if (wcsnicmp( name, users_root, users_root_len )) goto done;
++    name += users_root_len;
++    len -= users_root_len;
++    while (len && *name != '\\')
++    {
++        ++name;
++        --len;
++    }
++    if (len != software_len) goto done;
++    ret = !wcsnicmp( name, software, software_len );
++done:
++    if ((char *)info != buffer) heap_free( info );
+     return ret;
+ }
+ 
+@@ -160,6 +199,11 @@
+ 
+     InitializeObjectAttributes( &attr, &nameW, 0, key, NULL );
+     if (NtOpenKeyEx( &ret, MAXIMUM_ALLOWED | KEY_WOW64_64KEY, &attr, 0 )) return key;
++    if (is_wow6432_shared( key ))
++    {
++        NtClose( ret );
++        return key;
++    }
+     return ret;
+ }
+ 
+@@ -268,8 +312,8 @@
+     /* Retry with a dynamically allocated buffer */
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, len )))
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( len )))
+             return STATUS_NO_MEMORY;
+         info = (KEY_NAME_INFORMATION *)buf_ptr;
+         status = NtQueryKey( root, KeyNameInformation, info, len, &len );
+@@ -277,7 +321,7 @@
+ 
+     if (status)
+     {
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++        if (buf_ptr != buffer) heap_free( buf_ptr );
+         return status;
+     }
+ 
+@@ -293,7 +337,7 @@
+         root = *retkey;
+     }
+ 
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+ 
+     return status;
+ }
+@@ -819,8 +863,8 @@
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+         /* retry with a dynamically allocated buffer */
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( total_size )))
+             return ERROR_NOT_ENOUGH_MEMORY;
+         info = (KEY_NODE_INFORMATION *)buf_ptr;
+         status = NtEnumerateKey( hkey, index, KeyNodeInformation,
+@@ -853,7 +897,7 @@
+         }
+     }
+ 
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError( status );
+ }
+ 
+@@ -883,8 +927,8 @@
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+         /* retry with a dynamically allocated buffer */
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( total_size )))
+             return ERROR_NOT_ENOUGH_MEMORY;
+         info = (KEY_NODE_INFORMATION *)buf_ptr;
+         status = NtEnumerateKey( hkey, index, KeyNodeInformation,
+@@ -921,7 +965,7 @@
+         }
+     }
+ 
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError( status );
+ }
+ 
+@@ -979,8 +1023,8 @@
+         /* retry with a dynamically allocated buffer */
+         while (status == STATUS_BUFFER_OVERFLOW)
+         {
+-            if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-            if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++            if (buf_ptr != buffer) heap_free( buf_ptr );
++            if (!(buf_ptr = heap_alloc( total_size )))
+                 return ERROR_NOT_ENOUGH_MEMORY;
+             info = (KEY_FULL_INFORMATION *)buf_ptr;
+             status = NtQueryKey( hkey, KeyFullInformation, buf_ptr, total_size, &total_size );
+@@ -1016,7 +1060,7 @@
+     }
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError( status );
+ }
+ 
+@@ -1069,8 +1113,8 @@
+         /* retry with a dynamically allocated buffer */
+         while (status == STATUS_BUFFER_OVERFLOW)
+         {
+-            if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-            if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++            if (buf_ptr != buffer) heap_free( buf_ptr );
++            if (!(buf_ptr = heap_alloc( total_size )))
+                 return ERROR_NOT_ENOUGH_MEMORY;
+             info = (KEY_FULL_INFORMATION *)buf_ptr;
+             status = NtQueryKey( hkey, KeyFullInformation, buf_ptr, total_size, &total_size );
+@@ -1111,7 +1155,7 @@
+     }
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError( status );
+ }
+ 
+@@ -1267,7 +1311,7 @@
+     {
+         DWORD lenW;
+         RtlMultiByteToUnicodeSize( &lenW, (const char *)data, count );
+-        if (!(dataW = HeapAlloc( GetProcessHeap(), 0, lenW ))) return ERROR_OUTOFMEMORY;
++        if (!(dataW = heap_alloc( lenW ))) return ERROR_OUTOFMEMORY;
+         RtlMultiByteToUnicodeN( dataW, lenW, NULL, (const char *)data, count );
+         count = lenW;
+         data = (BYTE *)dataW;
+@@ -1279,7 +1323,7 @@
+         status = NtSetValueKey( hkey, &nameW, 0, type, data, count );
+         RtlFreeUnicodeString( &nameW );
+     }
+-    HeapFree( GetProcessHeap(), 0, dataW );
++    heap_free( dataW );
+     return RtlNtStatusToDosError( status );
+ }
+ 
+@@ -1673,8 +1717,8 @@
+         /* retry with a dynamically allocated buffer */
+         while (status == STATUS_BUFFER_OVERFLOW && total_size - info_size <= *count)
+         {
+-            if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-            if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++            if (buf_ptr != buffer) heap_free( buf_ptr );
++            if (!(buf_ptr = heap_alloc( total_size )))
+                 return ERROR_NOT_ENOUGH_MEMORY;
+             info = (KEY_VALUE_PARTIAL_INFORMATION *)buf_ptr;
+             status = NtQueryValueKey( hkey, &name_str, KeyValuePartialInformation,
+@@ -1700,7 +1744,7 @@
+     if (count) *count = total_size - info_size;
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError(status);
+ }
+ 
+@@ -1774,8 +1818,8 @@
+         /* retry with a dynamically allocated buffer */
+         while (status == STATUS_BUFFER_OVERFLOW)
+         {
+-            if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-            if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++            if (buf_ptr != buffer) heap_free( buf_ptr );
++            if (!(buf_ptr = heap_alloc( total_size )))
+             {
+                 status = STATUS_NO_MEMORY;
+                 goto done;
+@@ -1819,7 +1863,7 @@
+     if (count) *count = total_size - info_size;
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     RtlFreeUnicodeString( &nameW );
+     return RtlNtStatusToDosError(status);
+ }
+@@ -1942,9 +1986,9 @@
+          (ret == ERROR_SUCCESS && (cbData < sizeof(WCHAR) || (pvData && *((WCHAR *)pvData + cbData / sizeof(WCHAR) - 1))))))
+     {
+         do {
+-            HeapFree(GetProcessHeap(), 0, pvBuf);
+-
+-            pvBuf = HeapAlloc(GetProcessHeap(), 0, cbData + sizeof(WCHAR));
++            heap_free(pvBuf);
++
++            pvBuf = heap_alloc(cbData + sizeof(WCHAR));
+             if (!pvBuf)
+             {
+                 ret = ERROR_NOT_ENOUGH_MEMORY;
+@@ -1990,7 +2034,7 @@
+             }
+         }
+ 
+-        HeapFree(GetProcessHeap(), 0, pvBuf);
++        heap_free(pvBuf);
+     }
+ 
+     if (pszSubKey && pszSubKey[0])
+@@ -2057,9 +2101,9 @@
+          (ret == ERROR_SUCCESS && (!cbData || (pvData && *((char *)pvData + cbData - 1))))))
+     {
+         do {
+-            HeapFree(GetProcessHeap(), 0, pvBuf);
+-
+-            pvBuf = HeapAlloc(GetProcessHeap(), 0, cbData + 1);
++            heap_free(pvBuf);
++
++            pvBuf = heap_alloc(cbData + 1);
+             if (!pvBuf)
+             {
+                 ret = ERROR_NOT_ENOUGH_MEMORY;
+@@ -2105,7 +2149,7 @@
+             }
+         }
+ 
+-        HeapFree(GetProcessHeap(), 0, pvBuf);
++        heap_free(pvBuf);
+     }
+ 
+     if (pszSubKey && pszSubKey[0])
+@@ -2168,8 +2212,8 @@
+     /* retry with a dynamically allocated buffer */
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( total_size )))
+             return ERROR_NOT_ENOUGH_MEMORY;
+         info = (KEY_VALUE_FULL_INFORMATION *)buf_ptr;
+         status = NtEnumerateValueKey( hkey, index, KeyValueFullInformation,
+@@ -2209,7 +2253,7 @@
+     if (count) *count = info->DataLength;
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError(status);
+ }
+ 
+@@ -2248,8 +2292,8 @@
+     /* retry with a dynamically allocated buffer */
+     while (status == STATUS_BUFFER_OVERFLOW)
+     {
+-        if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
+-        if (!(buf_ptr = HeapAlloc( GetProcessHeap(), 0, total_size )))
++        if (buf_ptr != buffer) heap_free( buf_ptr );
++        if (!(buf_ptr = heap_alloc( total_size )))
+             return ERROR_NOT_ENOUGH_MEMORY;
+         info = (KEY_VALUE_FULL_INFORMATION *)buf_ptr;
+         status = NtEnumerateValueKey( hkey, index, KeyValueFullInformation,
+@@ -2310,7 +2354,7 @@
+     if (count) *count = info->DataLength;
+ 
+  done:
+-    if (buf_ptr != buffer) HeapFree( GetProcessHeap(), 0, buf_ptr );
++    if (buf_ptr != buffer) heap_free( buf_ptr );
+     return RtlNtStatusToDosError(status);
+ }
+ 
+@@ -2769,9 +2813,9 @@
+ 
+ static inline void free_mui_cache_entry(struct mui_cache_entry *ent)
+ {
+-    HeapFree(GetProcessHeap(), 0, ent->file_name);
+-    HeapFree(GetProcessHeap(), 0, ent->text);
+-    HeapFree(GetProcessHeap(), 0, ent);
++    heap_free(ent->file_name);
++    heap_free(ent->text);
++    heap_free(ent);
+ }
+ 
+ /* critical section must be held */
+@@ -2807,10 +2851,10 @@
+     struct mui_cache_entry *ent;
+     TRACE("(%s %u %s %d)\n", wine_dbgstr_w(file_name), index, wine_dbgstr_wn(buffer, size), size);
+ 
+-    ent = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*ent));
++    ent = heap_calloc(sizeof(*ent), 1);
+     if (!ent)
+         return;
+-    ent->file_name = HeapAlloc(GetProcessHeap(), 0, (lstrlenW(file_name) + 1) * sizeof(WCHAR));
++    ent->file_name = heap_alloc((lstrlenW(file_name) + 1) * sizeof(WCHAR));
+     if (!ent->file_name) {
+         free_mui_cache_entry(ent);
+         return;
+@@ -2818,7 +2862,7 @@
+     lstrcpyW(ent->file_name, file_name);
+     ent->index = index;
+     ent->locale = GetThreadLocale();
+-    ent->text = HeapAlloc(GetProcessHeap(), 0, (size + 1) * sizeof(WCHAR));
++    ent->text = heap_alloc((size + 1) * sizeof(WCHAR));
+     if (!ent->text) {
+         free_mui_cache_entry(ent);
+         return;
+@@ -2856,7 +2900,7 @@
+     size = GetFullPathNameW(file_name, 0, NULL, NULL);
+     if (!size)
+         return GetLastError();
+-    full_name = HeapAlloc(GetProcessHeap(), 0, size * sizeof(WCHAR));
++    full_name = heap_alloc(size * sizeof(WCHAR));
+     if (!full_name)
+         return ERROR_NOT_ENOUGH_MEMORY;
+     GetFullPathNameW(file_name, size, full_name, NULL);
+@@ -2914,7 +2958,7 @@
+         FreeLibrary(hModule);
+     else
+         RtlLeaveCriticalSection(&reg_mui_cs);
+-    HeapFree(GetProcessHeap(), 0, full_name);
++    heap_free(full_name);
+     return result;
+ }
+ 
+@@ -2962,7 +3006,7 @@
+         result = ERROR_FILE_NOT_FOUND;
+         goto cleanup;
+     }
+-    pwszTempBuffer = HeapAlloc(GetProcessHeap(), 0, cbData);
++    pwszTempBuffer = heap_alloc(cbData);
+     if (!pwszTempBuffer) {
+         result = ERROR_NOT_ENOUGH_MEMORY;
+         goto cleanup;
+@@ -2979,7 +3023,7 @@
+     /* Expand environment variables regardless of the type. */
+     cbData = ExpandEnvironmentStringsW(pwszTempBuffer, NULL, 0) * sizeof(WCHAR);
+     if (!cbData) goto cleanup;
+-    pwszExpandedBuffer = HeapAlloc(GetProcessHeap(), 0, cbData);
++    pwszExpandedBuffer = heap_alloc(cbData);
+     if (!pwszExpandedBuffer) {
+         result = ERROR_NOT_ENOUGH_MEMORY;
+         goto cleanup;
+@@ -3005,7 +3049,7 @@
+         /* Build a resource dll path. */
+         baseDirLen = pwszBaseDir ? lstrlenW(pwszBaseDir) : 0;
+         cbData = (baseDirLen + 1 + lstrlenW(pwszExpandedBuffer + 1) + 1) * sizeof(WCHAR);
+-        pNewBuffer = HeapReAlloc(GetProcessHeap(), 0, pwszTempBuffer, cbData);
++        pNewBuffer = heap_realloc(pwszTempBuffer, cbData);
+         if (!pNewBuffer) {
+             result = ERROR_NOT_ENOUGH_MEMORY;
+             goto cleanup;
+@@ -3027,8 +3071,8 @@
+     }
+ 
+ cleanup:
+-    HeapFree(GetProcessHeap(), 0, pwszTempBuffer);
+-    HeapFree(GetProcessHeap(), 0, pwszExpandedBuffer);
++    heap_free(pwszTempBuffer);
++    heap_free(pwszExpandedBuffer);
+     return result;
+ }
+ 
+@@ -3068,7 +3112,7 @@
+         goto cleanup;
+ 
+     max_name = max( max_subkey, max_name ) + 1;
+-    if (!(name_buf = HeapAlloc( GetProcessHeap(), 0, max_name * sizeof(WCHAR) )))
++    if (!(name_buf = heap_alloc( max_name * sizeof(WCHAR) )))
+     {
+         ret = ERROR_NOT_ENOUGH_MEMORY;
+         goto cleanup;
+@@ -3106,7 +3150,7 @@
+     ret = ERROR_SUCCESS;
+ 
+ cleanup:
+-    HeapFree( GetProcessHeap(), 0, name_buf );
++    heap_free( name_buf );
+     if (subkey && *subkey)
+         RegCloseKey( hkey );
+     return ret;
+@@ -3158,13 +3202,13 @@
+         goto cleanup;
+ 
+     max_name = max( max_subkey, max_name ) + 1;
+-    if (!(name_buf = HeapAlloc( GetProcessHeap(), 0, max_name * sizeof(WCHAR) )))
++    if (!(name_buf = heap_alloc( max_name * sizeof(WCHAR) )))
+     {
+         ret = ERROR_NOT_ENOUGH_MEMORY;
+         goto cleanup;
+     }
+ 
+-    if (!(value_buf = HeapAlloc( GetProcessHeap(), 0, max_value )))
++    if (!(value_buf = heap_alloc( max_value )))
+     {
+         ret = ERROR_NOT_ENOUGH_MEMORY;
+         goto cleanup;
+@@ -3199,8 +3243,8 @@
+     ret = ERROR_SUCCESS;
+ 
+ cleanup:
+-    HeapFree( GetProcessHeap(), 0, name_buf );
+-    HeapFree( GetProcessHeap(), 0, value_buf );
++    heap_free( name_buf );
++    heap_free( value_buf );
+     if (subkey)
+         RegCloseKey( hsrc );
+     return ret;
+@@ -3503,7 +3547,7 @@
+     if (path)
+     {
+         INT len = MultiByteToWideChar(CP_ACP, 0, path, -1, NULL, 0);
+-        pathW = HeapAlloc(GetProcessHeap(), 0, len * sizeof(WCHAR));
++        pathW = heap_alloc(len * sizeof(WCHAR));
+         if (!pathW)
+             return ERROR_NOT_ENOUGH_MEMORY;
+         MultiByteToWideChar(CP_ACP, 0, path, -1, pathW, len);
+@@ -3565,7 +3609,7 @@
+         return ERROR_SUCCESS;
+     }
+ 
+-    ret_key = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*ret_key));
++    ret_key = heap_alloc_zero(sizeof(*ret_key));
+     lstrcpynW(ret_key->path, path, ARRAY_SIZE(ret_key->path));
+ 
+     if (relative_key)
+@@ -3585,7 +3629,7 @@
+         if (ret == ERROR_SUCCESS)
+             *new_uskey = ret_key;
+         else
+-            HeapFree(GetProcessHeap(), 0, ret_key);
++            heap_free(ret_key);
+     }
+ 
+     return ret;
+@@ -3608,7 +3652,7 @@
+     if (key->HKLMstart && key->HKLMstart != HKEY_LOCAL_MACHINE)
+         ret = RegCloseKey(key->HKLMstart);
+ 
+-    HeapFree(GetProcessHeap(), 0, key);
++    heap_free(key);
+     return ret;
+ }
+ 
+@@ -3723,7 +3767,7 @@
+         *uskey = NULL;
+ 
+     /* Create internal HUSKEY */
+-    key = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*key));
++    key = heap_alloc_zero(sizeof(*key));
+     lstrcpynW(key->path, path, ARRAY_SIZE(key->path));
+ 
+     if (relative_key)

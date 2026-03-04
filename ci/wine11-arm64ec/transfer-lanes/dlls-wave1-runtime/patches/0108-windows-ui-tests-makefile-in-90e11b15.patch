@@ -1,0 +1,10 @@
+diff --git a/dlls/windows.ui/tests/Makefile.in b/dlls/windows.ui/tests/Makefile.in
+--- a/dlls/windows.ui/tests/Makefile.in
++++ b/dlls/windows.ui/tests/Makefile.in
+@@ -1,5 +1,5 @@
+ TESTDLL = windows.ui.dll
+-IMPORTS = combase advapi32 user32
++IMPORTS = combase advapi32
+ 
+ SOURCES = \
+ 	uisettings.c

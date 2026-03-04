@@ -1,0 +1,12 @@
+diff --git a/programs/wineboot/Makefile.in b/programs/wineboot/Makefile.in
+index d346b8984b1972179c3555a0d75f90fae8af86fb..035197970d851bfbd41bef4861bd509dacfa81a6 100644
+--- a/programs/wineboot/Makefile.in
++++ b/programs/wineboot/Makefile.in
+@@ -1,6 +1,6 @@
+ MODULE    = wineboot.exe
+ IMPORTS   = uuid advapi32 ws2_32 kernelbase
+-DELAYIMPORTS = shell32 shlwapi version user32 gdi32 setupapi newdev wininet
++DELAYIMPORTS = shell32 shlwapi version user32 gdi32 setupapi newdev crypt32
+ 
+ EXTRADLLFLAGS = -mconsole
+ 

@@ -1,0 +1,14 @@
+diff --git a/libs/mpg123/src/libmpg123/layer2.c b/libs/mpg123/src/libmpg123/layer2.c
+index a8da3cc42c1fd6752f2b5dbb288c4764ca37e433..6855850087b7bfe9ecbb13630d3746764ce84319 100644
+--- a/libs/mpg123/src/libmpg123/layer2.c
++++ b/libs/mpg123/src/libmpg123/layer2.c
+@@ -341,8 +341,7 @@ int INT123_do_layer2(mpg123_handle *fr)
+ 
+ 	if(fr->jsbound > fr->II_sblimit)
+ 	{
+-		if(NOQUIET)
+-			error("Truncating stereo boundary to sideband limit.");
++		fprintf(stderr, "Truncating stereo boundary to sideband limit.\n");
+ 		fr->jsbound=fr->II_sblimit;
+ 	}
+ 

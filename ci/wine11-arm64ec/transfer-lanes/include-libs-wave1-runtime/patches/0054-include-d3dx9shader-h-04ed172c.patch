@@ -1,0 +1,13 @@
+diff --git a/include/d3dx9shader.h b/include/d3dx9shader.h
+index 3d41e4be30dd05a7e57468783d2d484eb2b0c49c..a3f68f29f43dd2594448f2f633dd322a730c8d29 100644
+--- a/include/d3dx9shader.h
++++ b/include/d3dx9shader.h
+@@ -212,7 +212,7 @@ DECLARE_INTERFACE_(ID3DXConstantTable, ID3DXBuffer)
+ /*** ID3DXConstantTable methods ***/
+ #define ID3DXConstantTable_GetDesc(p,a)                               (p)->GetDesc(a)
+ #define ID3DXConstantTable_GetConstantDesc(p,a,b,c)                   (p)->GetConstantDesc(a,b,c)
+-#define ID3DXConstantTable_GetSamplerIndex(p,a)                       (p)->GetSamplerIndex(a)
++#define ID3DXConstantTable_GetSamplerIndex(p,a)                       (p)->GetConstantDesc(a)
+ #define ID3DXConstantTable_GetConstant(p,a,b)                         (p)->GetConstant(a,b)
+ #define ID3DXConstantTable_GetConstantByName(p,a,b)                   (p)->GetConstantByName(a,b)
+ #define ID3DXConstantTable_GetConstantElement(p,a,b)                  (p)->GetConstantElement(a,b)

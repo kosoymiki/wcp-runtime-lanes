@@ -1,0 +1,16 @@
+diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
+--- a/dlls/ntdll/signal_arm64ec.c
++++ b/dlls/ntdll/signal_arm64ec.c
+@@ -1247,7 +1247,11 @@ NTSTATUS call_seh_handlers( EXCEPTION_RECORD *rec, CONTEXT *orig_context )
+  */
+ void dispatch_emulation( ARM64_NT_CONTEXT *arm_ctx )
+ {
+-    context_arm_to_x64( get_arm64ec_cpu_area()->ContextAmd64, arm_ctx );
++    ARM64EC_NT_CONTEXT *context = get_arm64ec_cpu_area()->ContextAmd64;
++    CONTEXT_EX *xctx;
++
++    RtlInitializeExtendedContext( context, ctx_flags_arm_to_x64( arm_ctx->ContextFlags), &xctx );
++    context_arm_to_x64( context, arm_ctx );
+     get_arm64ec_cpu_area()->InSimulation = 1;
+     pBeginSimulation();
+ }

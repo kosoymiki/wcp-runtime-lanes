@@ -1,0 +1,20 @@
+diff --git a/include/dmusbuff.h b/include/dmusbuff.h
+index fbba3707f5354c6ad40415345d74042b8589e8cc..7632b1aea4d55b2b838824baae2ce261960cbfa3 100644
+--- a/include/dmusbuff.h
++++ b/include/dmusbuff.h
+@@ -40,13 +40,13 @@
+ typedef struct _DMUS_EVENTHEADER DMUS_EVENTHEADER, *LPDMUS_EVENTHEADER;
+ 
+ /* actual structure*/ 
+-#pragma pack(push,4)
++#include <pshpack4.h>
+ struct _DMUS_EVENTHEADER {
+     DWORD           cbEvent;
+     DWORD           dwChannelGroup;
+     REFERENCE_TIME  rtDelta;
+     DWORD           dwFlags;
+ };
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_DMUSIC_BUFFER_H */

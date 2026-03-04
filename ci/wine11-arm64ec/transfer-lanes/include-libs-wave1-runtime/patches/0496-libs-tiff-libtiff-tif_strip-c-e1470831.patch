@@ -1,0 +1,14 @@
+diff --git a/libs/tiff/libtiff/tif_strip.c b/libs/tiff/libtiff/tif_strip.c
+index c9ba393669b4c56db2883d618d2a12e8ce9ddd98..4dbcf37e48b26e04e43f2229fb69e4669c1c2601 100644
+--- a/libs/tiff/libtiff/tif_strip.c
++++ b/libs/tiff/libtiff/tif_strip.c
+@@ -40,8 +40,7 @@ uint32_t TIFFComputeStrip(TIFF *tif, uint32_t row, uint16_t sample)
+ 
+     if (td->td_rowsperstrip == 0)
+     {
+-        TIFFErrorExtR(tif, module,
+-                      "Cannot compute strip: RowsPerStrip is zero");
++        TIFFErrorExtR(tif, module, "Cannot compute strip: RowsPerStrip is zero");
+         return 0;
+     }
+     strip = row / td->td_rowsperstrip;

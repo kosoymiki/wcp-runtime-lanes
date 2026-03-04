@@ -1,0 +1,22 @@
+diff --git a/include/mmddk.h b/include/mmddk.h
+index 8baf42b270b412feb801a24665c458d083b8afc3..6854277ca3748c1f7493fba93053b143666e1416 100644
+--- a/include/mmddk.h
++++ b/include/mmddk.h
+@@ -34,7 +34,7 @@ extern "C" {
+  *   Multimedia DDK compatible part
+  * ================================== */
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ #define DRVM_INIT		100
+ #define DRVM_EXIT		101
+@@ -454,7 +454,7 @@ BOOL     WINAPI mmTaskSignal(DWORD);
+ VOID     WINAPI mmTaskYield(VOID);
+ DWORD    WINAPI mmGetCurrentTask(VOID);
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #ifdef __cplusplus
+ }

@@ -1,0 +1,27 @@
+diff --git a/dlls/netapi32/unixlib.h b/dlls/netapi32/unixlib.h
+--- a/dlls/netapi32/unixlib.h
++++ b/dlls/netapi32/unixlib.h
+@@ -43,15 +43,6 @@
+     DWORD reserved;
+ };
+ 
+-struct share_getinfo_params
+-{
+-    const WCHAR *server;
+-    const WCHAR *share;
+-    DWORD level;
+-    void *buffer;
+-    ULONG *size;
+-};
+-
+ struct wksta_getinfo_params
+ {
+     const WCHAR *server;
+@@ -74,7 +65,6 @@
+     unix_server_getinfo,
+     unix_share_add,
+     unix_share_del,
+-    unix_share_getinfo,
+     unix_wksta_getinfo,
+     unix_change_password,
+     unix_funcs_count

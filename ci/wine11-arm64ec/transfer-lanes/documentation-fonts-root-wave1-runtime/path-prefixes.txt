@@ -1,0 +1,14 @@
+documentation/
+fonts/
+aclocal.m4
+ANNOUNCE.md
+AUTHORS
+autogen.sh
+configure.ac
+COPYING.LIB
+LICENSE
+LICENSE.OLD
+MAINTAINERS
+README.esync
+README.md
+VERSION

@@ -1,0 +1,273 @@
+diff --git a/include/Makefile.in b/include/Makefile.in
+index e0987cead85bb6fc5ebb01b399a5babd0da9c421..96ec0fe385da2fab8618a279d65832ef5075f6bc 100644
+--- a/include/Makefile.in
++++ b/include/Makefile.in
+@@ -12,7 +12,6 @@ SOURCES = \
+ 	adshlp.h \
+ 	advpub.h \
+ 	af_irda.h \
+-	afunix.h \
+ 	amaudio.h \
+ 	amsi.idl \
+ 	amstream.idl \
+@@ -59,10 +58,8 @@ SOURCES = \
+ 	bits5_0.idl \
+ 	bitsmsg.h \
+ 	bluetoothapis.h \
+-	bluetoothleapis.h \
+ 	bthdef.h \
+ 	bthioctl.h \
+-	bthledef.h \
+ 	bthsdpdef.h \
+ 	cderr.h \
+ 	cdosys.idl \
+@@ -104,7 +101,6 @@ SOURCES = \
+ 	crtrow.idl \
+ 	cryptdlg.h \
+ 	cryptuiapi.h \
+-	cryptxml.h \
+ 	ctfutb.idl \
+ 	ctxtcall.idl \
+ 	custcntl.h \
+@@ -145,7 +141,6 @@ SOURCES = \
+ 	d3d8types.h \
+ 	d3d9.h \
+ 	d3d9caps.h \
+-	d3d9on12.idl \
+ 	d3d9types.h \
+ 	d3dcaps.h \
+ 	d3dcommon.idl \
+@@ -189,7 +184,6 @@ SOURCES = \
+ 	dbinit.idl \
+ 	dbprop.idl \
+ 	dbs.idl \
+-	dbsrst.idl \
+ 	dbt.h \
+ 	dciddi.h \
+ 	dciman.h \
+@@ -200,7 +194,6 @@ SOURCES = \
+ 	dde.h \
+ 	dde.rh \
+ 	ddeml.h \
+-	ddk/bthguid.h \
+ 	ddk/compstui.h \
+ 	ddk/csq.h \
+ 	ddk/d3dkmthk.h \
+@@ -235,13 +228,10 @@ SOURCES = \
+ 	ddstream.idl \
+ 	delayloadhandler.h \
+ 	devenum.idl \
+-	devfiltertypes.h \
+ 	devguid.h \
+ 	devicetopology.idl \
+ 	devpkey.h \
+ 	devpropdef.h \
+-	devquery.h \
+-	devquerydef.h \
+ 	dhcpcsdk.h \
+ 	dhtmldid.h \
+ 	dhtmled.idl \
+@@ -319,8 +309,6 @@ SOURCES = \
+ 	dxvahd.idl \
+ 	dyngraph.idl \
+ 	endpointvolume.idl \
+-	errhandlingapi.h \
+-	errlup.idl \
+ 	errorrep.h \
+ 	errors.h \
+ 	errrec.idl \
+@@ -337,7 +325,6 @@ SOURCES = \
+ 	fci.h \
+ 	fdi.h \
+ 	featurestagingapi.h \
+-	fibersapi.h \
+ 	fileapi.h \
+ 	filter.idl \
+ 	fltdefs.h \
+@@ -347,7 +334,6 @@ SOURCES = \
+ 	gameux.idl \
+ 	gamingtcui.h \
+ 	gdiplus.h \
+-	gdiplusbase.h \
+ 	gdipluscolor.h \
+ 	gdipluscolormatrix.h \
+ 	gdipluseffects.h \
+@@ -381,7 +367,6 @@ SOURCES = \
+ 	icm.h \
+ 	icmpapi.h \
+ 	icodecapi.idl \
+-	icu.h \
+ 	idispids.h \
+ 	ieautomation.idl \
+ 	iextag.idl \
+@@ -472,8 +457,6 @@ SOURCES = \
+ 	minidumpapiset.h \
+ 	minmax.h \
+ 	minschannel.h \
+-	minwinbase.h \
+-	minwindef.h \
+ 	mlang.idl \
+ 	mmc.idl \
+ 	mmddk.h \
+@@ -481,9 +464,6 @@ SOURCES = \
+ 	mmreg.h \
+ 	mmstream.idl \
+ 	mmsystem.h \
+-	mpeg2bits.h \
+-	mpeg2data.idl \
+-	mpeg2structs.idl \
+ 	mpegtype.idl \
+ 	mprapi.h \
+ 	mprerror.h \
+@@ -653,7 +633,6 @@ SOURCES = \
+ 	physicalmonitorenumerationapi.h \
+ 	pktdef.h \
+ 	poppack.h \
+-	powersetting.h \
+ 	powrprof.h \
+ 	prntvpt.h \
+ 	processthreadsapi.h \
+@@ -690,7 +669,6 @@ SOURCES = \
+ 	robuffer.idl \
+ 	roerrorapi.h \
+ 	rometadata.h \
+-	rometadataapi.idl \
+ 	rometadataresolution.h \
+ 	roparameterizediid.idl \
+ 	row.idl \
+@@ -707,16 +685,13 @@ SOURCES = \
+ 	rpcsal.h \
+ 	rstbas.idl \
+ 	rstchg.idl \
+-	rstcridx.idl \
+ 	rstfnd.idl \
+ 	rstidn.idl \
+-	rstind.idl \
+ 	rstinf.idl \
+ 	rstloc.idl \
+ 	rstnot.idl \
+ 	rstscr.idl \
+ 	rstupd.idl \
+-	rstvw.idl \
+ 	rstxsc.idl \
+ 	rtlsupportapi.h \
+ 	rtutils.h \
+@@ -780,7 +755,6 @@ SOURCES = \
+ 	structuredquerycondition.idl \
+ 	svrapi.h \
+ 	synchapi.h \
+-	sysinfoapi.h \
+ 	systemmediatransportcontrolsinterop.idl \
+ 	t2embapi.h \
+ 	tapi.h \
+@@ -838,8 +812,6 @@ SOURCES = \
+ 	vsstyle.h \
+ 	vssym32.h \
+ 	vswriter.idl \
+-	vwchp.idl \
+-	vwflt.idl \
+ 	wbemcli.idl \
+ 	wbemdisp.idl \
+ 	wbemprov.idl \
+@@ -876,10 +848,7 @@ SOURCES = \
+ 	windows.applicationmodel.idl \
+ 	windows.data.json.idl \
+ 	windows.data.xml.dom.idl \
+-	windows.devices.bluetooth.advertisement.idl \
+-	windows.devices.bluetooth.genericattributeprofile.idl \
+ 	windows.devices.bluetooth.idl \
+-	windows.devices.bluetooth.rfcomm.idl \
+ 	windows.devices.enumeration.idl \
+ 	windows.devices.geolocation.idl \
+ 	windows.devices.haptics.idl \
+@@ -908,20 +877,15 @@ SOURCES = \
+ 	windows.management.deployment.idl \
+ 	windows.media.capture.idl \
+ 	windows.media.closedcaptioning.idl \
+-	windows.media.core.idl \
+ 	windows.media.devices.idl \
+ 	windows.media.effects.idl \
+ 	windows.media.faceanalysis.idl \
+ 	windows.media.idl \
+-	windows.media.mediaproperties.idl \
+-	windows.media.playback.idl \
+ 	windows.media.render.idl \
+ 	windows.media.speechrecognition.idl \
+ 	windows.media.speechsynthesis.idl \
+-	windows.media.transcoding.idl \
+ 	windows.networking.connectivity.idl \
+ 	windows.networking.idl \
+-	windows.networking.sockets.idl \
+ 	windows.perception.idl \
+ 	windows.perception.spatial.idl \
+ 	windows.perception.spatial.surfaces.idl \
+@@ -929,7 +893,6 @@ SOURCES = \
+ 	windows.security.authorization.appcapabilityaccess.idl \
+ 	windows.security.credentials.idl \
+ 	windows.security.credentials.ui.idl \
+-	windows.security.cryptography.core.idl \
+ 	windows.security.cryptography.idl \
+ 	windows.security.enterprisedata.idl \
+ 	windows.security.exchangeactivesyncprovisioning.idl \
+@@ -950,9 +913,7 @@ SOURCES = \
+ 	windows.ui.idl \
+ 	windows.ui.input.idl \
+ 	windows.ui.notifications.idl \
+-	windows.ui.viewmanagement.core.idl \
+ 	windows.ui.viewmanagement.idl \
+-	windows.ui.windowmanagement.idl \
+ 	windows.ui.xaml.hosting.desktopwindowxamlsource.idl \
+ 	windows.ui.xaml.idl \
+ 	windows.ui.xaml.interop.idl \
+@@ -970,6 +931,7 @@ SOURCES = \
+ 	wine/fil_data.idl \
+ 	wine/gdi_driver.h \
+ 	wine/glu.h \
++	wine/heap.h \
+ 	wine/hid.h \
+ 	wine/http.h \
+ 	wine/iaccessible2.idl \
+@@ -982,7 +944,6 @@ SOURCES = \
+ 	wine/mscvpdb.h \
+ 	wine/mssign.h \
+ 	wine/nsi.h \
+-	wine/opengl_driver.h \
+ 	wine/orpc.idl \
+ 	wine/plugplay.idl \
+ 	wine/rbtree.h \
+@@ -996,10 +957,10 @@ SOURCES = \
+ 	wine/vulkan.h \
+ 	wine/vulkan_driver.h \
+ 	wine/wgl.h \
++	wine/wgl_driver.h \
+ 	wine/winbase16.h \
+ 	wine/windef16.h \
+ 	wine/wine_common_ver.rc \
+-	wine/winebth.h \
+ 	wine/wined3d.h \
+ 	wine/winedmo.h \
+ 	wine/winedxgi.idl \
+@@ -1061,7 +1022,6 @@ SOURCES = \
+ 	wownt16.h \
+ 	wownt32.h \
+ 	wpcapi.idl \
+-	ws2bth.h \
+ 	ws2def.h \
+ 	ws2ipdef.h \
+ 	ws2spi.h \
+@@ -1101,15 +1061,3 @@ SOURCES = \
+ 	xpsobjectmodel.idl \
+ 	xpsobjectmodel_1.idl \
+ 	zmouse.h
+-
+-INSTALL_LIB = \
+-	windows.applicationmodel.winmd \
+-	windows.globalization.winmd \
+-	windows.graphics.winmd \
+-	windows.media.winmd \
+-	windows.networking.winmd \
+-	windows.perception.winmd \
+-	windows.storage.winmd \
+-	windows.system.winmd \
+-	windows.ui.winmd \
+-	windows.ui.xaml.winmd

@@ -1,0 +1,33 @@
+diff --git a/dlls/crypt32/context.c b/dlls/crypt32/context.c
+--- a/dlls/crypt32/context.c
++++ b/dlls/crypt32/context.c
+@@ -42,7 +42,6 @@
+ 
+     context->vtbl = vtbl;
+     context->ref = 1;
+-    context->deleted_from_store = FALSE;
+     context->linked = NULL;
+ 
+     store->vtbl->addref(store);
+@@ -65,7 +64,6 @@
+     memcpy(context_ptr(context), context_ptr(linked), contextSize);
+     context->vtbl = linked->vtbl;
+     context->ref = 1;
+-    context->deleted_from_store = FALSE;
+     context->linked = linked;
+     context->properties = linked->properties;
+     Context_AddRef(linked);
+@@ -110,12 +108,7 @@
+     LONG ref = InterlockedDecrement(&context->ref);
+ 
+     TRACE("(%p) ref=%ld\n", context, ref);
+-
+-    if (ref < 0)
+-    {
+-        ERR( "ref %ld.\n", ref );
+-        return;
+-    }
++    assert(ref >= 0);
+ 
+     if (!ref) {
+         WINECRYPT_CERTSTORE *store = context->store;

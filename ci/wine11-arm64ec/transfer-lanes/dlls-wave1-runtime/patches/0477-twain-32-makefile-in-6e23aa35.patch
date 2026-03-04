@@ -1,0 +1,12 @@
+diff --git a/dlls/twain_32/Makefile.in b/dlls/twain_32/Makefile.in
+--- a/dlls/twain_32/Makefile.in
++++ b/dlls/twain_32/Makefile.in
+@@ -1,2 +1,7 @@
+ MODULE    = twain_32.dll
+-IMPORTS   = twaindsm
++IMPORTS   = user32
++
++SOURCES = \
++	dsm_ctrl.c \
++	twain.rc \
++	twain32_main.c

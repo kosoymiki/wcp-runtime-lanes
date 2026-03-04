@@ -1,0 +1,9 @@
+diff --git a/dlls/windows.ui.xaml/tests/Makefile.in b/dlls/windows.ui.xaml/tests/Makefile.in
+--- a/dlls/windows.ui.xaml/tests/Makefile.in
++++ /dev/null
+@@ -1,5 +0,0 @@
+-TESTDLL = windows.ui.xaml.dll
+-IMPORTS = combase
+-
+-SOURCES = \
+-	xaml.c

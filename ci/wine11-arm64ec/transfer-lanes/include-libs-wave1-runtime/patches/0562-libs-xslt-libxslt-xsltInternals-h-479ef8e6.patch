@@ -1,0 +1,14 @@
+diff --git a/libs/xslt/libxslt/xsltInternals.h b/libs/xslt/libxslt/xsltInternals.h
+index a187802558fddcb73c7abd6d5a385eff39059b0c..be50678c4b655ebb891fb4d4eee6425c94128153 100644
+--- a/libs/xslt/libxslt/xsltInternals.h
++++ b/libs/xslt/libxslt/xsltInternals.h
+@@ -1799,9 +1799,6 @@ struct _xsltTransformContext {
+     xsltNewLocaleFunc newLocale;
+     xsltFreeLocaleFunc freeLocale;
+     xsltGenSortKeyFunc genSortKey;
+-
+-    /* Wine extension */
+-    void *userData;
+ };
+ 
+ /**

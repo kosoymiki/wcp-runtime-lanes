@@ -1,0 +1,18 @@
+diff --git a/dlls/ntdll/math.c b/dlls/ntdll/math.c
+--- a/dlls/ntdll/math.c
++++ b/dlls/ntdll/math.c
+@@ -38,7 +38,7 @@
+     return i >= 0 ? i : -i;
+ }
+ 
+-#ifdef __i386__
++#if (defined(__GNUC__) || defined(__clang__)) && defined(__i386__)
+ 
+ #define FPU_DOUBLE(var) double var; \
+     __asm__ __volatile__( "fstpl %0;fwait" : "=m" (var) : )
+@@ -100,4 +100,4 @@
+     return (LONGLONG)x;
+ }
+ 
+-#endif /* __i386__ */
++#endif /* (defined(__GNUC__) || defined(__clang__)) && defined(__i386__) */

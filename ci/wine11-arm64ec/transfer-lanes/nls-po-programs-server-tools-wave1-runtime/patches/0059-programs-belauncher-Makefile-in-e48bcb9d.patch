@@ -1,0 +1,13 @@
+diff --git a/programs/belauncher/Makefile.in b/programs/belauncher/Makefile.in
+new file mode 100644
+index 0000000000000000000000000000000000000000..927983f742393fb1e7afb081fe63294f936b0763
+--- /dev/null
++++ b/programs/belauncher/Makefile.in
+@@ -0,0 +1,7 @@
++MODULE    = belauncher.exe
++IMPORTS   = shlwapi shcore
++
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++        main.c \

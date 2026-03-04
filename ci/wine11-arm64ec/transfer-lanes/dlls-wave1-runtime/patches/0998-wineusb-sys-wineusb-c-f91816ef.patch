@@ -1,0 +1,29 @@
+diff --git a/dlls/wineusb.sys/wineusb.c b/dlls/wineusb.sys/wineusb.c
+--- a/dlls/wineusb.sys/wineusb.c
++++ b/dlls/wineusb.sys/wineusb.c
+@@ -315,9 +315,6 @@
+             return ret;
+         }
+ 
+-        case IRP_MN_QUERY_ID:
+-            break;
+-
+         default:
+             FIXME("Unhandled minor function %#x.\n", stack->MinorFunction);
+     }
+@@ -565,7 +562,6 @@
+         case URB_FUNCTION_SELECT_CONFIGURATION:
+         case URB_FUNCTION_VENDOR_DEVICE:
+         case URB_FUNCTION_VENDOR_INTERFACE:
+-        case URB_FUNCTION_VENDOR_ENDPOINT:
+         {
+             struct usb_submit_urb_params params =
+             {
+@@ -597,7 +593,6 @@
+ 
+                 case URB_FUNCTION_VENDOR_DEVICE:
+                 case URB_FUNCTION_VENDOR_INTERFACE:
+-                case URB_FUNCTION_VENDOR_ENDPOINT:
+                 {
+                     struct _URB_CONTROL_VENDOR_OR_CLASS_REQUEST *req = &urb->UrbControlVendorClassRequest;
+                     if (req->TransferBufferMDL)

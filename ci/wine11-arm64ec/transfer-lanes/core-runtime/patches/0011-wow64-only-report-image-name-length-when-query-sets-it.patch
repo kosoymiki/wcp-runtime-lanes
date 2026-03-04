@@ -1,0 +1,26 @@
+diff --git a/dlls/wow64/process.c b/dlls/wow64/process.c
+--- a/dlls/wow64/process.c
++++ b/dlls/wow64/process.c
+@@ -670,19 +670,20 @@ NTSTATUS WINAPI wow64_NtQueryInformationProcess( UINT *args )
+     case ProcessImageFileName:
+     case ProcessImageFileNameWin32:  /* UNICODE_STRING + string */
+         {
+-            ULONG retsize, size = len + sizeof(UNICODE_STRING) - sizeof(UNICODE_STRING32);
++            ULONG retsize = 0, size = len + sizeof(UNICODE_STRING) - sizeof(UNICODE_STRING32);
+             UNICODE_STRING *str = Wow64AllocateTemp( size );
+             UNICODE_STRING32 *str32 = ptr;
+ 
+             if (!(status = NtQueryInformationProcess( handle, class, str, size, &retsize )))
+             {
+                 str32->Length = str->Length;
+                 str32->MaximumLength = str->MaximumLength;
+                 str32->Buffer = PtrToUlong( str32 + 1 );
+                 memcpy( str32 + 1, str->Buffer, str->MaximumLength );
+             }
+-            if (retlen) *retlen = retsize + sizeof(UNICODE_STRING32) - sizeof(UNICODE_STRING);
++            if (retlen && (status == STATUS_SUCCESS || status == STATUS_INFO_LENGTH_MISMATCH))
++                *retlen = retsize + sizeof(UNICODE_STRING32) - sizeof(UNICODE_STRING);
+             return status;
+         }
+ 
+     case ProcessImageInformation:  /* SECTION_IMAGE_INFORMATION */

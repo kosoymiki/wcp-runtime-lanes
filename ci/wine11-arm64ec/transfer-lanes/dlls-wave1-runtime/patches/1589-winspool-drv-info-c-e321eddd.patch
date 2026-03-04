@@ -1,0 +1,113 @@
+diff --git a/dlls/winspool.drv/info.c b/dlls/winspool.drv/info.c
+--- a/dlls/winspool.drv/info.c
++++ b/dlls/winspool.drv/info.c
+@@ -45,6 +45,7 @@
+ #include "wine/debug.h"
+ #include "wine/list.h"
+ #include "wine/rbtree.h"
++#include "wine/heap.h"
+ #include <wine/unixlib.h>
+ 
+ #include "ddk/compstui.h"
+@@ -1649,7 +1650,7 @@
+         free( piW->pDriverName );
+         free( piW->pComment );
+         free( piW->pLocation );
+-        HeapFree( GetProcessHeap(), 0, piW->pDevMode );
++        heap_free( piW->pDevMode );
+         free( piW->pSepFile );
+         free( piW->pPrintProcessor );
+         free( piW->pDatatype );
+@@ -1662,7 +1663,7 @@
+     {
+         PRINTER_INFO_9W *piW = (PRINTER_INFO_9W *)data;
+ 
+-        HeapFree( GetProcessHeap(), 0, piW->pDevMode );
++        heap_free( piW->pDevMode );
+         break;
+     }
+ 
+@@ -1728,7 +1729,7 @@
+     }
+ cleanup:
+     free(device_name);
+-    HeapFree(GetProcessHeap(), 0, devmode);
++    heap_free(devmode);
+     free(port);
+     return ret;
+ }
+@@ -1794,7 +1795,7 @@
+         DEVMODEWtoA( outputW, output );
+ 
+     free(device);
+-    HeapFree(GetProcessHeap(), 0, inputW);
++    heap_free(inputW);
+     free(outputW);
+ 
+     if (!mode && ret > 0) ret -= CCHDEVICENAME + CCHFORMNAME;
+@@ -2016,7 +2017,7 @@
+     if (p_defaultsW)
+     {
+         RtlFreeUnicodeString(&datatypeU);
+-        HeapFree(GetProcessHeap(), 0, defaultsW.pDevMode);
++        heap_free(defaultsW.pDevMode);
+     }
+     RtlFreeUnicodeString(&nameU);
+ 
+@@ -3056,8 +3057,8 @@
+         free(info2W->pDatatype);
+         free(info2W->pPrintProcessor);
+         free(info2W->pParameters);
++        heap_free(info2W->pDevMode);
+         free(info2W->pStatus);
+-        HeapFree(GetProcessHeap(), 0, info2W->pDevMode);
+         break;
+       }
+     }
+@@ -3454,7 +3455,7 @@
+     if (ptr && (buflen >= sz)) {
+         DEVMODEW *dmW = GdiConvertToDevmodeW((DEVMODEA*)ptr);
+         memcpy(ptr, dmW, sz);
+-        HeapFree(GetProcessHeap(), 0, dmW);
++        heap_free(dmW);
+     }
+     *needed = sz;
+     return TRUE;
+@@ -7486,9 +7487,9 @@
+     if(retW)
+     {
+         DWORD len = WideCharToMultiByte(CP_ACP, 0, retW, -1, NULL, 0, NULL, NULL);
+-        ret = HeapAlloc(GetProcessHeap(), 0, len);
++        ret = heap_alloc(len);
+         WideCharToMultiByte(CP_ACP, 0, retW, -1, ret, len, NULL, NULL);
+-        HeapFree(GetProcessHeap(), 0, retW);
++        heap_free(retW);
+     }
+ 
+ failed:
+@@ -7559,7 +7560,7 @@
+                 free(name);
+                 return NULL;
+             }
+-            ret = HeapAlloc(GetProcessHeap(), 0, len * sizeof(WCHAR));
++            ret = heap_alloc(len * sizeof(WCHAR));
+             GetFullPathNameW(name, len, ret, NULL);
+             free(name);
+         }
+@@ -7569,13 +7570,13 @@
+     if(!(len = GetFullPathNameW(doc->lpszOutput, 0, NULL, NULL)))
+         return NULL;
+ 
+-    ret = HeapAlloc(GetProcessHeap(), 0, len * sizeof(WCHAR));
++    ret = heap_alloc(len * sizeof(WCHAR));
+     GetFullPathNameW(doc->lpszOutput, len, ret, NULL);
+-
++        
+     attr = GetFileAttributesW(ret);
+     if(attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY))
+     {
+-        HeapFree(GetProcessHeap(), 0, ret);
++        heap_free(ret);
+         ret = NULL;
+     }
+     return ret;

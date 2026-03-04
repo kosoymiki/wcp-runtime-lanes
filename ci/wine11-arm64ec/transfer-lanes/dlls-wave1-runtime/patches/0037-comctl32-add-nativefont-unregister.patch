@@ -1,0 +1,14 @@
+diff --git a/dlls/comctl32/nativefont.c b/dlls/comctl32/nativefont.c
+--- a/dlls/comctl32/nativefont.c
++++ b/dlls/comctl32/nativefont.c
+@@ -123,3 +123,10 @@
+ 
+     RegisterClassW (&wndClass);
+ }
++
++
++VOID
++NATIVEFONT_Unregister (void)
++{
++    UnregisterClassW (WC_NATIVEFONTCTLW, NULL);
++}

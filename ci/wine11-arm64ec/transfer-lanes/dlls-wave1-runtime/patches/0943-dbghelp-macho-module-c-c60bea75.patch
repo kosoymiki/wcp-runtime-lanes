@@ -1,0 +1,26 @@
+diff --git a/dlls/dbghelp/macho_module.c b/dlls/dbghelp/macho_module.c
+--- a/dlls/dbghelp/macho_module.c
++++ b/dlls/dbghelp/macho_module.c
+@@ -37,6 +37,7 @@
+ #include "ddk/mountmgr.h"
+ 
+ #include "wine/debug.h"
++#include "wine/heap.h"
+ 
+ struct dyld_image_info32
+ {
+@@ -1948,8 +1949,12 @@
+ 
+     if (!ret)
+     {
+-        const WCHAR *loader = get_wine_loader_name(pcs);
+-        if (loader) ret = macho_search_and_load_file(pcs, loader, 0, macho_info);
++        WCHAR* loader = get_wine_loader_name(pcs);
++        if (loader)
++        {
++            ret = macho_search_and_load_file(pcs, loader, 0, macho_info);
++            HeapFree(GetProcessHeap(), 0, loader);
++        }
+     }
+     return ret;
+ }

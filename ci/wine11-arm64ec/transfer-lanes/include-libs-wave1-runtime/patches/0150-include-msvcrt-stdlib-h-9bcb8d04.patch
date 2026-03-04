@@ -1,0 +1,56 @@
+diff --git a/include/msvcrt/stdlib.h b/include/msvcrt/stdlib.h
+index 670a25c78e168530ebdd95211990f4946b5a861c..9cb8ccb110ac4ae475ba56f91f512c17a1d7f5a6 100644
+--- a/include/msvcrt/stdlib.h
++++ b/include/msvcrt/stdlib.h
+@@ -12,7 +12,7 @@
+ #include <corecrt_wstdlib.h>
+ #include <limits.h>
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ typedef struct
+ {
+@@ -121,21 +121,21 @@ extern unsigned int _fmode;
+ 
+ #endif  /* __i386__ */
+ 
+-#ifndef MB_CUR_MAX
+ _ACRTIMP int             __cdecl ___mb_cur_max_func(void);
+ _ACRTIMP int             __cdecl ___mb_cur_max_l_func(_locale_t);
+ #define __mb_cur_max             ___mb_cur_max_func()
+ #define MB_CUR_MAX               ___mb_cur_max_func()
+-#endif /* MB_CUR_MAX */
+-
+ _ACRTIMP __msvcrt_ulong* __cdecl __doserrno(void);
+ #define _doserrno              (*__doserrno())
+ _ACRTIMP int*            __cdecl _errno(void);
+ #define errno                  (*_errno())
+ _ACRTIMP int*            __cdecl __sys_nerr(void);
+ #define _sys_nerr              (*__sys_nerr())
+-_ACRTIMP char**          __cdecl __sys_errlist(void);
+-#define _sys_errlist           (__sys_errlist())
++
++/* FIXME: We need functions to access these:
++ * int _sys_nerr;
++ * char** _sys_errlist;
++ */
+ 
+ _ACRTIMP errno_t       __cdecl _get_doserrno(int*);
+ _ACRTIMP errno_t       __cdecl _get_errno(int*);
+@@ -161,7 +161,6 @@ _ACRTIMP void          __cdecl _beep(unsigned int,unsigned int);
+ _ACRTIMP unsigned short   __cdecl _byteswap_ushort(unsigned short);
+ _ACRTIMP __msvcrt_ulong   __cdecl _byteswap_ulong(__msvcrt_ulong);
+ _ACRTIMP unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64);
+-_ACRTIMP errno_t       __cdecl _dupenv_s(char**,size_t*,const char*);
+ _ACRTIMP char*         __cdecl _ecvt(double,int,int*,int*);
+ _ACRTIMP char*         __cdecl _fcvt(double,int,int*,int*);
+ _ACRTIMP char*         __cdecl _fullpath(char*,const char*,size_t);
+@@ -321,6 +320,6 @@ static inline ldiv_t __wine_msvcrt_ldiv(__msvcrt_long num, __msvcrt_long denom)
+ #define ldiv(num,denom) __wine_msvcrt_ldiv(num,denom)
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_STDLIB_H */

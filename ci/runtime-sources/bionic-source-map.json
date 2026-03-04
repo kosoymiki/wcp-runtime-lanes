@@ -1,0 +1,47 @@
+{
+  "schema": "bionic-source-map/v2",
+  "description": "Mainline bionic-only source mapping for FreeWine runtime provenance and debug-only baseline references.",
+  "packages": {
+    "freewine11-arm64ec": {
+      "baselineReferenceUrl": "https://github.com/GameNative/proton-wine/releases/download/build-20260225-1/proton-wine-10.0-4-arm64ec.wcp.xz",
+      "baselineReferenceSha256": "528932a9d9303a39e29235471e810ff22e723d411c8b38ff509c363d5e3254fa",
+      "unixCoreAdopt": 0,
+      "unixCoreModules": [
+        "ntdll.so",
+        "win32u.so",
+        "ws2_32.so",
+        "winevulkan.so",
+        "winebus.so",
+        "winebus.sys.so"
+      ],
+      "notes": "Mainline no longer injects donor WCP by default; this row keeps only baseline provenance for debug and regression analysis.",
+      "baselineReferenceSha256Alternates": [
+        "b1a7e056d91ba6ee72215b2114c26eff07cb75c4537b010d11f728dafcd3a682"
+      ]
+    },
+    "wine-11-arm64ec": {
+      "baselineReferenceUrl": "https://github.com/GameNative/proton-wine/releases/download/build-20260225-1/proton-wine-10.0-4-arm64ec.wcp.xz",
+      "baselineReferenceSha256": "528932a9d9303a39e29235471e810ff22e723d411c8b38ff509c363d5e3254fa",
+      "unixCoreAdopt": 0,
+      "unixCoreModules": [
+        "ntdll.so",
+        "win32u.so",
+        "ws2_32.so",
+        "winevulkan.so",
+        "winebus.so",
+        "winebus.sys.so"
+      ],
+      "notes": "Legacy alias for compatibility with historical package name.",
+      "baselineReferenceSha256Alternates": [
+        "b1a7e056d91ba6ee72215b2114c26eff07cb75c4537b010d11f728dafcd3a682"
+      ]
+    }
+  },
+  "baselines": {
+    "gamenativeProton104Arm64ec": {
+      "archiveUrl": "https://github.com/GameNative/proton-wine/releases/download/build-20260225-1/proton-wine-10.0-4-arm64ec.wcp.xz",
+      "sha256Url": "https://github.com/GameNative/proton-wine/releases/tag/build-20260225-1",
+      "origin": "GameNative Proton 10.0-4 baseline reference"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+diff --git a/libs/musl/src/internal/libm.h b/libs/musl/src/internal/libm.h
+index e24e10edaa6bda2ac1f1aa8c3c72af4277922917..fa3ec4bd607fed7ba7785e5506bdff2e1b9c089e 100644
+--- a/libs/musl/src/internal/libm.h
++++ b/libs/musl/src/internal/libm.h
+@@ -10,7 +10,6 @@
+ typedef float float_t;
+ typedef double double_t;
+ 
+-typedef double matherr_t(int, const char *, double, double, double);
+ hidden double math_error(int type, const char *name, double arg1, double arg2, double retval);
+ 
+ #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024

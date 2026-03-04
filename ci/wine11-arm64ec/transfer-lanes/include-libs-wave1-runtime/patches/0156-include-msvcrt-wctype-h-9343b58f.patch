@@ -1,0 +1,21 @@
+diff --git a/include/msvcrt/wctype.h b/include/msvcrt/wctype.h
+index cb547942c610893d004064775fbfa82ca3b54b16..27a6adcd92242f46ff4474b6a8147fa99bf84158 100644
+--- a/include/msvcrt/wctype.h
++++ b/include/msvcrt/wctype.h
+@@ -22,7 +22,7 @@
+ 
+ #include <corecrt.h>
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ /* ASCII char classification table - binary compatible */
+ #define _UPPER        0x0001  /* C1_UPPER */
+@@ -77,6 +77,6 @@ wctype_t __cdecl wctype(const char *);
+ }
+ #endif
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_WCTYPE_H */

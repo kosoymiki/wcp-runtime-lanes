@@ -1,0 +1,10 @@
+diff --git a/dlls/protontts/protontts.spec b/dlls/protontts/protontts.spec
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/dlls/protontts/protontts.spec
+@@ -0,0 +1,4 @@
++@ stdcall -private DllCanUnloadNow()
++@ stdcall -private DllGetClassObject(ptr ptr ptr)
++@ stdcall -private DllRegisterServer()
++@ stdcall -private DllUnregisterServer()

@@ -1,0 +1,33 @@
+diff --git a/libs/tiff/libtiff/tif_win32.c b/libs/tiff/libtiff/tif_win32.c
+index 525cebec76d6da7ebd82b6516b755344eb34b476..d64ba49f0e493a10080d8a669cea64f0b527c875 100644
+--- a/libs/tiff/libtiff/tif_win32.c
++++ b/libs/tiff/libtiff/tif_win32.c
+@@ -158,6 +158,14 @@ static uint64_t _tiffSizeProc(thandle_t fd)
+         return (0);
+ }
+ 
++static int _tiffDummyMapProc(thandle_t fd, void **pbase, toff_t *psize)
++{
++    (void)fd;
++    (void)pbase;
++    (void)psize;
++    return (0);
++}
++
+ /*
+  * From "Hermann Josef Hill" <lhill@rhein-zeitung.de>:
+  *
+@@ -193,6 +201,13 @@ static int _tiffMapProc(thandle_t fd, void **pbase, toff_t *psize)
+     return (1);
+ }
+ 
++static void _tiffDummyUnmapProc(thandle_t fd, void *base, toff_t size)
++{
++    (void)fd;
++    (void)base;
++    (void)size;
++}
++
+ static void _tiffUnmapProc(thandle_t fd, void *base, toff_t size)
+ {
+     (void)fd;

@@ -1,0 +1,13 @@
+diff --git a/documentation/README-no.md b/documentation/README-no.md
+index e681d6954b3159ac6989b819887cedadc540272e..22b3f08a774190142ef7bd9a747e040f913dc312 100644
+--- a/documentation/README-no.md
++++ b/documentation/README-no.md
+@@ -35,7 +35,7 @@ Følgende kreves for å bygge og kjøre Wine:
+ - FreeBSD 12.4 eller nyere
+ - Solaris x86 9 eller nyere
+ - NetBSD-current
+-- macOS 10.12 eller nyere
++- Mac OS X 10.12 eller nyere
+ 
+ Wine krever støtte for tråder på kjernenivå, og derfor er det bare
+ operativsystemene ovenfor som støttes. Andre operativsystemer som

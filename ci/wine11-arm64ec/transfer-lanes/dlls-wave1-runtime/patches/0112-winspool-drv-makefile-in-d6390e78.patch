@@ -1,0 +1,10 @@
+diff --git a/dlls/winspool.drv/Makefile.in b/dlls/winspool.drv/Makefile.in
+--- a/dlls/winspool.drv/Makefile.in
++++ b/dlls/winspool.drv/Makefile.in
+@@ -8,6 +8,5 @@
+ SOURCES = \
+ 	cups.c \
+ 	info.c \
+-	winspool.drv.spec \
+ 	winspool.rc \
+ 	wspool.c

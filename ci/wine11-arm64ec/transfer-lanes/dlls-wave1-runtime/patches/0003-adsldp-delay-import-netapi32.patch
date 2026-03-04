@@ -1,0 +1,11 @@
+diff --git a/dlls/adsldp/Makefile.in b/dlls/adsldp/Makefile.in
+--- a/dlls/adsldp/Makefile.in
++++ b/dlls/adsldp/Makefile.in
+@@ -1,6 +1,6 @@
+ MODULE    = adsldp.dll
+ IMPORTS   = ole32 oleaut32 secur32 activeds uuid
+-DELAYIMPORTS = wldap32
++DELAYIMPORTS = netapi32 wldap32
+ 
+ EXTRADLLFLAGS = -Wb,--prefer-native
+ 

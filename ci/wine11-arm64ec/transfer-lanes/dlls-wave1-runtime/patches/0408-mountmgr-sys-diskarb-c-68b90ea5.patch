@@ -1,0 +1,12 @@
+diff --git a/dlls/mountmgr.sys/diskarb.c b/dlls/mountmgr.sys/diskarb.c
+--- a/dlls/mountmgr.sys/diskarb.c
++++ b/dlls/mountmgr.sys/diskarb.c
+@@ -356,7 +356,7 @@
+         break;
+     }
+     default:
+-        FIXME( "option %u not supported\n", params->req->id );
++        FIXME( "option %u not supported\n", (unsigned int)params->req->id );
+         break;
+     }
+ 

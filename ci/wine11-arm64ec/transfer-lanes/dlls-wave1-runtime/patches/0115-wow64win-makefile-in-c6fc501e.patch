@@ -1,0 +1,10 @@
+diff --git a/dlls/wow64win/Makefile.in b/dlls/wow64win/Makefile.in
+--- a/dlls/wow64win/Makefile.in
++++ b/dlls/wow64win/Makefile.in
+@@ -1,5 +1,5 @@
+ MODULE    = wow64win.dll
+-IMPORTS   = wow64 win32u ntdll
++IMPORTS   = wow64 win32u ntdll winecrt0
+ 
+ EXTRADLLFLAGS = -nodefaultlibs
+ 

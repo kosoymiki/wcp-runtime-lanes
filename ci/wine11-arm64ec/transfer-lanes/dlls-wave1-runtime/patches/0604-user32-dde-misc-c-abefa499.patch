@@ -1,0 +1,13 @@
+diff --git a/dlls/user32/dde_misc.c b/dlls/user32/dde_misc.c
+--- a/dlls/user32/dde_misc.c
++++ b/dlls/user32/dde_misc.c
+@@ -1325,8 +1325,7 @@
+     pByte = (LPBYTE)(pDdh + 1);
+     if (pSrc)
+     {
+-        if (cbOff) memset(pByte, 0, cbOff);
+-        memcpy(pByte + cbOff, pSrc, cb);
++	memcpy(pByte, pSrc + cbOff, cb);
+     }
+     GlobalUnlock(hMem);
+ 

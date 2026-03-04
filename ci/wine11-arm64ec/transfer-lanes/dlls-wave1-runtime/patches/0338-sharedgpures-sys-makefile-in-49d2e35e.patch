@@ -1,0 +1,12 @@
+diff --git a/dlls/sharedgpures.sys/Makefile.in b/dlls/sharedgpures.sys/Makefile.in
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/dlls/sharedgpures.sys/Makefile.in
+@@ -0,0 +1,6 @@
++MODULE    = sharedgpures.sys
++IMPORTS   = ntoskrnl
++EXTRADLLFLAGS = -Wl,--subsystem,native
++
++SOURCES = \
++	shared_resource.c

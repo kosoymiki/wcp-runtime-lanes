@@ -1,0 +1,12 @@
+diff --git a/tools/widl/Makefile.in b/tools/widl/Makefile.in
+index 39ed0ec7fbe454d1dd5c338ea30ffc8e35ad8098..4caabd87ba77bdbafaf886f26fe3ecc7465367c4 100644
+--- a/tools/widl/Makefile.in
++++ b/tools/widl/Makefile.in
+@@ -7,7 +7,6 @@ SOURCES = \
+ 	expr.c \
+ 	hash.c \
+ 	header.c \
+-	metadata.c \
+ 	parser.l \
+ 	parser.y \
+ 	ppl.l \

@@ -1,0 +1,97 @@
+diff --git a/dlls/wininet/http.c b/dlls/wininet/http.c
+--- a/dlls/wininet/http.c
++++ b/dlls/wininet/http.c
+@@ -3265,10 +3265,10 @@
+     if(allow_blocking || TryEnterCriticalSection(&req->read_section)) {
+         if(allow_blocking)
+             EnterCriticalSection(&req->read_section);
+-        if(!req->state)
+-            req->state = INTERNET_HANDLE_IN_USE;
+-        else if(req->state == INTERNET_HANDLE_IN_USE)
+-            req->state = ERROR_INTERNET_INTERNAL_ERROR;
++        if(hdr->dwError == ERROR_SUCCESS)
++            hdr->dwError = INTERNET_HANDLE_IN_USE;
++        else if(hdr->dwError == INTERNET_HANDLE_IN_USE)
++            hdr->dwError = ERROR_INTERNET_INTERNAL_ERROR;
+ 
+         if(req->read_size) {
+             read = min(size, req->read_size);
+@@ -3300,10 +3300,10 @@
+             }
+         }
+ 
+-        if(req->state == INTERNET_HANDLE_IN_USE)
+-            req->state = 0;
++        if(hdr->dwError == INTERNET_HANDLE_IN_USE)
++            hdr->dwError = ERROR_SUCCESS;
+         else
+-            error = req->state;
++            error = hdr->dwError;
+ 
+         LeaveCriticalSection( &req->read_section );
+     }else {
+@@ -3361,10 +3361,10 @@
+     if(allow_blocking || TryEnterCriticalSection(&req->read_section)) {
+         if(allow_blocking)
+             EnterCriticalSection(&req->read_section);
+-        if(!req->state)
+-            req->state = INTERNET_HANDLE_IN_USE;
+-        else if(req->state == INTERNET_HANDLE_IN_USE)
+-            req->state = ERROR_INTERNET_INTERNAL_ERROR;
++        if(hdr->dwError == ERROR_SUCCESS)
++            hdr->dwError = INTERNET_HANDLE_IN_USE;
++        else if(hdr->dwError == INTERNET_HANDLE_IN_USE)
++            hdr->dwError = ERROR_INTERNET_INTERNAL_ERROR;
+ 
+         avail = req->read_size;
+         if(req->cache_size > req->content_pos)
+@@ -3379,10 +3379,10 @@
+             res = refill_read_buffer(req, allow_blocking, &avail);
+         }
+ 
+-        if(req->state == INTERNET_HANDLE_IN_USE)
+-            req->state = 0;
++        if(hdr->dwError == INTERNET_HANDLE_IN_USE)
++            hdr->dwError = ERROR_SUCCESS;
+         else
+-            error = req->state;
++            error = hdr->dwError;
+ 
+         LeaveCriticalSection( &req->read_section );
+     }else {
+@@ -5206,14 +5206,12 @@
+                 case HTTP_STATUS_MOVED:
+                 case HTTP_STATUS_REDIRECT_KEEP_VERB:
+                 case HTTP_STATUS_REDIRECT_METHOD:
+-                case HTTP_STATUS_PERMANENT_REDIRECT:
+                     new_url = get_redirect_url(request);
+                     if(!new_url)
+                         break;
+ 
+                     if (wcscmp(request->verb, L"GET") && wcscmp(request->verb, L"HEAD") &&
+-                        request->status_code != HTTP_STATUS_REDIRECT_KEEP_VERB &&
+-                        request->status_code != HTTP_STATUS_PERMANENT_REDIRECT)
++                        request->status_code != HTTP_STATUS_REDIRECT_KEEP_VERB)
+                     {
+                         free(request->verb);
+                         request->verb = wcsdup(L"GET");
+@@ -5403,8 +5401,7 @@
+         case HTTP_STATUS_REDIRECT:
+         case HTTP_STATUS_MOVED:
+         case HTTP_STATUS_REDIRECT_METHOD:
+-        case HTTP_STATUS_REDIRECT_KEEP_VERB:
+-        case HTTP_STATUS_PERMANENT_REDIRECT: {
++        case HTTP_STATUS_REDIRECT_KEEP_VERB: {
+             WCHAR *new_url;
+ 
+             new_url = get_redirect_url(request);
+@@ -5412,8 +5409,7 @@
+                 break;
+ 
+             if (wcscmp(request->verb, L"GET") && wcscmp(request->verb, L"HEAD") &&
+-                request->status_code != HTTP_STATUS_REDIRECT_KEEP_VERB &&
+-                request->status_code != HTTP_STATUS_PERMANENT_REDIRECT)
++                request->status_code != HTTP_STATUS_REDIRECT_KEEP_VERB)
+             {
+                 free(request->verb);
+                 request->verb = wcsdup(L"GET");

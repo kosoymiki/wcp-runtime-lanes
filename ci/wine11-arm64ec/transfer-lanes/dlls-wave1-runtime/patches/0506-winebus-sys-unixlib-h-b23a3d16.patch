@@ -1,0 +1,12 @@
+diff --git a/dlls/winebus.sys/unixlib.h b/dlls/winebus.sys/unixlib.h
+--- a/dlls/winebus.sys/unixlib.h
++++ b/dlls/winebus.sys/unixlib.h
+@@ -45,6 +45,8 @@
+     WCHAR manufacturer[MAX_PATH];
+     WCHAR product[MAX_PATH];
+     WCHAR serialnumber[MAX_PATH];
++
++    GUID bus_container_id;
+ };
+ 
+ struct device_options

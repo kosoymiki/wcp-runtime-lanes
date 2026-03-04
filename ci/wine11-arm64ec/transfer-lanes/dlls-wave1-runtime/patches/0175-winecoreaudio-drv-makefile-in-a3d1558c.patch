@@ -1,0 +1,11 @@
+diff --git a/dlls/winecoreaudio.drv/Makefile.in b/dlls/winecoreaudio.drv/Makefile.in
+--- a/dlls/winecoreaudio.drv/Makefile.in
++++ b/dlls/winecoreaudio.drv/Makefile.in
+@@ -6,4 +6,6 @@
+ 
+ SOURCES = \
+ 	coreaudio.c \
+-	coremidi.c
++	coremidi.c \
++	midi.c \
++	mmdevdrv.c

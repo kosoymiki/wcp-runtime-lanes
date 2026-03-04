@@ -1,0 +1,23 @@
+diff --git a/dlls/opcservices/opc_private.h b/dlls/opcservices/opc_private.h
+--- a/dlls/opcservices/opc_private.h
++++ b/dlls/opcservices/opc_private.h
+@@ -15,8 +15,6 @@
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+  */
+-
+-#include <stdbool.h>
+ 
+ #include "msopc.h"
+ 
+@@ -64,8 +62,7 @@
+ extern HRESULT opc_package_write(IOpcPackage *package, OPC_WRITE_FLAGS flags, IStream *stream);
+ 
+ struct zip_archive;
+-extern HRESULT compress_create_archive(IStream *output, bool zip64, struct zip_archive **archive);
++extern HRESULT compress_create_archive(IStream *output, struct zip_archive **archive);
+ extern HRESULT compress_add_file(struct zip_archive *archive, const WCHAR *path, IStream *content,
+         OPC_COMPRESSION_OPTIONS options);
+-extern HRESULT compress_finalize_archive(struct zip_archive *archive);
+-extern void compress_release_archive(struct zip_archive *archive);
++extern void compress_finalize_archive(struct zip_archive *archive);

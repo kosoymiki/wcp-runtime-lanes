@@ -1,0 +1,21 @@
+diff --git a/include/msvcrt/eh.h b/include/msvcrt/eh.h
+index f3d247f3a6c6b41d735dd822f4ee41fe501557b0..659b2271b2d71170f232074c247c199956c74b79 100644
+--- a/include/msvcrt/eh.h
++++ b/include/msvcrt/eh.h
+@@ -26,7 +26,7 @@
+ #error "eh.h is meant only for C++ applications"
+ #endif
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ struct _EXCEPTION_POINTERS;
+ 
+@@ -43,6 +43,6 @@ _ACRTIMP _se_translator_function __cdecl set_se_translator(_se_translator_functi
+ _ACRTIMP DECLSPEC_NORETURN void __cdecl terminate(void);
+ _ACRTIMP DECLSPEC_NORETURN void __cdecl unexpected(void);
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* __WINE_EH_H */

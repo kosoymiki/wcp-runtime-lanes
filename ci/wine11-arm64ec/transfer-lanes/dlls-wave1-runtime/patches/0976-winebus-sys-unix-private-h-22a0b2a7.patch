@@ -1,0 +1,28 @@
+diff --git a/dlls/winebus.sys/unix_private.h b/dlls/winebus.sys/unix_private.h
+--- a/dlls/winebus.sys/unix_private.h
++++ b/dlls/winebus.sys/unix_private.h
+@@ -128,7 +128,7 @@
+     BYTE next_report_id[3];
+ };
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ struct hid_haptics_feature
+ {
+     WORD waveform;
+@@ -143,7 +143,7 @@
+     struct hid_haptics_feature left;
+     struct hid_haptics_feature right;
+ };
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ struct hid_haptics
+ {
+@@ -269,4 +269,6 @@
+ 
+ extern void hid_device_set_effect_state(struct unix_device *iface, BYTE index, BYTE flags);
+ 
++extern BOOL is_sdl_ignored_device(WORD vid, WORD pid);
++
+ #endif /* __WINEBUS_UNIX_PRIVATE_H */

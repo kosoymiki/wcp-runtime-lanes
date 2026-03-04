@@ -1,0 +1,13 @@
+diff --git a/dlls/shell32/assoc.c b/dlls/shell32/assoc.c
+--- a/dlls/shell32/assoc.c
++++ b/dlls/shell32/assoc.c
+@@ -152,8 +152,7 @@
+   {
+     TRACE("Destroying IQueryAssociations (%p)\n", This);
+     RegCloseKey(This->hkeySource);
+-    if (This->hkeySource != This->hkeyProgID)
+-        RegCloseKey(This->hkeyProgID);
++    RegCloseKey(This->hkeyProgID);
+     SHFree(This);
+   }
+ 

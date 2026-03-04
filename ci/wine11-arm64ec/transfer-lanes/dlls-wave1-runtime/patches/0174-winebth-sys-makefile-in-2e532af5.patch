@@ -1,0 +1,11 @@
+diff --git a/dlls/winebth.sys/Makefile.in b/dlls/winebth.sys/Makefile.in
+--- a/dlls/winebth.sys/Makefile.in
++++ b/dlls/winebth.sys/Makefile.in
+@@ -2,7 +2,6 @@
+ IMPORTS = ntoskrnl uuid
+ UNIXLIB = winebth.so
+ UNIX_CFLAGS = $(DBUS_CFLAGS)
+-UNIX_LIBS = $(PTHREAD_LIBS)
+ 
+ EXTRADLLFLAGS = -Wl,--subsystem,native
+ 

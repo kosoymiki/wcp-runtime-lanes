@@ -1,0 +1,21 @@
+diff --git a/include/svrapi.h b/include/svrapi.h
+index ac91dd24acaf41aceaf91c66cd57608496bc026c..adee78f0ec7e2ffbc2b5bd9ac18152010297d280 100644
+--- a/include/svrapi.h
++++ b/include/svrapi.h
+@@ -22,7 +22,7 @@
+ #include <lmcons.h>
+ #include <lmerr.h>
+ 
+-#pragma pack(push,1)
++#include <pshpack1.h>
+ 
+ typedef struct _share_info_1 {
+        char shi1_netname[LM20_NNLEN+1];
+@@ -41,6 +41,6 @@ typedef struct _share_info_50 {
+        char shi50_ro_password[SHPWLEN+1];
+ } share_info_50;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #endif /* SVRAPI_INCLUDED */

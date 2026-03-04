@@ -1,0 +1,11 @@
+diff --git a/dlls/dmstyle/Makefile.in b/dlls/dmstyle/Makefile.in
+--- a/dlls/dmstyle/Makefile.in
++++ b/dlls/dmstyle/Makefile.in
+@@ -9,6 +9,7 @@
+ 	dmobject.c \
+ 	dmstyle.idl \
+ 	dmstyle_main.c \
++	dmutils.c \
+ 	motiftrack.c \
+ 	mutetrack.c \
+ 	style.c \

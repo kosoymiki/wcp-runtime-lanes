@@ -1,0 +1,40 @@
+diff --git a/include/windows.data.json.idl b/include/windows.data.json.idl
+index 4dfe36d095ab61f7ae767910ed49d8bb41a8683d..c37c0a59b8806145d577a06b31d6d09cc7e41f0e 100644
+--- a/include/windows.data.json.idl
++++ b/include/windows.data.json.idl
+@@ -132,7 +132,7 @@ namespace Windows.Data.Json {
+         activatable(Windows.Foundation.UniversalApiContract, 1.0),
+         contract(Windows.Foundation.UniversalApiContract, 1.0),
+         marshaling_behavior(agile),
+-        /* static(Windows.Data.Json.IJsonArrayStatics, Windows.Foundation.UniversalApiContract, 1.0), */
++        static(Windows.Data.Json.IJsonArrayStatics, Windows.Foundation.UniversalApiContract, 1.0),
+         threading(both)
+     ]
+     runtimeclass JsonArray
+@@ -148,7 +148,7 @@ namespace Windows.Data.Json {
+         activatable(Windows.Foundation.UniversalApiContract, 1.0),
+         contract(Windows.Foundation.UniversalApiContract, 1.0),
+         marshaling_behavior(agile),
+-        /* static(Windows.Data.Json.IJsonObjectStatics, Windows.Foundation.UniversalApiContract, 1.0), */
++        static(Windows.Data.Json.IJsonObjectStatics, Windows.Foundation.UniversalApiContract, 1.0),
+         threading(both)
+     ]
+     runtimeclass JsonObject
+@@ -157,7 +157,7 @@ namespace Windows.Data.Json {
+         interface Windows.Data.Json.IJsonValue;
+         interface Windows.Foundation.Collections.IMap<HSTRING, Windows.Data.Json.IJsonValue *>;
+         interface Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<HSTRING, Windows.Data.Json.IJsonValue *> *>;
+-        /* [contract(Windows.Foundation.UniversalApiContract, 1.0)] interface Windows.Data.Json.IJsonObjectWithDefaultValues; */
++        [contract(Windows.Foundation.UniversalApiContract, 1.0)] interface Windows.Data.Json.IJsonObjectWithDefaultValues;
+         [contract(Windows.Foundation.UniversalApiContract, 1.0)] interface Windows.Foundation.IStringable;
+     }
+ 
+@@ -165,7 +165,7 @@ namespace Windows.Data.Json {
+         contract(Windows.Foundation.UniversalApiContract, 1.0),
+         marshaling_behavior(agile),
+         static(Windows.Data.Json.IJsonValueStatics, Windows.Foundation.UniversalApiContract, 1.0),
+-        /* static(Windows.Data.Json.IJsonValueStatics2, Windows.Foundation.UniversalApiContract, 1.0), */
++        static(Windows.Data.Json.IJsonValueStatics2, Windows.Foundation.UniversalApiContract, 1.0),
+         threading(both)
+     ]
+     runtimeclass JsonValue

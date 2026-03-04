@@ -1,0 +1,13 @@
+diff --git a/dlls/windows.ui/main.c b/dlls/windows.ui/main.c
+--- a/dlls/windows.ui/main.c
++++ b/dlls/windows.ui/main.c
+@@ -38,9 +38,6 @@
+ 
+     *factory = NULL;
+ 
+-    if (!wcscmp( buffer, RuntimeClass_Windows_UI_ViewManagement_AccessibilitySettings ))
+-        IActivationFactory_QueryInterface( accessibilitysettings_factory, &IID_IActivationFactory, (void **)factory );
+-
+     if (!wcscmp( buffer, RuntimeClass_Windows_UI_ViewManagement_UISettings ))
+         IActivationFactory_QueryInterface( uisettings_factory, &IID_IActivationFactory, (void **)factory );
+ 

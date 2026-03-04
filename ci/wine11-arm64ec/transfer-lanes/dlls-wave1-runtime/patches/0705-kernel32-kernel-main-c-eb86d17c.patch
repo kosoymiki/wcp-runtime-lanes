@@ -1,0 +1,16 @@
+diff --git a/dlls/kernel32/kernel_main.c b/dlls/kernel32/kernel_main.c
+--- a/dlls/kernel32/kernel_main.c
++++ b/dlls/kernel32/kernel_main.c
+@@ -214,12 +214,3 @@
+ 
+     return TRUE;
+ }
+-
+-/******************************************************************************
+- *          CreateBoundaryDescriptorA    (KERNEL32.@)
+- */
+-HANDLE WINAPI CreateBoundaryDescriptorA(LPCSTR name, ULONG flags)
+-{
+-    FIXME("%s, %#lx - stub\n", debugstr_a(name), flags);
+-    return NULL;
+-}

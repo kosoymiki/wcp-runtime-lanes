@@ -1,0 +1,9 @@
+diff --git a/dlls/bcp47langs/tests/Makefile.in b/dlls/bcp47langs/tests/Makefile.in
+--- a/dlls/bcp47langs/tests/Makefile.in
++++ /dev/null
+@@ -1,5 +0,0 @@
+-TESTDLL = bcp47langs.dll
+-IMPORTS = combase bcp47langs
+-
+-SOURCES = \
+-	bcp47langs.c

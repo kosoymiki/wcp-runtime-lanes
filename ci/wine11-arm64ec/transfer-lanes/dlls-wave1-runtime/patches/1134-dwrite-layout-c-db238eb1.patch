@@ -1,0 +1,40 @@
+diff --git a/dlls/dwrite/layout.c b/dlls/dwrite/layout.c
+--- a/dlls/dwrite/layout.c
++++ b/dlls/dwrite/layout.c
+@@ -3762,11 +3762,10 @@
+     unsigned int i;
+     HRESULT hr;
+ 
+-    memset(bbox, 0, sizeof(*bbox));
+-
+     if (run->bbox.top == run->bbox.bottom)
+     {
+         struct dwrite_glyphbitmap glyph_bitmap;
++        RECT *bbox;
+ 
+         glyph_run = regular->run;
+         glyph_run.glyphCount = run->glyphcount;
+@@ -3778,6 +3777,8 @@
+         glyph_bitmap.simulations = IDWriteFontFace_GetSimulations(glyph_run.fontFace);
+         glyph_bitmap.emsize = glyph_run.fontEmSize;
+ 
++        bbox = &glyph_bitmap.bbox;
++
+         if (!(origins = calloc(glyph_run.glyphCount, sizeof(*origins))))
+             return;
+ 
+@@ -3795,10 +3796,10 @@
+             glyph_bitmap.glyph = glyph_run.glyphIndices[i];
+             dwrite_fontface_get_glyph_bbox(glyph_run.fontFace, &glyph_bitmap);
+ 
+-            glyph_bbox.left = glyph_bitmap.bbox.left;
+-            glyph_bbox.top = glyph_bitmap.bbox.top;
+-            glyph_bbox.right = glyph_bitmap.bbox.right;
+-            glyph_bbox.bottom = glyph_bitmap.bbox.bottom;
++            glyph_bbox.left = bbox->left;
++            glyph_bbox.top = bbox->top;
++            glyph_bbox.right = bbox->right;
++            glyph_bbox.bottom = bbox->bottom;
+ 
+             d2d_rect_offset(&glyph_bbox, origins[i].x, origins[i].y);
+             d2d_rect_union(&run->bbox, &glyph_bbox);

@@ -1,0 +1,21 @@
+diff --git a/libs/lcms2/src/cmscnvrt.c b/libs/lcms2/src/cmscnvrt.c
+index 5f9aec8e6b9d33f71f4f1a5e884c329a9428fd67..59d386dcf89fde4a56ef4e0e069dbd049711aec6 100644
+--- a/libs/lcms2/src/cmscnvrt.c
++++ b/libs/lcms2/src/cmscnvrt.c
+@@ -1,7 +1,7 @@
+ //---------------------------------------------------------------------------------
+ //
+ //  Little Color Management System
+-//  Copyright (c) 1998-2024 Marti Maria Saguer
++//  Copyright (c) 1998-2023 Marti Maria Saguer
+ //
+ // Permission is hereby granted, free of charge, to any person obtaining
+ // a copy of this software and associated documentation files (the "Software"),
+@@ -721,6 +721,7 @@ static
+ cmsBool is_cmyk_devicelink(cmsHPROFILE hProfile)
+ {
+     return cmsGetDeviceClass(hProfile) == cmsSigLinkClass &&
++            cmsGetColorSpace(hProfile) == cmsSigCmykData &&
+             cmsGetColorSpace(hProfile) == cmsSigCmykData;
+ }
+ 

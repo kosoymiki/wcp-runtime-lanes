@@ -1,0 +1,25 @@
+diff --git a/dlls/mmsystem.dll16/mmsystem.c b/dlls/mmsystem.dll16/mmsystem.c
+--- a/dlls/mmsystem.dll16/mmsystem.c
++++ b/dlls/mmsystem.dll16/mmsystem.c
+@@ -2147,8 +2147,10 @@
+  */
+ void WINAPI StackEnter16(void)
+ {
++#ifdef __i386__
+     /* mmsystem.dll from Win 95 does only this: so does Wine */
+     __asm__("stc");
++#endif
+ }
+ 
+ /**************************************************************************
+@@ -2156,8 +2158,10 @@
+  */
+ void WINAPI StackLeave16(void)
+ {
++#ifdef __i386__
+     /* mmsystem.dll from Win 95 does only this: so does Wine */
+     __asm__("stc");
++#endif
+ }
+ 
+ /**************************************************************************

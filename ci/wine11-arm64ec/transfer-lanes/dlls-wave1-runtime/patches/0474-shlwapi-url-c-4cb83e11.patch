@@ -1,0 +1,12 @@
+diff --git a/dlls/shlwapi/url.c b/dlls/shlwapi/url.c
+--- a/dlls/shlwapi/url.c
++++ b/dlls/shlwapi/url.c
+@@ -107,7 +107,7 @@
+ HRESULT WINAPI MLBuildResURLW(LPCWSTR lpszLibName, HMODULE hMod, DWORD dwFlags,
+                               LPCWSTR lpszRes, LPWSTR lpszDest, DWORD dwDestLen)
+ {
+-  static const WCHAR szRes[] = L"res://";
++  static const WCHAR szRes[] = { 'r','e','s',':','/','/','\0' };
+   static const unsigned int szResLen = ARRAY_SIZE(szRes) - 1;
+   HRESULT hRet = E_FAIL;
+ 

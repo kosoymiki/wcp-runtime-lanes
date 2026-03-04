@@ -1,0 +1,25 @@
+diff --git a/tools/wrc/wpp.c b/tools/wrc/wpp.c
+index beb445efb447fee06a5fadae470357cf56c3235e..57baf44862b093164bf564791a406986f3ca83c9 100644
+--- a/tools/wrc/wpp.c
++++ b/tools/wrc/wpp.c
+@@ -62,7 +62,7 @@ static char *wpp_lookup(const char *name, int type, const char *parent_name)
+     char *cptr;
+     char *path;
+     const char *ccptr;
+-    int fd;
++    int i, fd;
+ 
+     cpy = xmalloc(strlen(name)+1);
+     cptr = cpy;
+@@ -96,9 +96,9 @@ static char *wpp_lookup(const char *name, int type, const char *parent_name)
+         free( path );
+     }
+     /* Search -I path */
+-    STRARRAY_FOR_EACH( incl, &includes )
++    for(i = 0; i < includes.count; i++)
+     {
+-        path = strmake("%s/%s", incl, cpy);
++        path = strmake("%s/%s", includes.str[i], cpy);
+         fd = open( path, O_RDONLY );
+         if (fd != -1)
+         {

@@ -1,0 +1,19 @@
+diff --git a/dlls/dmusic/collection.c b/dlls/dmusic/collection.c
+--- a/dlls/dmusic/collection.c
++++ b/dlls/dmusic/collection.c
+@@ -208,14 +208,7 @@
+     {
+         if (index--) continue;
+         *patch = entry->patch;
+-        if (name)
+-        {
+-            if (entry->desc.dwValidData & DMUS_OBJ_NAME)
+-                lstrcpynW(name, entry->desc.wszName, name_length);
+-            else
+-                name[0] = 0;
+-        }
+-
++        if (name) lstrcpynW(name, entry->desc.wszName, name_length);
+         return S_OK;
+     }
+ 

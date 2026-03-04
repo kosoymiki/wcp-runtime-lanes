@@ -1,0 +1,20 @@
+diff --git a/include/windows.ui.input.idl b/include/windows.ui.input.idl
+index f396a3ce8a77bb355169f24df29ff68ee98c3372..f160671f232342ada4a47d58649a26e1647a1182 100644
+--- a/include/windows.ui.input.idl
++++ b/include/windows.ui.input.idl
+@@ -20,6 +20,7 @@
+ #pragma winrt ns_prefix
+ #endif
+ 
++#ifndef DO_NO_IMPORTS
+ import "inspectable.idl";
+ import "asyncinfo.idl";
+ import "eventtoken.idl";
+@@ -28,6 +29,7 @@ import "windows.foundation.idl";
+ import "windows.devices.input.idl";
+ import "windows.system.idl";
+ import "windows.ui.core.idl";
++#endif
+ 
+ namespace Windows.UI.Input {
+     typedef enum PointerUpdateKind PointerUpdateKind;

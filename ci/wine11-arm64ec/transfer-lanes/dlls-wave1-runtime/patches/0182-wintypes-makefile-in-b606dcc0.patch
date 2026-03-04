@@ -1,0 +1,11 @@
+diff --git a/dlls/wintypes/Makefile.in b/dlls/wintypes/Makefile.in
+--- a/dlls/wintypes/Makefile.in
++++ b/dlls/wintypes/Makefile.in
+@@ -6,7 +6,5 @@
+ 	buffer.c \
+ 	classes.idl \
+ 	main.c \
+-	map.c \
+-	propertyset.c \
+ 	storage.c \
+ 	wintypes_private.idl

@@ -1,0 +1,12 @@
+diff --git a/dlls/wbemprox/table.c b/dlls/wbemprox/table.c
+--- a/dlls/wbemprox/table.c
++++ b/dlls/wbemprox/table.c
+@@ -274,7 +274,7 @@
+     {
+         for (j = 0; j < table->num_cols; j++)
+         {
+-            if (table->columns[j].type & COL_FLAG_METHOD && !wcsicmp( table->columns[j].name, name ))
++            if (table->columns[j].type & COL_FLAG_METHOD && !wcscmp( table->columns[j].name, name ))
+             {
+                 HRESULT hr;
+                 LONGLONG val;

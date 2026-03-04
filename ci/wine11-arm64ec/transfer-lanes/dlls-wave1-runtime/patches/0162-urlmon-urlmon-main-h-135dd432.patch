@@ -1,0 +1,11 @@
+diff --git a/dlls/urlmon/urlmon_main.h b/dlls/urlmon/urlmon_main.h
+--- a/dlls/urlmon/urlmon_main.h
++++ b/dlls/urlmon/urlmon_main.h
+@@ -34,7 +34,6 @@
+ #include "wine/list.h"
+ 
+ extern HINSTANCE hProxyDll;
+-extern HRESULT PersistentZoneIdentifier_Construct(IUnknown *pUnkOuter, LPVOID *ppobj);
+ extern HRESULT SecManagerImpl_Construct(IUnknown *pUnkOuter, LPVOID *ppobj);
+ extern HRESULT ZoneMgrImpl_Construct(IUnknown *pUnkOuter, LPVOID *ppobj);
+ extern HRESULT StdURLMoniker_Construct(IUnknown *pUnkOuter, LPVOID *ppobj);

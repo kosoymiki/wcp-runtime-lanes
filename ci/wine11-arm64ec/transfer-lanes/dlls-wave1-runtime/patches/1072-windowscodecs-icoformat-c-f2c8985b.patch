@@ -1,0 +1,34 @@
+diff --git a/dlls/windowscodecs/icoformat.c b/dlls/windowscodecs/icoformat.c
+--- a/dlls/windowscodecs/icoformat.c
++++ b/dlls/windowscodecs/icoformat.c
+@@ -31,7 +31,7 @@
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(wincodecs);
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ typedef struct {
+     BYTE bWidth;
+@@ -51,7 +51,7 @@
+     WORD idCount;
+ } ICONHEADER;
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ typedef struct {
+     IWICBitmapDecoder IWICBitmapDecoder_iface;
+@@ -662,9 +662,9 @@
+         goto fail;
+     }
+ 
+-    if (This->header.idCount <= index)
+-    {
+-        hr = WINCODEC_ERR_FRAMEMISSING;
++    if (This->header.idCount < index)
++    {
++        hr = E_INVALIDARG;
+         goto fail;
+     }
+ 

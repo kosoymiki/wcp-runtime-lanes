@@ -1,0 +1,9 @@
+diff --git a/dlls/winealsa.drv/unixlib.h b/dlls/winealsa.drv/unixlib.h
+--- a/dlls/winealsa.drv/unixlib.h
++++ b/dlls/winealsa.drv/unixlib.h
+@@ -28,3 +28,5 @@
+ NTSTATUS alsa_wow64_midi_in_message(void *args);
+ NTSTATUS alsa_wow64_midi_notify_wait(void *args);
+ #endif
++
++#define ALSA_CALL(func, params) WINE_UNIX_CALL(func, params)

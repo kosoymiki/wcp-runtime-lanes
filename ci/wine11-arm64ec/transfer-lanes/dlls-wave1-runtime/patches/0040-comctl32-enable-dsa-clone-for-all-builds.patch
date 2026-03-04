@@ -1,0 +1,16 @@
+diff --git a/dlls/comctl32/dsa.c b/dlls/comctl32/dsa.c
+--- a/dlls/comctl32/dsa.c
++++ b/dlls/comctl32/dsa.c
+@@ -438,7 +438,6 @@
+     DSA_Destroy (hdsa);
+ }
+ 
+-#if __WINE_COMCTL32_VERSION == 6
+ /**************************************************************************
+  * DSA_Clone [COMCTL32.@]
+  *
+@@ -494,4 +493,3 @@
+ 
+     return sizeof(*hdsa) + (ULONGLONG)hdsa->nMaxCount*hdsa->nItemSize;
+ }
+-#endif /* __WINE_COMCTL32_VERSION == 6 */

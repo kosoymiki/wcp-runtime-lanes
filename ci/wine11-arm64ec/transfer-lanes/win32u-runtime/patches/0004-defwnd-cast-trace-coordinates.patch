@@ -1,0 +1,30 @@
+diff --git a/dlls/win32u/defwnd.c b/dlls/win32u/defwnd.c
+--- a/dlls/win32u/defwnd.c
++++ b/dlls/win32u/defwnd.c
+@@ -697,7 +697,7 @@ static void handle_sys_command( HWND hwnd, WPARAM wparam, LPARAM lparam )
+     NtUserClipCursor( NULL );
+ 
+     TRACE( "hwnd %p command %04x, hittest %d, pos %d,%d\n",
+-           hwnd, syscommand, hittest, pt.x, pt.y );
++           hwnd, syscommand, hittest, (int)pt.x, (int)pt.y );
+ 
+     if (syscommand == SC_MOVE)
+     {
+@@ -1879,7 +1879,7 @@ static void handle_nc_calc_size( HWND hwnd, WPARAM wparam, RECT *win_rect )
+         if (((style & (WS_CHILD | WS_POPUP)) != WS_CHILD) && get_menu( hwnd ))
+         {
+             TRACE( "getting menu bar height with hwnd %p, width %d, at (%d, %d)\n",
+-                   hwnd, win_rect->right - win_rect->left, -rect.left, -rect.top );
++                   hwnd, (int)(win_rect->right - win_rect->left), (int)-rect.left, (int)-rect.top );
+ 
+             win_rect->top += get_menu_bar_height( hwnd, win_rect->right - win_rect->left,
+                                                   -rect.left, -rect.top );
+@@ -1924,7 +1924,7 @@ LRESULT handle_nc_hit_test( HWND hwnd, POINT pt )
+     struct window_rects rects;
+     DWORD style, ex_style;
+ 
+-    TRACE( "hwnd %p pt %d,%d\n", hwnd, pt.x, pt.y );
++    TRACE( "hwnd %p pt %d,%d\n", hwnd, (int)pt.x, (int)pt.y );
+ 
+     get_window_rects( hwnd, COORDS_SCREEN, &rects, get_thread_dpi() );
+     if (!PtInRect( &rects.window, pt )) return HTNOWHERE;

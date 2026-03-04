@@ -1,0 +1,10 @@
+diff --git a/dlls/windows.media/Makefile.in b/dlls/windows.media/Makefile.in
+--- a/dlls/windows.media/Makefile.in
++++ b/dlls/windows.media/Makefile.in
+@@ -4,5 +4,4 @@
+ SOURCES = \
+ 	captions.c \
+ 	classes.idl \
+-	main.c \
+-	transcoder.c
++	main.c

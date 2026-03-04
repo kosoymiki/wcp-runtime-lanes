@@ -1,0 +1,68 @@
+diff --git a/dlls/ntdll/signal_arm64.c b/dlls/ntdll/signal_arm64.c
+index 82321e3..55959eb 100644
+--- a/dlls/ntdll/signal_arm64.c
++++ b/dlls/ntdll/signal_arm64.c
+@@ -45,7 +45,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
+  *         syscalls
+  */
+ #define SYSCALL_ENTRY(id,name,args) __ASM_SYSCALL_FUNC( id, name )
+-ALL_SYSCALLS
++ALL_SYSCALLS64
+ #undef SYSCALL_ENTRY
+ 
+ 
+@@ -625,16 +625,6 @@ NTSTATUS WINAPI RtlGetNativeSystemInformation( SYSTEM_INFORMATION_CLASS class,
+ }
+ 
+ 
+-static ULONGLONG cpu_features_bitmap[2];
+-static RTL_RUN_ONCE init_once = RTL_RUN_ONCE_INIT;
+-
+-static DWORD WINAPI init_cpu_features( RTL_RUN_ONCE *once, void *param, void **context )
+-{
+-    return !NtQuerySystemInformation( SystemProcessorFeaturesBitMapInformation,
+-                                      cpu_features_bitmap, sizeof(cpu_features_bitmap), NULL );
+-}
+-
+-
+ /***********************************************************************
+  *           RtlIsProcessorFeaturePresent [NTDLL.@]
+  */
+@@ -671,17 +661,10 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
+         (1ull << PF_ARM_SVE_SM4_INSTRUCTIONS_AVAILABLE) |
+         (1ull << PF_ARM_SVE_I8MM_INSTRUCTIONS_AVAILABLE) |
+         (1ull << PF_ARM_SVE_F32MM_INSTRUCTIONS_AVAILABLE) |
+-        (1ull << PF_ARM_SVE_F64MM_INSTRUCTIONS_AVAILABLE) |
+-        (1ull << PF_ARM_LSE2_AVAILABLE);
+-
+-    if (feature < PROCESSOR_FEATURE_MAX)
+-        return (arm64_features & (1ull << feature)) && user_shared_data->ProcessorFeatures[feature];
+-
+-    feature -= PROCESSOR_FEATURE_MAX;
+-    if (feature >= 8 * sizeof(cpu_features_bitmap)) return FALSE;
++        (1ull << PF_ARM_SVE_F64MM_INSTRUCTIONS_AVAILABLE);
+ 
+-    RtlRunOnceExecuteOnce( &init_once, init_cpu_features, NULL, NULL );
+-    return !!(cpu_features_bitmap[feature / 64] & (1ull << (feature % 64)));
++    return (feature < PROCESSOR_FEATURE_MAX && (arm64_features & (1ull << feature)) &&
++            user_shared_data->ProcessorFeatures[feature]);
+ }
+ 
+ static LONG apc_worker_started = 0;
+@@ -933,12 +916,10 @@ void WINAPI LdrInitializeThunk( CONTEXT *context, ULONG_PTR unk2, ULONG_PTR unk3
+     if (NtCurrentTeb()->WowTebOffset && InterlockedCompareExchange( &apc_worker_started, 1, 0 ) == 0)
+     {
+         HANDLE handle;
+-        NTSTATUS status = NtCreateThreadEx( &handle, SYNCHRONIZE | THREAD_QUERY_INFORMATION, NULL,
+-                                            NtCurrentProcess(), apc_worker_thread, NULL,
+-                                            THREAD_CREATE_FLAGS_SKIP_THREAD_ATTACH | THREAD_CREATE_FLAGS_SKIP_LOADER_INIT |
+-                                            THREAD_CREATE_FLAGS_HIDE_FROM_DEBUGGER, 0, 0, 0, NULL );
+-        if (!status) NtClose( handle );
+-        else InterlockedExchange( &apc_worker_started, 0 );
++        NtCreateThreadEx( &handle, SYNCHRONIZE | THREAD_QUERY_INFORMATION, NULL, NtCurrentProcess(),
++                          apc_worker_thread, NULL,
++                          THREAD_CREATE_FLAGS_SKIP_THREAD_ATTACH | THREAD_CREATE_FLAGS_SKIP_LOADER_INIT |
++                          THREAD_CREATE_FLAGS_HIDE_FROM_DEBUGGER, 0, 0, 0, NULL );
+     }
+ 
+     loader_init( context, (void **)&context->X0 );

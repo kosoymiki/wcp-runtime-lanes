@@ -1,0 +1,22 @@
+diff --git a/tools/widl/typelib_struct.h b/tools/widl/typelib_struct.h
+index c7bc141b81f3a28b91cca456314ed15d0fc5b637..ec1e317bf233ff825b9897b7875a8c29a0d81ae5 100644
+--- a/tools/widl/typelib_struct.h
++++ b/tools/widl/typelib_struct.h
+@@ -282,7 +282,7 @@ typedef struct {
+  *
+  */
+ 
+-#pragma pack(push,1)
++#include "pshpack1.h"
+ 
+ typedef struct {
+ /*00*/	unsigned int   SLTG_magic;	/* 0x47544c53  == "SLTG" */
+@@ -579,7 +579,7 @@ WORD offset from start of block to SAFEARRAY
+ WORD typeofarray
+ */
+ 
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ /*---------------------------END--------------------------------------------*/
+ #endif

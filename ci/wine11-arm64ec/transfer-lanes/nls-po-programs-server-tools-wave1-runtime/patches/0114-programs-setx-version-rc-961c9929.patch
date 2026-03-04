@@ -1,0 +1,13 @@
+diff --git a/programs/setx/version.rc b/programs/setx/version.rc
+index 63007a1cec48ac16e8bec09b0df8edcf98b5f6a6..e8c6324aaac7dd143788d7ac7a3744d12c25ccaa 100644
+--- a/programs/setx/version.rc
++++ b/programs/setx/version.rc
+@@ -20,5 +20,8 @@
+ #define WINE_FILENAME_STR "setx.exe"
+ #define WINE_FILETYPE VFT_APP
+ #define WINE_FILEVERSION 10,0,19041,1
++#define WINE_FILEVERSION_STR "10.0.19041.1"
++#define WINE_PRODUCTVERSION 10,0,19041,1
++#define WINE_PRODUCTVERSION_STR "10.0.19041.1"
+ 
+ #include "wine/wine_common_ver.rc"

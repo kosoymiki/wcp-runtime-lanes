@@ -1,0 +1,35 @@
+diff --git a/dlls/riched32/richedit.c b/dlls/riched32/richedit.c
+--- a/dlls/riched32/richedit.c
++++ b/dlls/riched32/richedit.c
+@@ -30,6 +30,7 @@
+ #include "winerror.h"
+ #include "winuser.h"
+ #include "richedit.h"
++#include "shlwapi.h"
+ 
+ #include "wine/debug.h"
+ 
+@@ -75,3 +76,23 @@
+     }
+     return TRUE;
+ }
++
++/***********************************************************************
++ * DllGetVersion [RICHED32.2]
++ *
++ * Retrieves version information
++ */
++HRESULT WINAPI DllGetVersion (DLLVERSIONINFO *pdvi)
++{
++    TRACE("\n");
++
++    if (pdvi->cbSize != sizeof(DLLVERSIONINFO))
++	return E_INVALIDARG;
++
++    pdvi->dwMajorVersion = 4;
++    pdvi->dwMinorVersion = 0;
++    pdvi->dwBuildNumber = 0;
++    pdvi->dwPlatformID = 0;
++
++    return S_OK;
++}

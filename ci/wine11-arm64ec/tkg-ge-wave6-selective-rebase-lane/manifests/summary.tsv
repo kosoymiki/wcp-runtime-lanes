@@ -1,0 +1,21 @@
+metric	value
+selected_low_rows	96
+proven	30
+pending	65
+deferred	0
+dropped_not_needed	0
+dropped_external	0
+dropped_incompatible	1
+dropped_conflict_not_needed	0
+pending_index_missing	0
+pending_patch_missing	0
+pending_override_missing	0
+pending_route_unmapped	0
+override_used	5
+lane_name	Wine11 Wave6 Selective Rebase
+active_routes	binutils,wine
+drop_families	ge-fonts,ge-proton,ge-proton-5.9,ge-proton-hotfixes,tkg-proton-template
+drop_conflict_families	ge-game-patches,ge-wine-hotfixes,loader-KeyboardLayouts,user32-rawinput-keyboard
+drop_non_active	1
+drop_missing_path_errors	1
+route_wine	96

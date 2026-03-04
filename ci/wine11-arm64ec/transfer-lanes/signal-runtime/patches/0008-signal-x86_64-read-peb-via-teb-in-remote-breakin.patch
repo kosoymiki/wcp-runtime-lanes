@@ -1,0 +1,14 @@
+diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
+index 1812dc7..82ef1c5 100644
+--- a/dlls/ntdll/signal_x86_64.c
++++ b/dlls/ntdll/signal_x86_64.c
+@@ -1097,7 +1097,8 @@ __ASM_GLOBAL_FUNC( DbgUiRemoteBreakin,
+                    ".seh_stackalloc 0x28\n\t"
+                    ".seh_endprologue\n\t"
+                    ".seh_handler DbgUiRemoteBreakin_handler, @except\n\t"
+-                   "mov %gs:0x60,%rax\n\t"
++                   "mov %gs:0x30,%rax\n\t"
++                   "mov 0x60(%rax),%rax\n\t"
+                    "cmpb $0,2(%rax)\n\t"
+                    "je 1f\n\t"
+                    "call " __ASM_NAME("DbgBreakPoint") "\n"

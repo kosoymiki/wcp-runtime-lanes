@@ -1,0 +1,13 @@
+diff --git a/include/sql.h b/include/sql.h
+index c9a85faf9c5930fb971cbb2c3d373de91daa1e0e..ed47380c8a3a698d277bf5f298bd1e86a30340ea 100644
+--- a/include/sql.h
++++ b/include/sql.h
+@@ -22,7 +22,7 @@
+ #define __SQL_H
+ 
+ #ifndef ODBCVER
+-#define ODBCVER 0x0380
++#define ODBCVER 0x0351
+ #endif
+ 
+ #include <sqltypes.h>

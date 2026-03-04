@@ -1,0 +1,21 @@
+diff --git a/dlls/win32u/opentype.c b/dlls/win32u/opentype.c
+--- a/dlls/win32u/opentype.c
++++ b/dlls/win32u/opentype.c
+@@ -52,7 +52,7 @@
+ #define GET_BE_DWORD(x) RtlUlongByteSwap(x)
+ #endif
+ 
+-#pragma pack(push,2)
++#include "pshpack2.h"
+ struct ttc_header_v1
+ {
+     CHAR TTCTag[4];
+@@ -158,7 +158,7 @@
+     SHORT index_format;
+     SHORT glyphdata_format;
+ };
+-#pragma pack(pop)
++#include "poppack.h"
+ 
+ enum OPENTYPE_PLATFORM_ID
+ {

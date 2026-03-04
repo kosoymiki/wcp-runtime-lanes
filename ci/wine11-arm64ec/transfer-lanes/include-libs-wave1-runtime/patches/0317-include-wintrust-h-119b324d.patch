@@ -1,0 +1,22 @@
+diff --git a/include/wintrust.h b/include/wintrust.h
+index 5964f13448d0217085d206c7ebbd3ea89e4f1ffc..eeb149822b4c913205991fcbb976fd29c238727b 100644
+--- a/include/wintrust.h
++++ b/include/wintrust.h
+@@ -22,7 +22,7 @@
+ #include <wincrypt.h>
+ 
+ 
+-#pragma pack(push,8)
++#include <pshpack8.h>
+ 
+ typedef struct WINTRUST_FILE_INFO_
+ {
+@@ -427,7 +427,7 @@ typedef struct _CRYPT_PROVUI_FUNCS {
+     PFN_PROVUI_CALL pfnOnAdvancedClickDefault;
+ } CRYPT_PROVUI_FUNCS, *PCRYPT_PROVUI_FUNCS;
+ 
+-#pragma pack(pop)
++#include <poppack.h>
+ 
+ #define WVT_OFFSETOF(t,f)     ((ULONG)(offsetof(t, f)))
+ #define WVT_ISINSTRUCT(t,s,f) (WVT_OFFSETOF(t,f) + sizeof(((t*)0)->f) <= (s))

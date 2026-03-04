@@ -1,0 +1,16 @@
+diff --git a/dlls/xaudio2_4/Makefile.in b/dlls/xaudio2_4/Makefile.in
+--- a/dlls/xaudio2_4/Makefile.in
++++ b/dlls/xaudio2_4/Makefile.in
+@@ -4,9 +4,10 @@
+ EXTRAINCL = $(FAUDIO_PE_CFLAGS)
+ PARENTSRC = ../xaudio2_7
+ 
++EXTRADLLFLAGS = -Wb,--prefer-native
++
+ SOURCES = \
+ 	xapo.c \
+ 	xaudio_allocator.c \
+ 	xaudio_classes.idl \
+-	xaudio_dll.c \
+-	xaudio_register.idl
++	xaudio_dll.c

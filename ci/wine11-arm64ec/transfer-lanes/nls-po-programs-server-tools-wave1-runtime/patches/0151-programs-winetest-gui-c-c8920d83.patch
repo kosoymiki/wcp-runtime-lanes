@@ -1,0 +1,13 @@
+diff --git a/programs/winetest/gui.c b/programs/winetest/gui.c
+index b0b176c50b47ff7199cd85318f74f5c8b1bf4c87..88ba105bf4d35b3454253a6168eb4148cbac58ab 100644
+--- a/programs/winetest/gui.c
++++ b/programs/winetest/gui.c
+@@ -311,7 +311,7 @@ guiAsk (va_list ap)
+     return ret;
+ }
+ 
+-static LRESULT CALLBACK
++static BOOL CALLBACK
+ EditTagProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+ {
+     switch (msg) {

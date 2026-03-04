@@ -1,0 +1,19 @@
+diff --git a/dlls/iertutil/classes.idl b/dlls/iertutil/classes.idl
+--- a/dlls/iertutil/classes.idl
++++ b/dlls/iertutil/classes.idl
+@@ -19,10 +19,10 @@
+  */
+ 
+ #pragma makedep register
++
++#ifdef __WIDL__
+ #pragma winrt ns_prefix
++#endif
+ 
+-import "windows.foundation.idl";
+-
+-namespace Windows.Foundation {
+-    runtimeclass Uri;
+-}
++#define DO_NO_IMPORTS
++#include "windows.foundation.idl"

@@ -1,0 +1,11 @@
+diff --git a/dlls/winex11.drv/winex11.drv.spec b/dlls/winex11.drv/winex11.drv.spec
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/dlls/winex11.drv/winex11.drv.spec
+@@ -0,0 +1,5 @@
++# WinTab32
++@ cdecl AttachEventQueueToTablet(long) X11DRV_AttachEventQueueToTablet
++@ cdecl GetCurrentPacket(ptr) X11DRV_GetCurrentPacket
++@ cdecl LoadTabletInfo(long) X11DRV_LoadTabletInfo
++@ cdecl WTInfoW(long long ptr) X11DRV_WTInfoW
