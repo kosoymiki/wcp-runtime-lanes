@@ -96,7 +96,7 @@ env:
   WCP_BIONIC_SOURCE_MAP_REQUIRED: "0"
   WCP_BIONIC_DONOR_PREFLIGHT: "0"
   WCP_WINE_SOURCE_MODE: freewine-git
-  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
+  WCP_FREEWINE_REPO: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || (secrets.AEO_RELEASE_TOKEN != '' && format('https://x-access-token:{0}@github.com/kosoymiki/freewine11.git', secrets.AEO_RELEASE_TOKEN) || 'https://github.com/kosoymiki/freewine11.git') }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
   WCP_GN_PATCHSET_ENABLE: "0"
   WCP_FREEWINE_PREFIXPACK_AUTOBUILD: "1"
