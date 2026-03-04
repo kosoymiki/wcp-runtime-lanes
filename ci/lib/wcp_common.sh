@@ -617,6 +617,10 @@ wcp_ensure_configure_script() {
   local wine_src_dir="$1"
   local need_autoreconf=0
 
+  # Some FreeWine trees miss vendored SPIR-V headers after selective rebases.
+  # Seed from known donor/system locations before configure to avoid vkd3d probe failures.
+  wcp_seed_spirv_headers_for_vkd3d "${wine_src_dir}"
+
   if [[ ! -x "${wine_src_dir}/configure" ]]; then
     need_autoreconf=1
     wcp_log "configure is missing in ${wine_src_dir}; will regenerate autotools files"
@@ -649,6 +653,33 @@ wcp_ensure_configure_script() {
   [[ -f "${wine_src_dir}/configure" ]] || wcp_fail "autoreconf did not produce configure in ${wine_src_dir}"
   [[ -f "${wine_src_dir}/include/config.h.in" ]] || wcp_fail "autoreconf did not produce include/config.h.in in ${wine_src_dir}"
   chmod +x "${wine_src_dir}/configure" || true
+}
+
+wcp_seed_spirv_headers_for_vkd3d() {
+  local wine_src_dir="$1"
+  local target_dir target_header donor
+  local -a donor_dirs=()
+
+  target_dir="${wine_src_dir}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
+  target_header="${target_dir}/spirv.h"
+  [[ -f "${target_header}" ]] && return 0
+
+  donor_dirs+=(
+    "${WCP_LOCAL_ANDRE_WINE11_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
+    "${WCP_LOCAL_WINE11_DONOR_DIR:-}/libs/vkd3d/libs/vkd3d-shader/spirv/unified1"
+    "/usr/include/spirv/unified1"
+  )
+
+  for donor in "${donor_dirs[@]}"; do
+    [[ -n "${donor}" ]] || continue
+    [[ -f "${donor}/spirv.h" ]] || continue
+    mkdir -p "${target_dir}"
+    cp -a "${donor}/." "${target_dir}/"
+    wcp_log "Seeded SPIR-V headers for vkd3d from ${donor}"
+    return 0
+  done
+
+  wcp_log "SPIR-V headers were not seeded (no donor found for ${target_header})"
 }
 
 build_wine_tools_host() {
