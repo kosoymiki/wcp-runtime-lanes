@@ -615,15 +615,26 @@ wcp_try_bootstrap_winevulkan() {
 
 wcp_ensure_configure_script() {
   local wine_src_dir="$1"
+  local need_autoreconf=0
 
-  if [[ -x "${wine_src_dir}/configure" ]]; then
+  if [[ ! -x "${wine_src_dir}/configure" ]]; then
+    need_autoreconf=1
+    wcp_log "configure is missing in ${wine_src_dir}; will regenerate autotools files"
+  fi
+
+  if [[ ! -f "${wine_src_dir}/include/config.h.in" ]]; then
+    need_autoreconf=1
+    wcp_log "include/config.h.in is missing in ${wine_src_dir}; will regenerate autotools files"
+  fi
+
+  if [[ "${need_autoreconf}" -eq 0 ]]; then
     return
   fi
 
   [[ -f "${wine_src_dir}/configure.ac" ]] || wcp_fail "Missing configure script and configure.ac in ${wine_src_dir}"
   wcp_require_cmd autoreconf
 
-  wcp_log "configure is missing in ${wine_src_dir}; generating it with autoreconf -ifv"
+  wcp_log "Running autoreconf -ifv in ${wine_src_dir}"
   pushd "${wine_src_dir}" >/dev/null
   if [[ -x tools/make_requests ]]; then
     tools/make_requests
@@ -636,6 +647,7 @@ wcp_ensure_configure_script() {
   popd >/dev/null
 
   [[ -f "${wine_src_dir}/configure" ]] || wcp_fail "autoreconf did not produce configure in ${wine_src_dir}"
+  [[ -f "${wine_src_dir}/include/config.h.in" ]] || wcp_fail "autoreconf did not produce include/config.h.in in ${wine_src_dir}"
   chmod +x "${wine_src_dir}/configure" || true
 }
 
