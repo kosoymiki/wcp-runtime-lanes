@@ -13,7 +13,7 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
   - DXVK GPLAsync (`dxvk-gplasync*`)
   - VKD3D-Proton (`vkd3d-proton*`)
   - Vulkan SDK (`vulkan-sdk-*`)
-  - dgVoodoo (`dgvoodoo-latest`)
+  - dgVoodoo (`dgvoodoo-x86_64-latest`, `dgvoodoo-arm64ec-latest`)
 - Keep runtime/forensic contracts strict for bionic-only deployment.
 
 ## Ownership Model

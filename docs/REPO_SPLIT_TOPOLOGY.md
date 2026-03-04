@@ -17,14 +17,16 @@ Final split model for Ae.solator delivery lanes.
     - `vkd3d-proton-arm64ec-latest`
     - `vulkan-sdk-arm64-latest`
     - `vulkan-sdk-x86_64-latest`
-    - `dgvoodoo-latest`
+    - `dgvoodoo-x86_64-latest`
+    - `dgvoodoo-arm64ec-latest`
 - `kosoymiki/wcp-graphics-lanes`
   - Graphics build/control repository.
   - Canonical release host for graphics ZIP lanes:
     - `aeturnip-arm64-latest`
     - `aeopengl-driver-arm64-latest`
   - Build owner for dgVoodoo archive lane:
-    - `dgvoodoo-latest` (`dgvoodoo.wcp` published to `wcp-runtime-lanes`)
+    - `dgvoodoo-x86_64-latest` (`dgvoodoo-x86_64.wcp` published to `wcp-runtime-lanes`)
+    - `dgvoodoo-arm64ec-latest` (`dgvoodoo-arm64ec.wcp` published to `wcp-runtime-lanes`)
 - `kosoymiki/winlator-wine-proton-arm64ec-wcp`
   - Legacy monorepo; archived migration history only.
   - Must not be used as active source-of-truth for release routing.

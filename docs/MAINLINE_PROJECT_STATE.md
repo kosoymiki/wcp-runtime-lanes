@@ -10,7 +10,8 @@ Snapshot date: 2026-03-04
   - `dxvk-gplasync*`
   - `vkd3d-proton*`
   - `vulkan-sdk-*`
-  - `dgvoodoo-latest`
+  - `dgvoodoo-x86_64-latest`
+  - `dgvoodoo-arm64ec-latest`
 
 ## Current Build Contract
 
