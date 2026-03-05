@@ -178,6 +178,7 @@ fetch_wine_sources() {
 
   run_native_forensics_scaffold wine "${WINE_SRC_DIR}"
   apply_freewine_source_hotfixes
+  validate_freewine_source_tree
 }
 
 apply_freewine_source_hotfixes() {
@@ -191,6 +192,21 @@ apply_freewine_source_hotfixes() {
     sed -i -E 's/InterlockedOr\(&dummy,[[:space:]]*0\);/InterlockedOr((long volatile *)\&dummy, 0);/' "${winnt_header}"
     log "Applied FreeWine hotfix: winnt.h MemoryBarrier InterlockedOr cast"
   fi
+}
+
+validate_freewine_source_tree() {
+  local marker_report
+  marker_report="$(mktemp)"
+  if grep -RInE '^(<<<<<<<|=======|>>>>>>>)' "${WINE_SRC_DIR}" \
+      --exclude-dir='.git' \
+      --exclude='*.patch' \
+      --exclude='*.diff' > "${marker_report}"; then
+    log "Detected unresolved merge markers in FreeWine source:"
+    sed -n '1,40p' "${marker_report}" >&2
+    rm -f "${marker_report}"
+    fail "FreeWine source tree contains unresolved merge markers"
+  fi
+  rm -f "${marker_report}"
 }
 
 build_wine() {
