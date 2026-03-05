@@ -177,6 +177,20 @@ fetch_wine_sources() {
   esac
 
   run_native_forensics_scaffold wine "${WINE_SRC_DIR}"
+  apply_freewine_source_hotfixes
+}
+
+apply_freewine_source_hotfixes() {
+  local winnt_header
+  winnt_header="${WINE_SRC_DIR}/include/winnt.h"
+  [[ -f "${winnt_header}" ]] || return 0
+
+  # Clang with stricter pointer checks rejects LONG* where volatile long* is expected.
+  # Keep this CI-side hotfix until it is folded into the canonical FreeWine tree.
+  if grep -q 'InterlockedOr(&dummy, 0);' "${winnt_header}" && grep -q 'LONG dummy;' "${winnt_header}"; then
+    sed -i -E 's/^([[:space:]]*)LONG dummy;$/\1LONG volatile dummy;/' "${winnt_header}"
+    log "Applied FreeWine hotfix: winnt.h MemoryBarrier volatile dummy"
+  fi
 }
 
 build_wine() {
