@@ -187,9 +187,9 @@ apply_freewine_source_hotfixes() {
 
   # Clang with stricter pointer checks rejects LONG* where volatile long* is expected.
   # Keep this CI-side hotfix until it is folded into the canonical FreeWine tree.
-  if grep -q 'InterlockedOr(&dummy, 0);' "${winnt_header}" && grep -q 'LONG dummy;' "${winnt_header}"; then
-    sed -i -E 's/^([[:space:]]*)LONG dummy;$/\1LONG volatile dummy;/' "${winnt_header}"
-    log "Applied FreeWine hotfix: winnt.h MemoryBarrier volatile dummy"
+  if grep -q 'InterlockedOr(&dummy, 0);' "${winnt_header}"; then
+    sed -i -E 's/InterlockedOr\(&dummy, 0\);/InterlockedOr((long volatile *)&dummy, 0);/' "${winnt_header}"
+    log "Applied FreeWine hotfix: winnt.h MemoryBarrier InterlockedOr cast"
   fi
 }
 
