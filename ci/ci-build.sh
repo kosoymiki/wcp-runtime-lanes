@@ -183,6 +183,7 @@ fetch_wine_sources() {
 
 apply_freewine_source_hotfixes() {
   local winnt_header
+  local ntdll_spec
   winnt_header="${WINE_SRC_DIR}/include/winnt.h"
   [[ -f "${winnt_header}" ]] || return 0
 
@@ -191,6 +192,15 @@ apply_freewine_source_hotfixes() {
   if grep -q 'InterlockedOr(&dummy, 0);' "${winnt_header}"; then
     sed -i -E 's/InterlockedOr\(&dummy,[[:space:]]*0\);/InterlockedOr((long volatile *)\&dummy, 0);/' "${winnt_header}"
     log "Applied FreeWine hotfix: winnt.h MemoryBarrier InterlockedOr cast"
+  fi
+
+  ntdll_spec="${WINE_SRC_DIR}/dlls/ntdll/ntdll.spec"
+  if [[ -f "${ntdll_spec}" ]] && grep -q -- '-syscall=0x' "${ntdll_spec}"; then
+    # Some FreeWine donor drops encode explicit syscall IDs in spec flags
+    # (-syscall=0xNNNN), while the winebuild used in this lane only accepts
+    # plain -syscall. Normalize for deterministic CI compatibility.
+    sed -i -E 's/-syscall=0x[0-9A-Fa-f]+/-syscall/g' "${ntdll_spec}"
+    log "Applied FreeWine hotfix: normalized ntdll syscall flags for winebuild compatibility"
   fi
 }
 
