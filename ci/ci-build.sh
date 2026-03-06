@@ -284,7 +284,9 @@ PY
     fi
   fi
 
-  if [[ -f "${ntdll_loader_c}" ]] && grep -q 'ALL_SYSCALL_STUBS' "${ntdll_loader_c}"; then
+  if [[ "${FREEWINE_ENABLE_LOADER_COMPAT_PATCH:-0}" == "1" ]] \
+      && [[ -f "${ntdll_loader_c}" ]] \
+      && grep -q 'ALL_SYSCALL_STUBS' "${ntdll_loader_c}"; then
     if ! grep -q 'FREEWINE_LOADER_SYSCALL_COMPAT' "${ntdll_loader_c}"; then
       python3 - <<'PY' "${ntdll_loader_c}"
 import pathlib
