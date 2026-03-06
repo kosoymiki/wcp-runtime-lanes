@@ -187,6 +187,7 @@ apply_freewine_source_hotfixes() {
   local ntdll_env_c
   local ntdll_file_c
   local ntdll_loader_c
+  local ntdll_process_c
   local server_protocol
   winnt_header="${WINE_SRC_DIR}/include/winnt.h"
   [[ -f "${winnt_header}" ]] || return 0
@@ -222,6 +223,7 @@ apply_freewine_source_hotfixes() {
 
   ntdll_file_c="${WINE_SRC_DIR}/dlls/ntdll/unix/file.c"
   ntdll_loader_c="${WINE_SRC_DIR}/dlls/ntdll/unix/loader.c"
+  ntdll_process_c="${WINE_SRC_DIR}/dlls/ntdll/unix/process.c"
   if [[ -f "${ntdll_file_c}" ]] && grep -q 'WineFileUnixNameInformation' "${ntdll_file_c}"; then
     if ! grep -Rqs 'WineFileUnixNameInformation' "${WINE_SRC_DIR}/include"; then
       # If info-class symbol is absent in headers, keep buildable behavior by
@@ -270,6 +272,64 @@ if anchor in text and "FREEWINE_LOADER_SYSCALL_COMPAT" not in text:
     path.write_text(text.replace(anchor, anchor + inject + "\n", 1), encoding="utf-8")
 PY
       log "Applied FreeWine hotfix: normalized ntdll loader syscall macro compatibility"
+    fi
+  fi
+
+  if [[ -f "${ntdll_process_c}" ]] && [[ -f "${server_protocol}" ]]; then
+    local needs_base_priority_compat=0
+    local needs_disable_boost_compat=0
+    local needs_get_next_process_compat=0
+
+    if ! grep -q 'base_priority' "${server_protocol}"; then
+      needs_base_priority_compat=1
+    fi
+    if ! grep -q 'disable_boost' "${server_protocol}"; then
+      needs_disable_boost_compat=1
+    fi
+    if ! grep -q 'REQ_get_next_process' "${server_protocol}"; then
+      needs_get_next_process_compat=1
+    fi
+
+    if [[ "${needs_base_priority_compat}" == "1" || "${needs_disable_boost_compat}" == "1" || "${needs_get_next_process_compat}" == "1" ]]; then
+      python3 - <<'PY' "${ntdll_process_c}" "${needs_base_priority_compat}" "${needs_disable_boost_compat}" "${needs_get_next_process_compat}"
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+needs_base = sys.argv[2] == "1"
+needs_boost = sys.argv[3] == "1"
+needs_next = sys.argv[4] == "1"
+text = path.read_text(encoding="utf-8")
+original = text
+
+if needs_base:
+    text = text.replace("pbi.BasePriority = reply->base_priority;", "pbi.BasePriority = reply->priority;")
+    text = text.replace("req->base_priority = *base_priority;", "req->priority = *base_priority;")
+    text = text.replace("SET_PROCESS_INFO_BASE_PRIORITY", "SET_PROCESS_INFO_PRIORITY")
+
+if needs_boost:
+    text = text.replace("*disable_boost = reply->disable_boost;",
+                        "*disable_boost = 0; /* disable_boost unsupported in this protocol */")
+    text = text.replace(
+        "                req->disable_boost = *disable_boost;\n"
+        "                req->mask          = SET_PROCESS_INFO_DISABLE_BOOST;\n"
+        "                ret = wine_server_call( req );",
+        "                (void)disable_boost;\n"
+        "                ret = STATUS_NOT_SUPPORTED;")
+
+if needs_next and "FREEWINE_PROCESS_GET_NEXT_COMPAT" not in text:
+    start = text.find("NTSTATUS WINAPI NtGetNextProcess(")
+    marker = "\n\n\n/**********************************************************************\n *           NtDebugActiveProcess"
+    end = text.find(marker, start)
+    if start != -1 and end != -1:
+        replacement = """NTSTATUS WINAPI NtGetNextProcess( HANDLE process, ACCESS_MASK access, ULONG attributes,\n                                  ULONG flags, HANDLE *handle )\n{\n    (void)process;\n    (void)access;\n    (void)attributes;\n    (void)flags;\n    *handle = 0;\n    /* FREEWINE_PROCESS_GET_NEXT_COMPAT: server protocol has no get_next_process request. */\n    return STATUS_NOT_SUPPORTED;\n}\n"""
+        text = text[:start] + replacement + text[end:]
+
+if text != original:
+    path.write_text(text, encoding="utf-8")
+PY
+      log "Applied FreeWine hotfix: normalized ntdll process/server protocol compatibility"
     fi
   fi
 }
