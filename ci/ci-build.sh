@@ -16,6 +16,9 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${WCP_FREEWINE_SOURCE_DIR:=/home/mikhail/wcp-sources/freewine11}"
 : "${WCP_FREEWINE_REPO:=}"
 : "${WCP_FREEWINE_REF:=freewine11-main}"
+: "${WCP_FREEWINE_MAKE_SPECFILES_COMPAT:=1}"
+: "${WCP_FREEWINE_MAKE_SPECFILES_URL:=https://raw.githubusercontent.com/AndreRH/wine/arm64ec/tools/make_specfiles}"
+: "${WCP_FREEWINE_MAKE_SPECFILES_LOCAL:=}"
 : "${HANGOVER_REPO:=https://github.com/AndreRH/hangover.git}"
 : "${LLVM_MINGW_TAG:=${LLVM_MINGW_VER:-20260210}}"
 : "${WCP_NAME:=freewine11-arm64ec}"
@@ -189,8 +192,28 @@ apply_freewine_source_hotfixes() {
   local ntdll_loader_c
   local ntdll_process_c
   local server_protocol
+  local make_specfiles
+  local compat_make_specfiles
   winnt_header="${WINE_SRC_DIR}/include/winnt.h"
   [[ -f "${winnt_header}" ]] || return 0
+
+  make_specfiles="${WINE_SRC_DIR}/tools/make_specfiles"
+  if [[ "${WCP_FREEWINE_MAKE_SPECFILES_COMPAT}" == "1" ]] && [[ -f "${make_specfiles}" ]]; then
+    mkdir -p "${CACHE_DIR}/compat"
+    compat_make_specfiles="${CACHE_DIR}/compat/make_specfiles.andre-arm64ec"
+    rm -f "${compat_make_specfiles}"
+    if [[ -n "${WCP_FREEWINE_MAKE_SPECFILES_LOCAL}" && -f "${WCP_FREEWINE_MAKE_SPECFILES_LOCAL}" ]]; then
+      cp -f "${WCP_FREEWINE_MAKE_SPECFILES_LOCAL}" "${compat_make_specfiles}"
+    elif [[ -n "${WCP_FREEWINE_MAKE_SPECFILES_URL}" ]]; then
+      curl -fsSL "${WCP_FREEWINE_MAKE_SPECFILES_URL}" -o "${compat_make_specfiles}" \
+        || fail "Unable to fetch compatible tools/make_specfiles from ${WCP_FREEWINE_MAKE_SPECFILES_URL}"
+    fi
+
+    if [[ -f "${compat_make_specfiles}" ]] && ! cmp -s "${compat_make_specfiles}" "${make_specfiles}"; then
+      install -m 0755 "${compat_make_specfiles}" "${make_specfiles}"
+      log "Applied FreeWine hotfix: replaced tools/make_specfiles with arm64ec-compatible generator"
+    fi
+  fi
 
   # Clang with stricter pointer checks rejects LONG* where volatile long* is expected.
   # Keep this CI-side hotfix until it is folded into the canonical FreeWine tree.
