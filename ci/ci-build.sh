@@ -186,6 +186,7 @@ apply_freewine_source_hotfixes() {
   local ntdll_spec
   local ntdll_env_c
   local ntdll_file_c
+  local ntdll_loader_c
   local server_protocol
   winnt_header="${WINE_SRC_DIR}/include/winnt.h"
   [[ -f "${winnt_header}" ]] || return 0
@@ -220,6 +221,7 @@ apply_freewine_source_hotfixes() {
   fi
 
   ntdll_file_c="${WINE_SRC_DIR}/dlls/ntdll/unix/file.c"
+  ntdll_loader_c="${WINE_SRC_DIR}/dlls/ntdll/unix/loader.c"
   if [[ -f "${ntdll_file_c}" ]] && grep -q 'WineFileUnixNameInformation' "${ntdll_file_c}"; then
     if ! grep -Rqs 'WineFileUnixNameInformation' "${WINE_SRC_DIR}/include"; then
       # If info-class symbol is absent in headers, keep buildable behavior by
@@ -236,6 +238,39 @@ apply_freewine_source_hotfixes() {
       # caller code that expects reply->cancel_handle.
       sed -i -E 's/cancel_handle = wine_server_ptr_handle\( reply->cancel_handle \);/cancel_handle = 0; \/\* cancel_async reply has no cancel_handle in this protocol \*\//g' "${ntdll_file_c}"
       log "Applied FreeWine hotfix: normalized cancel_async reply handling"
+    fi
+  fi
+
+  if [[ -f "${ntdll_loader_c}" ]] && grep -q 'ALL_SYSCALL_STUBS' "${ntdll_loader_c}"; then
+    if ! grep -q 'FREEWINE_LOADER_SYSCALL_COMPAT' "${ntdll_loader_c}"; then
+      python3 - <<'PY' "${ntdll_loader_c}"
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+anchor = "#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }\n"
+inject = """
+#ifndef ALL_SYSCALLS
+# ifdef ALL_SYSCALLS64
+#  define ALL_SYSCALLS ALL_SYSCALLS64
+# elif defined(ALL_SYSCALLS32)
+#  define ALL_SYSCALLS ALL_SYSCALLS32
+# endif
+#endif
+#ifndef ALL_SYSCALL_STUBS
+# define FREEWINE_LOADER_SYSCALL_COMPAT 1
+# define SYSCALL_ENTRY(id,name,args) SYSCALL_STUB(name)
+ALL_SYSCALLS
+# undef SYSCALL_ENTRY
+# define ALL_SYSCALL_STUBS
+#endif
+"""
+
+if anchor in text and "FREEWINE_LOADER_SYSCALL_COMPAT" not in text:
+    path.write_text(text.replace(anchor, anchor + inject + "\n", 1), encoding="utf-8")
+PY
+      log "Applied FreeWine hotfix: normalized ntdll loader syscall macro compatibility"
     fi
   fi
 }
