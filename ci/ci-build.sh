@@ -280,7 +280,7 @@ PY
     local needs_disable_boost_compat=0
     local needs_get_next_process_compat=0
 
-    if ! grep -q 'base_priority' "${server_protocol}"; then
+    if ! grep -q 'SET_PROCESS_INFO_BASE_PRIORITY' "${server_protocol}"; then
       needs_base_priority_compat=1
     fi
     if ! grep -q 'disable_boost' "${server_protocol}"; then
