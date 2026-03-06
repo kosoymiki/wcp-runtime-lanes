@@ -305,6 +305,7 @@ path = pathlib.Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 anchor = "#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }\n"
 inject = """
+#define SYSCALL_STUB_COMPAT(sym,label) static void sym(void) { stub_syscall( label ); }
 #ifndef ALL_SYSCALLS
 # ifdef ALL_SYSCALLS64
 #  define ALL_SYSCALLS ALL_SYSCALLS64
@@ -324,7 +325,7 @@ if anchor in updated and "FREEWINE_LOADER_SYSCALL_COMPAT" not in updated:
 # In mixed donor trees ALL_SYSCALL_STUBS may lag behind ALL_SYSCALLS.
 # Build a deterministic local stub table directly from ALL_SYSCALLS.
 compat_stub_block = """#if defined(FREEWINE_LOADER_SYSCALL_COMPAT)
-#define SYSCALL_ENTRY(id,name,args) SYSCALL_STUB(name)
+#define SYSCALL_ENTRY(id,name,args) SYSCALL_STUB_COMPAT(sys_stub_##name, #name)
 ALL_SYSCALLS
 #undef SYSCALL_ENTRY
 #else
@@ -333,6 +334,20 @@ ALL_SYSCALL_STUBS
 updated = re.sub(
     r"(?m)^ALL_SYSCALL_STUBS$",
     compat_stub_block,
+    updated,
+    count=1,
+)
+
+# Point syscall table entries at compat-generated symbols when enabled, so
+# missing upstream syscall entrypoints don't break mixed donor trees.
+compat_syscall_entry_block = """#if defined(FREEWINE_LOADER_SYSCALL_COMPAT)
+#define SYSCALL_ENTRY(id,name,args) sys_stub_##name,
+#else
+#define SYSCALL_ENTRY(id,name,args) name,
+#endif"""
+updated = re.sub(
+    r"(?m)^#define SYSCALL_ENTRY\(id,name,args\)\s+name,$",
+    compat_syscall_entry_block,
     updated,
     count=1,
 )

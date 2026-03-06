@@ -101,7 +101,7 @@ env:
   WCP_FREEWINE_REPO_INPUT: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
   WCP_GN_PATCHSET_ENABLE: "0"
-  FREEWINE_ENABLE_LOADER_COMPAT_PATCH: "0"
+  FREEWINE_ENABLE_LOADER_COMPAT_PATCH: "1"
   WCP_FREEWINE_PREFIXPACK_AUTOBUILD: "1"
   WINE_TOOLS_CONFIGURE_EXTRA_ARGS: --without-x --without-gstreamer --without-wayland
   WINE_CONFIGURE_PROFILE: proton-android-minimal
