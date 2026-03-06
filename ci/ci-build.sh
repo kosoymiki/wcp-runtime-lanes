@@ -281,6 +281,14 @@ PY
     fi
   fi
 
+  if [[ -f "${ntdll_loader_c}" ]] && grep -q 'static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]' "${ntdll_loader_c}"; then
+    # Mixed donor syscall generators can emit a slightly longer args table than
+    # the resolved syscall symbol table. Relax fixed-size declaration to avoid
+    # hard build failures while preserving runtime service count from syscalls[].
+    sed -i -E 's/static BYTE syscall_args\[ARRAY_SIZE\(syscalls\)\]/static BYTE syscall_args[]/' "${ntdll_loader_c}"
+    log "Applied FreeWine hotfix: relaxed ntdll loader syscall_args declaration sizing"
+  fi
+
   if [[ -f "${ntdll_process_c}" ]] && [[ -f "${server_protocol}" ]]; then
     local needs_base_priority_compat=0
     local needs_disable_boost_compat=0
