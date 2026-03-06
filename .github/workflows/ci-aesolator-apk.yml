@@ -7,6 +7,8 @@ on:
       - ".github/workflows/ci-aesolator-apk.yml"
       - "README.md"
       - "docs/**"
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
     inputs:
       aesolator_ref:
