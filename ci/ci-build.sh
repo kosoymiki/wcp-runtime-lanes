@@ -92,6 +92,8 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${WCP_BIONIC_UNIX_CORE_ADOPT:=0}"
 : "${WCP_GN_PATCHSET_ENABLE:=0}"
 : "${WCP_FREEWINE_PREFIXPACK_AUTOBUILD:=1}"
+: "${WCP_FREEWINE_NTDLL_UNIX_COMPAT_SYNC:=1}"
+: "${WCP_FREEWINE_NTDLL_UNIX_COMPAT_BASE_URL:=https://raw.githubusercontent.com/AndreRH/wine/arm64ec/dlls/ntdll/unix}"
 : "${WINE_TOOLS_CONFIGURE_EXTRA_ARGS:=--without-x --without-gstreamer --without-wayland}"
 : "${WINE_CONFIGURE_PROFILE:=proton-android-minimal}"
 
@@ -192,6 +194,8 @@ apply_freewine_source_hotfixes() {
   local ntdll_loader_c
   local ntdll_process_c
   local ntdll_security_c
+  local ntdll_signal_x86_64_c
+  local ntdll_server_c
   local server_protocol
   local make_specfiles
   local compat_make_specfiles
@@ -267,6 +271,8 @@ PY
   ntdll_loader_c="${WINE_SRC_DIR}/dlls/ntdll/unix/loader.c"
   ntdll_process_c="${WINE_SRC_DIR}/dlls/ntdll/unix/process.c"
   ntdll_security_c="${WINE_SRC_DIR}/dlls/ntdll/unix/security.c"
+  ntdll_signal_x86_64_c="${WINE_SRC_DIR}/dlls/ntdll/unix/signal_x86_64.c"
+  ntdll_server_c="${WINE_SRC_DIR}/dlls/ntdll/unix/server.c"
   if [[ -f "${ntdll_loader_c}" ]] && grep -q 'static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]' "${ntdll_loader_c}"; then
     # Mixed donor trees can desync syscall table macros, which breaks
     # fixed-size syscall_args generation. Keep args table unsized to let
