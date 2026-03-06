@@ -13,6 +13,10 @@ on:
         description: "Git ref in Aesolator repository"
         required: false
         default: "main"
+      aesolator_commit:
+        description: "Exact commit SHA in Aesolator repository (optional)"
+        required: false
+        default: ""
       aesolator_repo:
         description: "Aesolator git URL (optional; fallback to secret AESOLATOR_REPO_URL)"
         required: false
@@ -38,6 +42,7 @@ env:
   APP_RELEASE_TITLE: Aesolator Latest
   AESOLATOR_REPO_INPUT: ${{ github.event.inputs.aesolator_repo || secrets.AESOLATOR_REPO_URL || 'https://github.com/kosoymiki/aesolator.git' }}
   AESOLATOR_REF: ${{ github.event.inputs.aesolator_ref || 'main' }}
+  AESOLATOR_COMMIT: ${{ github.event.inputs.aesolator_commit || '' }}
   RUNTIME_RELEASE_REPO: kosoymiki/wcp-runtime-lanes
   GRAPHICS_RELEASE_REPO: kosoymiki/wcp-graphics-lanes
   RUNTIME_RELEASE_TAG: ${{ github.event.inputs.runtime_release_tag || 'freewine11-arm64ec-latest' }}
@@ -76,6 +81,10 @@ jobs:
           set -euxo pipefail
           rm -rf "${GITHUB_WORKSPACE}/aesolator-src"
           git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO}" "${GITHUB_WORKSPACE}/aesolator-src"
+          if [[ -n "${AESOLATOR_COMMIT}" ]]; then
+            git -C "${GITHUB_WORKSPACE}/aesolator-src" fetch --depth 1 origin "${AESOLATOR_COMMIT}"
+            git -C "${GITHUB_WORKSPACE}/aesolator-src" checkout -f "${AESOLATOR_COMMIT}"
+          fi
           test -f "${GITHUB_WORKSPACE}/aesolator-src/ci/winlator/ci-build-winlator-ludashi.sh"
 
       - name: Set up Java 17
