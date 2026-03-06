@@ -197,7 +197,9 @@ apply_freewine_source_hotfixes() {
 validate_freewine_source_tree() {
   local marker_report
   marker_report="$(mktemp)"
-  if grep -RInE '^(<<<<<<<|=======|>>>>>>>)' "${WINE_SRC_DIR}" \
+  # Match only real git conflict markers. Do not flag decorative separators
+  # from LICENSE/CREDITS files that start with long "======" lines.
+  if grep -RInE '^(<<<<<<< .+|=======|>>>>>>> .+|\|\|\|\|\|\| .+)$' "${WINE_SRC_DIR}" \
       --exclude-dir='.git' \
       --exclude='*.patch' \
       --exclude='*.diff' > "${marker_report}"; then
