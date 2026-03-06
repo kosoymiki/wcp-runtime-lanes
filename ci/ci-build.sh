@@ -247,6 +247,7 @@ apply_freewine_source_hotfixes() {
     if ! grep -q 'FREEWINE_LOADER_SYSCALL_COMPAT' "${ntdll_loader_c}"; then
       python3 - <<'PY' "${ntdll_loader_c}"
 import pathlib
+import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
@@ -254,10 +255,10 @@ text = path.read_text(encoding="utf-8")
 anchor = "#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }\n"
 inject = """
 #ifndef ALL_SYSCALLS
-# ifdef ALL_SYSCALLS32
-#  define ALL_SYSCALLS ALL_SYSCALLS32
-# elif defined(ALL_SYSCALLS64)
+# ifdef ALL_SYSCALLS64
 #  define ALL_SYSCALLS ALL_SYSCALLS64
+# elif defined(ALL_SYSCALLS32)
+#  define ALL_SYSCALLS ALL_SYSCALLS32
 # else
 #  define ALL_SYSCALLS
 # endif
@@ -274,19 +275,25 @@ inject = """
 #endif
 """
 
-if anchor in text and "FREEWINE_LOADER_SYSCALL_COMPAT" not in text:
-    path.write_text(text.replace(anchor, anchor + inject + "\n", 1), encoding="utf-8")
+updated = text
+if anchor in updated and "FREEWINE_LOADER_SYSCALL_COMPAT" not in updated:
+    updated = updated.replace(anchor, anchor + inject + "\n", 1)
+
+# Mixed donor syscall generators may produce mismatched counts between
+# resolved syscall symbol table and emitted args list. Keep args array
+# unsized so build stays deterministic under CI normalization.
+updated = re.sub(
+    r"static\s+BYTE\s+syscall_args\s*\[\s*ARRAY_SIZE\s*\(\s*syscalls\s*\)\s*\]",
+    "static BYTE syscall_args[]",
+    updated,
+    count=1,
+)
+
+if updated != text:
+    path.write_text(updated, encoding="utf-8")
 PY
       log "Applied FreeWine hotfix: normalized ntdll loader syscall macro compatibility"
     fi
-  fi
-
-  if [[ -f "${ntdll_loader_c}" ]] && grep -q 'static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]' "${ntdll_loader_c}"; then
-    # Mixed donor syscall generators can emit a slightly longer args table than
-    # the resolved syscall symbol table. Relax fixed-size declaration to avoid
-    # hard build failures while preserving runtime service count from syscalls[].
-    sed -i -E 's/static BYTE syscall_args\[ARRAY_SIZE\(syscalls\)\]/static BYTE syscall_args[]/' "${ntdll_loader_c}"
-    log "Applied FreeWine hotfix: relaxed ntdll loader syscall_args declaration sizing"
   fi
 
   if [[ -f "${ntdll_process_c}" ]] && [[ -f "${server_protocol}" ]]; then
