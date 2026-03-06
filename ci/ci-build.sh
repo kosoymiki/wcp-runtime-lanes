@@ -184,6 +184,9 @@ fetch_wine_sources() {
 apply_freewine_source_hotfixes() {
   local winnt_header
   local ntdll_spec
+  local ntdll_env_c
+  local ntdll_file_c
+  local server_protocol
   winnt_header="${WINE_SRC_DIR}/include/winnt.h"
   [[ -f "${winnt_header}" ]] || return 0
 
@@ -201,6 +204,39 @@ apply_freewine_source_hotfixes() {
     # plain -syscall. Normalize for deterministic CI compatibility.
     sed -i -E 's/-syscall=0x[0-9A-Fa-f]+/-syscall/g' "${ntdll_spec}"
     log "Applied FreeWine hotfix: normalized ntdll syscall flags for winebuild compatibility"
+  fi
+
+  ntdll_env_c="${WINE_SRC_DIR}/dlls/ntdll/unix/env.c"
+  if [[ -f "${ntdll_env_c}" ]] && grep -q 'const WCHAR \*ntdll_get_build_dir(void)' "${ntdll_env_c}"; then
+    # Some mixed donor trees expose WCHAR-returning ntdll_get_* declarations,
+    # while unixlib.h + win32u consumers require const char *.
+    sed -i -E \
+      -e 's/^const WCHAR \*ntdll_get_build_dir\(void\)$/const char *ntdll_get_build_dir(void)/' \
+      -e 's/^const WCHAR \*ntdll_get_data_dir\(void\)$/const char *ntdll_get_data_dir(void)/' \
+      -e 's/return nt_build_dir;/return build_dir;/' \
+      -e 's/return nt_data_dir;/return data_dir;/' \
+      "${ntdll_env_c}"
+    log "Applied FreeWine hotfix: normalized ntdll_get_build_dir/data_dir ABI to const char *"
+  fi
+
+  ntdll_file_c="${WINE_SRC_DIR}/dlls/ntdll/unix/file.c"
+  if [[ -f "${ntdll_file_c}" ]] && grep -q 'WineFileUnixNameInformation' "${ntdll_file_c}"; then
+    if ! grep -Rqs 'WineFileUnixNameInformation' "${WINE_SRC_DIR}/include"; then
+      # If info-class symbol is absent in headers, keep buildable behavior by
+      # disabling this legacy donor-only branch.
+      sed -i -E 's/if \(class == WineFileUnixNameInformation\)/if (0 \/\* WineFileUnixNameInformation unavailable \*\/)/' "${ntdll_file_c}"
+      log "Applied FreeWine hotfix: gated legacy WineFileUnixNameInformation branch"
+    fi
+  fi
+
+  server_protocol="${WINE_SRC_DIR}/include/wine/server_protocol.h"
+  if [[ -f "${ntdll_file_c}" ]] && grep -q 'reply->cancel_handle' "${ntdll_file_c}"; then
+    if [[ -f "${server_protocol}" ]] && ! grep -q 'cancel_handle' "${server_protocol}"; then
+      # Newer protocol variant has empty cancel_async_reply; normalize legacy
+      # caller code that expects reply->cancel_handle.
+      sed -i -E 's/cancel_handle = wine_server_ptr_handle\( reply->cancel_handle \);/cancel_handle = 0; \/\* cancel_async reply has no cancel_handle in this protocol \*\//g' "${ntdll_file_c}"
+      log "Applied FreeWine hotfix: normalized cancel_async reply handling"
+    fi
   fi
 }
 
