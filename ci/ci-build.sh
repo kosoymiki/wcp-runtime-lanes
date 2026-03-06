@@ -295,6 +295,26 @@ path = pathlib.Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 anchor = "#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }\n"
 inject = """
+#ifndef ALL_SYSCALL_STUBS
+# ifdef ALL_SYSCALL_STUBS32
+#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS32
+#  ifndef ALL_SYSCALLS
+#   ifdef ALL_SYSCALLS32
+#    define ALL_SYSCALLS ALL_SYSCALLS32
+#   endif
+#  endif
+# elif defined(ALL_SYSCALL_STUBS64)
+#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS64
+#  ifndef ALL_SYSCALLS
+#   ifdef ALL_SYSCALLS64
+#    define ALL_SYSCALLS ALL_SYSCALLS64
+#   endif
+#  endif
+# else
+#  define FREEWINE_LOADER_SYSCALL_COMPAT 1
+#  define ALL_SYSCALL_STUBS
+# endif
+#endif
 #ifndef ALL_SYSCALLS
 # ifdef ALL_SYSCALLS64
 #  define ALL_SYSCALLS ALL_SYSCALLS64
@@ -302,16 +322,6 @@ inject = """
 #  define ALL_SYSCALLS ALL_SYSCALLS32
 # else
 #  define ALL_SYSCALLS
-# endif
-#endif
-#ifndef ALL_SYSCALL_STUBS
-# ifdef ALL_SYSCALL_STUBS32
-#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS32
-# elif defined(ALL_SYSCALL_STUBS64)
-#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS64
-# else
-#  define FREEWINE_LOADER_SYSCALL_COMPAT 1
-#  define ALL_SYSCALL_STUBS
 # endif
 #endif
 """
