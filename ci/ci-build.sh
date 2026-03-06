@@ -265,6 +265,14 @@ PY
   ntdll_file_c="${WINE_SRC_DIR}/dlls/ntdll/unix/file.c"
   ntdll_loader_c="${WINE_SRC_DIR}/dlls/ntdll/unix/loader.c"
   ntdll_process_c="${WINE_SRC_DIR}/dlls/ntdll/unix/process.c"
+  if [[ -f "${ntdll_loader_c}" ]] && grep -q 'static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]' "${ntdll_loader_c}"; then
+    # Mixed donor trees can desync syscall table macros, which breaks
+    # fixed-size syscall_args generation. Keep args table unsized to let
+    # the compiler derive the exact initializer length.
+    sed -i 's/static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]/static BYTE syscall_args[]/' "${ntdll_loader_c}"
+    log "Applied FreeWine hotfix: normalized ntdll loader syscall_args sizing"
+  fi
+
   if [[ -f "${ntdll_file_c}" ]] && grep -q 'WineFileUnixNameInformation' "${ntdll_file_c}"; then
     if ! grep -Rqs 'WineFileUnixNameInformation' "${WINE_SRC_DIR}/include"; then
       # If info-class symbol is absent in headers, keep buildable behavior by
