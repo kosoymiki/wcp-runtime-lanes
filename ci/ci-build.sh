@@ -213,6 +213,26 @@ apply_freewine_source_hotfixes() {
       install -m 0755 "${compat_make_specfiles}" "${make_specfiles}"
       log "Applied FreeWine hotfix: replaced tools/make_specfiles with arm64ec-compatible generator"
     fi
+
+    if [[ -f "${make_specfiles}" ]]; then
+      python3 - <<'PY' "${make_specfiles}"
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+updated = re.sub(
+    r'(\n\s*)open SPEC, "<\$file" or die "cannot open \$file";',
+    r"\1return unless -f $file;\1open SPEC, \"<$file\" or die \"cannot open $file\";",
+    text,
+    count=2,
+)
+if updated != text:
+    path.write_text(updated, encoding="utf-8")
+PY
+      log "Applied FreeWine hotfix: make_specfiles now skips missing donor spec files"
+    fi
   fi
 
   # Clang with stricter pointer checks rejects LONG* where volatile long* is expected.
