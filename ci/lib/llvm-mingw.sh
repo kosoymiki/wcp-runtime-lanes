@@ -24,12 +24,19 @@ download_release_asset() {
   local output_file="$4"
   local api_url
   local asset_url
+  local github_token
+  local -a curl_headers
 
   api_url="https://api.github.com/repos/${repo}/releases/tags/${tag}"
   llvm_log "Resolving asset from ${repo}@${tag} (${regex})"
+  github_token="${AEO_RELEASE_TOKEN:-${GITHUB_TOKEN:-${GH_TOKEN:-}}}"
+  curl_headers=(-H "Accept: application/vnd.github+json")
+  if [[ -n "${github_token}" ]]; then
+    curl_headers+=(-H "Authorization: Bearer ${github_token}")
+  fi
 
   asset_url="$({
-    curl -fsSL "${api_url}" | python3 -c '
+    curl -fsSL "${curl_headers[@]}" "${api_url}" | python3 -c '
 import json, re, sys
 pattern = re.compile(sys.argv[1])
 release = json.load(sys.stdin)
@@ -42,7 +49,7 @@ raise SystemExit("no matching release asset")
 ' "${regex}"
   })" || llvm_fail "Unable to resolve release asset URL for ${repo}@${tag}"
 
-  curl -fL --retry 5 --retry-delay 2 -o "${output_file}" "${asset_url}" \
+  curl -fL --retry 5 --retry-delay 2 "${curl_headers[@]}" -o "${output_file}" "${asset_url}" \
     || llvm_fail "Failed downloading ${asset_url}"
 }
 
