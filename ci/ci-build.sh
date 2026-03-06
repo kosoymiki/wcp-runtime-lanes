@@ -217,16 +217,14 @@ apply_freewine_source_hotfixes() {
     if [[ -f "${make_specfiles}" ]]; then
       python3 - <<'PY' "${make_specfiles}"
 import pathlib
-import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-updated = re.sub(
-    r'(\n\s*)open SPEC, "<\$file" or die "cannot open \$file";',
-    r"\1return unless -f $file;\1open SPEC, \"<$file\" or die \"cannot open $file\";",
-    text,
-    count=2,
+updated = text.replace(
+    'open SPEC, "<$file" or die "cannot open $file";',
+    'return unless -f $file;\\n    open SPEC, "<$file" or die "cannot open $file";',
+    2,
 )
 if updated != text:
     path.write_text(updated, encoding="utf-8")
