@@ -84,7 +84,13 @@ jobs:
           rm -rf "${GITHUB_WORKSPACE}/aesolator-src"
           git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO}" "${GITHUB_WORKSPACE}/aesolator-src"
           if [[ -n "${AESOLATOR_COMMIT}" ]]; then
-            git -C "${GITHUB_WORKSPACE}/aesolator-src" fetch --depth 1 origin "${AESOLATOR_COMMIT}"
+            if ! git -C "${GITHUB_WORKSPACE}/aesolator-src" rev-parse --verify "${AESOLATOR_COMMIT}^{commit}" >/dev/null 2>&1; then
+              # Do not fetch by raw SHA (not always advertised by GitHub); deepen by branch ref.
+              git -C "${GITHUB_WORKSPACE}/aesolator-src" fetch --no-tags --deepen=200 origin "${AESOLATOR_REF}"
+            fi
+            if ! git -C "${GITHUB_WORKSPACE}/aesolator-src" rev-parse --verify "${AESOLATOR_COMMIT}^{commit}" >/dev/null 2>&1; then
+              git -C "${GITHUB_WORKSPACE}/aesolator-src" fetch --no-tags --unshallow origin "${AESOLATOR_REF}"
+            fi
             git -C "${GITHUB_WORKSPACE}/aesolator-src" checkout -f "${AESOLATOR_COMMIT}"
           fi
           test -f "${GITHUB_WORKSPACE}/aesolator-src/ci/winlator/ci-build-winlator-ludashi.sh"
