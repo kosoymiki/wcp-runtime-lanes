@@ -254,17 +254,23 @@ text = path.read_text(encoding="utf-8")
 anchor = "#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }\n"
 inject = """
 #ifndef ALL_SYSCALLS
-# ifdef ALL_SYSCALLS64
-#  define ALL_SYSCALLS ALL_SYSCALLS64
-# elif defined(ALL_SYSCALLS32)
+# ifdef ALL_SYSCALLS32
 #  define ALL_SYSCALLS ALL_SYSCALLS32
+# elif defined(ALL_SYSCALLS64)
+#  define ALL_SYSCALLS ALL_SYSCALLS64
 # else
 #  define ALL_SYSCALLS
 # endif
 #endif
 #ifndef ALL_SYSCALL_STUBS
-# define FREEWINE_LOADER_SYSCALL_COMPAT 1
-# define ALL_SYSCALL_STUBS
+# ifdef ALL_SYSCALL_STUBS32
+#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS32
+# elif defined(ALL_SYSCALL_STUBS64)
+#  define ALL_SYSCALL_STUBS ALL_SYSCALL_STUBS64
+# else
+#  define FREEWINE_LOADER_SYSCALL_COMPAT 1
+#  define ALL_SYSCALL_STUBS
+# endif
 #endif
 """
 
