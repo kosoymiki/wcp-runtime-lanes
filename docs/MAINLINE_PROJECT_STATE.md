@@ -5,6 +5,7 @@ Snapshot date: 2026-03-04
 ## Scope
 
 - This repo is the canonical **WCP Archive** host.
+- Native APK lane built here: `aesolator-latest`.
 - Native runtime lane built here: `freewine11-arm64ec-latest`.
 - Additional WCP lanes hosted here from split graphics CI:
   - `dxvk-gplasync*`
@@ -23,6 +24,7 @@ Snapshot date: 2026-03-04
 
 ## CI Status
 
+- Workflow: `.github/workflows/ci-aesolator-apk.yml`.
 - Workflow: `.github/workflows/ci-arm64ec-wine.yml`.
 - Source access is now resolved in a dedicated step (`Resolve FreeWine clone URL`)
   with explicit preflight (`git ls-remote`) and actionable error output.
@@ -32,9 +34,11 @@ Snapshot date: 2026-03-04
 ## Required Secrets
 
 - `AEO_RELEASE_TOKEN` (required for production CI):
+  - read: `kosoymiki/aesolator`
   - read: `kosoymiki/freewine11`
   - write: `kosoymiki/wcp-runtime-lanes` releases
 - Optional:
+  - `AESOLATOR_REPO_URL`
   - `FREEWINE11_REPO_URL`
   - `AEOLATOR_PREFIX_PACK_URL`
 

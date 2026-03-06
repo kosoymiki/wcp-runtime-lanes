@@ -1,0 +1,217 @@
+name: Build Aesolator APK (WCP Archive lane)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/ci-aesolator-apk.yml"
+      - "README.md"
+      - "docs/**"
+  workflow_dispatch:
+    inputs:
+      aesolator_ref:
+        description: "Git ref in Aesolator repository"
+        required: false
+        default: "main"
+      aesolator_repo:
+        description: "Aesolator git URL (optional; fallback to secret AESOLATOR_REPO_URL)"
+        required: false
+        default: ""
+      runtime_release_tag:
+        description: "Runtime release tag consumed by app defaults"
+        required: false
+        default: "freewine11-arm64ec-latest"
+
+concurrency:
+  group: wcp-aesolator-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  AEO_UPLOAD_ARTIFACTS: "0"
+  WINLATOR_OUTPUT_DIR: ${{ github.workspace }}/out/aesolator
+  APP_RELEASE_OWNER: kosoymiki
+  APP_RELEASE_REPO: wcp-runtime-lanes
+  APP_RELEASE_TAG: aesolator-latest
+  APP_RELEASE_TITLE: Aesolator Latest
+  AESOLATOR_REPO_INPUT: ${{ github.event.inputs.aesolator_repo || secrets.AESOLATOR_REPO_URL || 'https://github.com/kosoymiki/aesolator.git' }}
+  AESOLATOR_REF: ${{ github.event.inputs.aesolator_ref || 'main' }}
+  RUNTIME_RELEASE_REPO: kosoymiki/wcp-runtime-lanes
+  GRAPHICS_RELEASE_REPO: kosoymiki/wcp-graphics-lanes
+  RUNTIME_RELEASE_TAG: ${{ github.event.inputs.runtime_release_tag || 'freewine11-arm64ec-latest' }}
+  PREFIX_PACK_URL: ${{ secrets.AEOLATOR_PREFIX_PACK_URL || 'https://raw.githubusercontent.com/GameNative/bionic-prefix-files/main/prefixPack-arm64ec.txz' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout WCP Archive
+        uses: actions/checkout@v4
+
+      - name: Resolve Aesolator clone URL
+        env:
+          AEO_RELEASE_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          input_repo="${AESOLATOR_REPO_INPUT}"
+          if [[ -z "${input_repo}" ]]; then
+            input_repo="https://github.com/kosoymiki/aesolator.git"
+          fi
+
+          resolved_repo="${input_repo}"
+          if [[ "${resolved_repo}" =~ ^https://github\.com/[^/]+/[^/]+(\.git)?$ ]] && [[ "${resolved_repo}" != *"x-access-token:"* ]]; then
+            if [[ -n "${AEO_RELEASE_TOKEN:-}" ]]; then
+              resolved_repo="$(printf '%s' "${resolved_repo}" | sed "s#https://github.com/#https://x-access-token:${AEO_RELEASE_TOKEN}@github.com/#")"
+            fi
+          fi
+
+          echo "AESOLATOR_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
+
+      - name: Clone Aesolator source
+        run: |
+          set -euxo pipefail
+          rm -rf "${GITHUB_WORKSPACE}/aesolator-src"
+          git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO}" "${GITHUB_WORKSPACE}/aesolator-src"
+          test -f "${GITHUB_WORKSPACE}/aesolator-src/ci/winlator/ci-build-winlator-ludashi.sh"
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          set -euxo pipefail
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;35.0.0" \
+            "ndk;29.0.14206865" \
+            "cmake;3.22.1"
+
+      - name: Install host build deps
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bash curl git git-lfs python3 tar xz-utils zstd unzip zip rsync file
+
+      - name: Build Aesolator APK from native source tree
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WINLATOR_SRC_DIR: ${{ github.workspace }}/aesolator-src
+          WINLATOR_OUTPUT_DIR: ${{ github.workspace }}/out/aesolator
+          WINLATOR_ANALYSIS_REPORT: ${{ github.workspace }}/out/aesolator/WINLATOR_LUDASHI_REFLECTIVE_ANALYSIS.md
+        run: |
+          set -euxo pipefail
+          bash "${GITHUB_WORKSPACE}/aesolator-src/ci/winlator/ci-build-winlator-ludashi.sh"
+
+      - name: Upload Aesolator artifacts
+        if: env.AEO_UPLOAD_ARTIFACTS == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aesolator-apk
+          path: |
+            out/aesolator/*.apk
+            out/aesolator/SHA256SUMS
+            out/aesolator/logs/**
+            out/aesolator/WINLATOR_LUDASHI_REFLECTIVE_ANALYSIS.md
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Prepare release notes
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euxo pipefail
+          test -f out/aesolator/logs/native-source-metadata.txt
+          source_commit="$(grep '^source_commit=' out/aesolator/logs/native-source-metadata.txt | head -n1 | cut -d= -f2-)"
+          source_branch="$(grep '^source_branch=' out/aesolator/logs/native-source-metadata.txt | head -n1 | cut -d= -f2-)"
+          cp out/aesolator/SHA256SUMS out/aesolator/SHA256SUMS-aesolator.txt
+          cat > RELEASE_NOTES.md <<EOF_NOTES
+          Aesolator APK (WCP Archive lane)
+
+          RU:
+          - APK собирается из native source tree репозитория Aesolator
+          - Лейн релизов APK перенесён в wcp-runtime-lanes
+          - Runtime source tag: ${RUNTIME_RELEASE_TAG}
+          - Source branch: ${source_branch}
+          - Source commit: ${source_commit}
+
+          EN:
+          - APK is built from native Aesolator source tree
+          - APK release lane is hosted in wcp-runtime-lanes
+          - Runtime source tag: ${RUNTIME_RELEASE_TAG}
+          - Source branch: ${source_branch}
+          - Source commit: ${source_commit}
+
+          Workflow commit: ${{ github.sha }}
+          Workflow run: ${{ github.run_id }}
+          EOF_NOTES
+
+      - name: Publish to GitHub Release
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          REPO="${APP_RELEASE_OWNER}/${APP_RELEASE_REPO}"
+          TAG="${APP_RELEASE_TAG}"
+          TITLE="${APP_RELEASE_TITLE}"
+
+          mapfile -t apk_assets < <(find out/aesolator -maxdepth 1 -type f -name '*.apk' -print | sort)
+          if [[ "${#apk_assets[@]}" -eq 0 ]]; then
+            echo "::error::No APK assets found in out/aesolator"
+            exit 1
+          fi
+
+          ASSETS=(
+            "${apk_assets[@]}"
+            "out/aesolator/SHA256SUMS-aesolator.txt"
+            "out/aesolator/WINLATOR_LUDASHI_REFLECTIVE_ANALYSIS.md"
+          )
+
+          for asset in "${ASSETS[@]}"; do
+            if [[ ! -f "${asset}" ]]; then
+              echo "::error::Missing release asset: ${asset}"
+              exit 1
+            fi
+          done
+
+          publish_once() {
+            if ! gh release view "${TAG}" --repo "${REPO}" >/dev/null 2>&1; then
+              gh release create "${TAG}" \
+                --repo "${REPO}" \
+                --title "${TITLE}" \
+                --notes-file RELEASE_NOTES.md \
+                --prerelease
+            else
+              mapfile -t existing_assets < <(gh release view "${TAG}" --repo "${REPO}" --json assets --jq '.assets[].name')
+              for name in "${existing_assets[@]}"; do
+                gh release delete-asset "${TAG}" "${name}" --repo "${REPO}" -y || true
+              done
+            fi
+
+            gh release upload "${TAG}" "${ASSETS[@]}" --repo "${REPO}" --clobber
+            gh release edit "${TAG}" --repo "${REPO}" --title "${TITLE}" --notes-file RELEASE_NOTES.md --prerelease
+          }
+
+          for attempt in 1 2 3 4 5; do
+            if publish_once; then
+              exit 0
+            fi
+            if [[ "${attempt}" -lt 5 ]]; then
+              sleep "$((attempt * 10))"
+            fi
+          done
+
+          echo "::error::Failed to publish release after retry budget"
+          exit 1

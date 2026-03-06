@@ -6,6 +6,8 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
 
 ## Scope
 
+- Build and publish Aesolator APK lane:
+  - release tag `aesolator-latest`
 - Build and publish FreeWine runtime WCP:
   - `freewine11-arm64ec.wcp`
   - release tag `freewine11-arm64ec-latest`
@@ -25,6 +27,10 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
 
 ## Main Workflow
 
+- `.github/workflows/ci-aesolator-apk.yml`
+  - clones `kosoymiki/aesolator` source tree
+  - builds APK from native source tree
+  - publishes APK lane to WCP Archive releases (`aesolator-latest`)
 - `.github/workflows/ci-arm64ec-wine.yml`
   - builds FreeWine runtime package
   - enforces strict runtime + forensic contract
@@ -34,8 +40,10 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
 ## CI Secrets
 
 - `AEO_RELEASE_TOKEN` (required)
+  - read access to `kosoymiki/aesolator`
   - read access to `kosoymiki/freewine11`
   - write access to `kosoymiki/wcp-runtime-lanes` releases
+- `AESOLATOR_REPO_URL` (optional)
 - `FREEWINE11_REPO_URL` (optional)
 - `AEOLATOR_PREFIX_PACK_URL` (optional)
 

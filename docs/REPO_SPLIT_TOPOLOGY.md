@@ -9,7 +9,8 @@ Final split model for Ae.solator delivery lanes.
 - `kosoymiki/freewine11`
   - Native FreeWine source tree.
 - `kosoymiki/wcp-runtime-lanes` (**WCP Archive**)
-  - Canonical WCP release host for:
+  - Canonical archive release host for:
+    - `aesolator-latest` (APK lane built from `kosoymiki/aesolator`)
     - `freewine11-arm64ec-latest`
     - `dxvk-gplasync-latest`
     - `dxvk-gplasync-arm64ec-latest`
@@ -34,9 +35,10 @@ Final split model for Ae.solator delivery lanes.
 ## Contract Rules
 
 1. Package metadata must point to actual release host (`sourceRepo`) per lane.
-2. DXVK/VKD3D/VulkanSDK WCP lanes publish into WCP Archive.
-3. Turnip/OpenGL ZIP lanes publish from graphics repo; dgVoodoo publishes as WCP via archive.
-4. Legacy monorepo release tags are not part of active topology.
+2. Aesolator APK lane publishes into WCP Archive under `aesolator-latest`.
+3. DXVK/VKD3D/VulkanSDK WCP lanes publish into WCP Archive.
+4. Turnip/OpenGL ZIP lanes publish from graphics repo; dgVoodoo publishes as WCP via archive.
+5. Legacy monorepo release tags are not part of active topology.
 
 ## Status
 
