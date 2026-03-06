@@ -191,6 +191,7 @@ apply_freewine_source_hotfixes() {
   local ntdll_file_c
   local ntdll_loader_c
   local ntdll_process_c
+  local ntdll_security_c
   local server_protocol
   local make_specfiles
   local compat_make_specfiles
@@ -265,6 +266,7 @@ PY
   ntdll_file_c="${WINE_SRC_DIR}/dlls/ntdll/unix/file.c"
   ntdll_loader_c="${WINE_SRC_DIR}/dlls/ntdll/unix/loader.c"
   ntdll_process_c="${WINE_SRC_DIR}/dlls/ntdll/unix/process.c"
+  ntdll_security_c="${WINE_SRC_DIR}/dlls/ntdll/unix/security.c"
   if [[ -f "${ntdll_loader_c}" ]] && grep -q 'static BYTE syscall_args\[ARRAY_SIZE(syscalls)\]' "${ntdll_loader_c}"; then
     # Mixed donor trees can desync syscall table macros, which breaks
     # fixed-size syscall_args generation. Keep args table unsized to let
@@ -424,6 +426,31 @@ if text != original:
     path.write_text(text, encoding="utf-8")
 PY
       log "Applied FreeWine hotfix: normalized ntdll process/server protocol compatibility"
+    fi
+  fi
+
+  if [[ -f "${ntdll_security_c}" ]] && grep -q 'if (localsystem_sid)' "${ntdll_security_c}"; then
+    if ! grep -Eq '(^|[[:space:]])(static[[:space:]]+)?(const[[:space:]]+)?(BOOL|BOOLEAN|int)[[:space:]]+localsystem_sid' "${ntdll_security_c}"; then
+      python3 - <<'PY' "${ntdll_security_c}"
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+anchor = "WINE_DEFAULT_DEBUG_CHANNEL(ntdll);\n"
+inject = (
+    "WINE_DEFAULT_DEBUG_CHANNEL(ntdll);\n\n"
+    "/* FREEWINE_SECURITY_LOCALSYSTEM_SID_COMPAT:\n"
+    " * keep donor drift buildable when localsystem_sid usage is present\n"
+    " * but the backing declaration was dropped. */\n"
+    "static BOOL localsystem_sid = FALSE;\n"
+)
+
+if anchor in text and "static BOOL localsystem_sid" not in text:
+    text = text.replace(anchor, inject, 1)
+    path.write_text(text, encoding="utf-8")
+PY
+      log "Applied FreeWine hotfix: added missing localsystem_sid declaration in ntdll unix security"
     fi
   fi
 }
