@@ -223,7 +223,7 @@ path = pathlib.Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 updated = text.replace(
     'open SPEC, "<$file" or die "cannot open $file";',
-    'return unless -f $file;\\n    open SPEC, "<$file" or die "cannot open $file";',
+    'return unless -f $file;\n    open SPEC, "<$file" or die "cannot open $file";',
     2,
 )
 if updated != text:
