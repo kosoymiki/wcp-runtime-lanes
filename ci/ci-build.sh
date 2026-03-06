@@ -256,13 +256,12 @@ inject = """
 #  define ALL_SYSCALLS ALL_SYSCALLS64
 # elif defined(ALL_SYSCALLS32)
 #  define ALL_SYSCALLS ALL_SYSCALLS32
+# else
+#  define ALL_SYSCALLS
 # endif
 #endif
 #ifndef ALL_SYSCALL_STUBS
 # define FREEWINE_LOADER_SYSCALL_COMPAT 1
-# define SYSCALL_ENTRY(id,name,args) SYSCALL_STUB(name)
-ALL_SYSCALLS
-# undef SYSCALL_ENTRY
 # define ALL_SYSCALL_STUBS
 #endif
 """
