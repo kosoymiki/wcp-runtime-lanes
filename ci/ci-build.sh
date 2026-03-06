@@ -435,6 +435,66 @@ PY
     fi
   fi
 
+  if [[ -f "${ntdll_server_c}" ]] && [[ -f "${server_protocol}" ]]; then
+    local needs_user_apc_flags_compat=0
+    local needs_inproc_device_compat=0
+
+    if ! awk '
+      /struct user_apc/ { in_block=1; next }
+      in_block && /\};/ { in_block=0 }
+      in_block && /\<flags\>/ { found=1 }
+      END { exit(found ? 0 : 1) }
+    ' "${server_protocol}"; then
+      needs_user_apc_flags_compat=1
+    fi
+
+    if ! awk '
+      /struct init_first_thread_reply/ { in_block=1; next }
+      in_block && /\};/ { in_block=0 }
+      in_block && /\<inproc_device\>/ { found=1 }
+      END { exit(found ? 0 : 1) }
+    ' "${server_protocol}"; then
+      needs_inproc_device_compat=1
+    fi
+
+    if [[ "${needs_user_apc_flags_compat}" == "1" || "${needs_inproc_device_compat}" == "1" ]]; then
+      python3 - <<'PY' "${ntdll_server_c}" "${needs_user_apc_flags_compat}" "${needs_inproc_device_compat}"
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+needs_apc_flags = sys.argv[2] == "1"
+needs_inproc = sys.argv[3] == "1"
+text = path.read_text(encoding="utf-8")
+original = text
+
+if needs_apc_flags:
+    text = text.replace(
+        "call_user_apc_dispatcher( context, apc->flags,",
+        "call_user_apc_dispatcher( context, 0 /* user_apc.flags unavailable in this protocol */,",
+        1,
+    )
+
+if needs_inproc:
+    text = text.replace("            obj_handle_t handle;\n", "", 1)
+    text = re.sub(
+        r"\n\s*if\s*\(reply->inproc_device\)\n\s*\{\n"
+        r"\s*inproc_device_fd = wine_server_receive_fd\(\s*&handle\s*\);\n"
+        r"\s*assert\(\s*handle == reply->inproc_device\s*\);\n"
+        r"\s*\}\n",
+        "\n            /* init_first_thread_reply has no inproc_device in this protocol. */\n",
+        text,
+        count=1,
+    )
+
+if text != original:
+    path.write_text(text, encoding="utf-8")
+PY
+      log "Applied FreeWine hotfix: normalized ntdll unix compat defaults and paths"
+    fi
+  fi
+
   if [[ -f "${ntdll_security_c}" ]] && grep -q 'if (localsystem_sid)' "${ntdll_security_c}"; then
     if ! grep -Eq '(^|[[:space:]])(static[[:space:]]+)?(const[[:space:]]+)?(BOOL|BOOLEAN|int)[[:space:]]+localsystem_sid' "${ntdll_security_c}"; then
       python3 - <<'PY' "${ntdll_security_c}"
