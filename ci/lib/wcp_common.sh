@@ -113,15 +113,16 @@ wcp_make_logged() {
 
 wcp_make_with_serial_retry() {
   local jobs="$1" log_file="$2"
+  local retry_jobs="${WCP_BUILD_RETRY_JOBS:-1}"
   shift 2
 
   if wcp_make_logged "${jobs}" "${log_file}" "$@"; then
     return 0
   fi
 
-  if [[ "${jobs}" != "1" ]]; then
-    wcp_log "Parallel make failed with -j${jobs}; retrying serial build (-j1)"
-    wcp_make_logged "1" "${log_file}" "$@"
+  if [[ "${jobs}" != "${retry_jobs}" ]]; then
+    wcp_log "Parallel make failed with -j${jobs}; retrying build with -j${retry_jobs}"
+    wcp_make_logged "${retry_jobs}" "${log_file}" "$@"
     return $?
   fi
 
