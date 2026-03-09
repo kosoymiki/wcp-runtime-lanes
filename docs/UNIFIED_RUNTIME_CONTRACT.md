@@ -6,7 +6,7 @@ Mainline runtime contract for `wcp-runtime-lanes` (WCP Archive) in FreeWine-only
 
 ## Mainline Invariants
 
-1. Runtime source is FreeWine (`WCP_WINE_SOURCE_MODE=freewine-git|freewine-local`).
+1. Runtime source is `FreeWine 11` (`WCP_WINE_SOURCE_MODE=freewine-git|freewine-local`).
 2. Target class is Android bionic (`WCP_RUNTIME_CLASS_TARGET=bionic-native`).
 3. CI runtime gate is mandatory before release publish:
    - `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic --require-usb`.

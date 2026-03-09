@@ -18,6 +18,15 @@ Repository slug stays `wcp-runtime-lanes`, but product role is **WCP Archive**.
   - dgVoodoo (`dgvoodoo-x86_64-latest`, `dgvoodoo-arm64ec-latest`)
 - Keep runtime/forensic contracts strict for bionic-only deployment.
 
+## Current Mainline State
+
+- Main runtime line is `FreeWine 11`, sourced from `kosoymiki/freewine11`.
+- Main APK line is `Ae.solator`, sourced from `kosoymiki/aeolator`.
+- This repository is the release/archive host, not the long-term source-of-truth
+  for app or runtime code.
+- Local scratch mirrors such as `wine-src` are disposable CI/build mirrors and
+  must not replace the source repositories.
+
 ## Ownership Model
 
 - Source tree: `kosoymiki/freewine11`

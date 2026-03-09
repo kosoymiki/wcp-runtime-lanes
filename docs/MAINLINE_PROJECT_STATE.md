@@ -1,6 +1,6 @@
 # Mainline Project State (WCP Archive)
 
-Snapshot date: 2026-03-04
+Snapshot date: 2026-03-10
 
 ## Scope
 
@@ -18,9 +18,12 @@ Snapshot date: 2026-03-04
 
 - Runtime source mode: `freewine-git`.
 - Source repository: `kosoymiki/freewine11` (private).
+- Runtime product line: `FreeWine 11`.
 - Runtime target policy: Android bionic-only.
 - Validation gate: `ci/validation/inspect-wcp-runtime-contract.sh --strict-bionic --require-usb`.
 - Legacy transfer/rebase scripts are removed from mainline runtime lane.
+- Local scratch mirror `wine-src` is a disposable build mirror only and must not
+  be treated as a second source-of-truth.
 
 ## CI Status
 
@@ -48,3 +51,7 @@ Snapshot date: 2026-03-04
    read private FreeWine source.
 2. Continue runtime forensic/provenance export evolution in lockstep with
    `aesolator` issue-bundle schema.
+3. Keep documentation aligned with the actual split model:
+   - `freewine11` owns runtime source
+   - `aeolator` owns app source
+   - `wcp-runtime-lanes` owns packaging/release orchestration

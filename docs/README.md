@@ -2,6 +2,13 @@
 
 This repo stores WCP archive/runtime documentation for Ae.solator package lanes.
 
+## Current Contract
+
+- Archive host for `Ae.solator` release artifacts.
+- Archive host for `FreeWine 11 ARM64EC` runtime artifacts.
+- Source-of-truth for runtime code remains `freewine11`.
+- Source-of-truth for app code remains `aeolator`.
+
 ## Source Of Truth
 
 - `docs/REPO_SPLIT_TOPOLOGY.md` - split ownership and final release topology.
