@@ -84,18 +84,14 @@ jobs:
           requested_ref="${AESOLATOR_REF}"
           requested_commit="${AESOLATOR_COMMIT}"
           resolved_commit="${requested_commit}"
-          lookup_repo="${AESOLATOR_REPO_INPUT}"
-
-          if [[ -z "${lookup_repo}" ]]; then
-            lookup_repo="https://github.com/kosoymiki/aesolator.git"
-          fi
-          lookup_repo="$(printf '%s' "${lookup_repo}" | sed -E 's#https://[^/@]+@github.com/#https://github.com/#')"
 
           if [[ -z "${resolved_commit}" ]]; then
-            resolved_commit="$(git ls-remote "${lookup_repo}" "refs/heads/${requested_ref}" | awk 'NR==1 {print $1}')"
-          fi
-          if [[ -z "${resolved_commit}" ]]; then
-            resolved_commit="$(git ls-remote "${lookup_repo}" "refs/tags/${requested_ref}" "refs/tags/${requested_ref}^{}" | awk 'NR==1 {print $1}')"
+            tmp_clone="$(mktemp -d)"
+            trap 'rm -rf "${tmp_clone}"' EXIT
+            git clone --depth 1 --branch "${requested_ref}" "${AESOLATOR_REPO}" "${tmp_clone}"
+            resolved_commit="$(git -C "${tmp_clone}" rev-parse HEAD)"
+            rm -rf "${tmp_clone}"
+            trap - EXIT
           fi
 
           if [[ -z "${resolved_commit}" ]]; then
