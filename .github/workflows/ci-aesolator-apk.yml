@@ -84,12 +84,18 @@ jobs:
           requested_ref="${AESOLATOR_REF}"
           requested_commit="${AESOLATOR_COMMIT}"
           resolved_commit="${requested_commit}"
+          lookup_repo="${AESOLATOR_REPO_INPUT}"
+
+          if [[ -z "${lookup_repo}" ]]; then
+            lookup_repo="https://github.com/kosoymiki/aesolator.git"
+          fi
+          lookup_repo="$(printf '%s' "${lookup_repo}" | sed -E 's#https://[^/@]+@github.com/#https://github.com/#')"
 
           if [[ -z "${resolved_commit}" ]]; then
-            resolved_commit="$(git ls-remote "${AESOLATOR_REPO}" "refs/heads/${requested_ref}" | awk 'NR==1 {print $1}')"
+            resolved_commit="$(git ls-remote "${lookup_repo}" "refs/heads/${requested_ref}" | awk 'NR==1 {print $1}')"
           fi
           if [[ -z "${resolved_commit}" ]]; then
-            resolved_commit="$(git ls-remote "${AESOLATOR_REPO}" "refs/tags/${requested_ref}" "refs/tags/${requested_ref}^{}" | awk 'NR==1 {print $1}')"
+            resolved_commit="$(git ls-remote "${lookup_repo}" "refs/tags/${requested_ref}" "refs/tags/${requested_ref}^{}" | awk 'NR==1 {print $1}')"
           fi
 
           if [[ -z "${resolved_commit}" ]]; then
