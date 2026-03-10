@@ -13,12 +13,18 @@ on:
       - "ci/validation/**"
       - ".github/workflows/ci-arm64ec-wine.yml"
       - "docs/**"
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
     inputs:
       freewine_ref:
         description: "Git ref in private FreeWine repository"
         required: false
         default: "main"
+      freewine_commit:
+        description: "Exact commit SHA in FreeWine repository (optional)"
+        required: false
+        default: ""
       freewine_repo:
         description: "Private FreeWine git URL (optional; fallback to secret FREEWINE11_REPO_URL)"
         required: false
@@ -53,7 +59,7 @@ env:
   LLVM_MINGW_VER: ${{ github.event.inputs.llvm_mingw_ver || '20260210' }}
   WCP_COMPRESS: ${{ github.event.inputs.compress || 'xz' }}
   WCP_VERSION_CODE: "1"
-  WCP_VERSION_NAME: 11.0-arm64ec
+  WCP_VERSION_NAME: 11.4-arm64ec
   WCP_CHANNEL: nightly
   WCP_DELIVERY: remote
   WCP_PROFILE_TYPE: Wine
@@ -102,6 +108,7 @@ env:
   WCP_WINE_SOURCE_MODE: freewine-git
   WCP_FREEWINE_REPO_INPUT: ${{ github.event.inputs.freewine_repo || secrets.FREEWINE11_REPO_URL || 'https://github.com/kosoymiki/freewine11.git' }}
   WCP_FREEWINE_REF: ${{ github.event.inputs.freewine_ref || 'main' }}
+  WCP_FREEWINE_COMMIT: ${{ github.event.inputs.freewine_commit || '' }}
   WCP_FREEWINE_MAKE_SPECFILES_COMPAT: "0"
   WCP_GN_PATCHSET_ENABLE: "0"
   FREEWINE_ENABLE_LOADER_COMPAT_PATCH: "1"
@@ -138,11 +145,45 @@ jobs:
 
           echo "WCP_FREEWINE_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
 
+      - name: Resolve latest FreeWine source head
+        run: |
+          set -euo pipefail
+          requested_ref="${WCP_FREEWINE_REF}"
+          requested_commit="${WCP_FREEWINE_COMMIT}"
+          resolved_commit="${requested_commit}"
+
+          if [[ -z "${resolved_commit}" ]]; then
+            resolved_commit="$(git ls-remote "${WCP_FREEWINE_REPO}" "refs/heads/${requested_ref}" | awk 'NR==1 {print $1}')"
+          fi
+          if [[ -z "${resolved_commit}" ]]; then
+            resolved_commit="$(git ls-remote "${WCP_FREEWINE_REPO}" "refs/tags/${requested_ref}" "refs/tags/${requested_ref}^{}" | awk 'NR==1 {print $1}')"
+          fi
+
+          if [[ -z "${resolved_commit}" ]]; then
+            echo "::error::Unable to resolve latest FreeWine commit for ref ${requested_ref}"
+            exit 1
+          fi
+
+          echo "WCP_FREEWINE_COMMIT=${resolved_commit}" >> "${GITHUB_ENV}"
+          echo "WCP_SOURCE_VERSION=${requested_ref}@${resolved_commit}" >> "${GITHUB_ENV}"
+
       - name: Validate FreeWine source config
         run: |
           set -euxo pipefail
           test -n "${WCP_FREEWINE_REPO}"
           test -n "${WCP_FREEWINE_REF}"
+          test -n "${WCP_FREEWINE_COMMIT}"
+
+      - name: Write FreeWine source metadata
+        run: |
+          set -euxo pipefail
+          mkdir -p "${WCP_OUTPUT_DIR}/logs"
+          cat > "${WCP_OUTPUT_DIR}/logs/freewine-source-metadata.txt" <<EOF
+          source_repo=${WCP_FREEWINE_REPO}
+          source_ref=${WCP_FREEWINE_REF}
+          source_commit=${WCP_FREEWINE_COMMIT}
+          source_version=${WCP_SOURCE_VERSION}
+          EOF
 
       - name: Bootstrap packages (Ubuntu)
         run: |
@@ -235,6 +276,9 @@ jobs:
           - Источник FreeWine: private closed repository (FreeWine-only policy)
           - Release repo: kosoymiki/wcp-runtime-lanes
           - Контур CI: только FreeWine + Aeolator
+          - Source ref: ${WCP_FREEWINE_REF}
+          - Source commit: ${WCP_FREEWINE_COMMIT}
+          - Source version: ${WCP_SOURCE_VERSION}
 
           EN:
           - Channel: nightly (freewine11-arm64ec-latest)
@@ -242,6 +286,9 @@ jobs:
           - FreeWine source: private closed repository (FreeWine-only policy)
           - Release repo: kosoymiki/wcp-runtime-lanes
           - CI scope: FreeWine + Aeolator only
+          - Source ref: ${WCP_FREEWINE_REF}
+          - Source commit: ${WCP_FREEWINE_COMMIT}
+          - Source version: ${WCP_SOURCE_VERSION}
 
           Commit: ${{ github.sha }}
           Workflow run: ${{ github.run_id }}

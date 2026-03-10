@@ -15,7 +15,8 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${WCP_WINE_SOURCE_MODE:=freewine-local}"
 : "${WCP_FREEWINE_SOURCE_DIR:=/home/mikhail/wcp-sources/freewine11}"
 : "${WCP_FREEWINE_REPO:=}"
-: "${WCP_FREEWINE_REF:=freewine11-main}"
+: "${WCP_FREEWINE_REF:=main}"
+: "${WCP_FREEWINE_COMMIT:=}"
 : "${WCP_FREEWINE_MAKE_SPECFILES_COMPAT:=0}"
 : "${WCP_FREEWINE_MAKE_SPECFILES_URL:=https://raw.githubusercontent.com/AndreRH/wine/arm64ec/tools/make_specfiles}"
 : "${WCP_FREEWINE_MAKE_SPECFILES_LOCAL:=}"
@@ -23,7 +24,7 @@ BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
 : "${LLVM_MINGW_TAG:=${LLVM_MINGW_VER:-20260210}}"
 : "${WCP_NAME:=freewine11-arm64ec}"
 : "${WCP_COMPRESS:=xz}"
-: "${WCP_VERSION_NAME:=11.0-arm64ec}"
+: "${WCP_VERSION_NAME:=11.4-arm64ec}"
 : "${WCP_VERSION_CODE:=0}"
 : "${WCP_DESCRIPTION:=FreeWine 11 ARM64EC for Ae.solator}"
 : "${WCP_CHANNEL:=stable}"
@@ -175,6 +176,18 @@ fetch_wine_sources() {
       log "Cloning FreeWine repo ${WCP_FREEWINE_REPO} @ ${WCP_FREEWINE_REF}"
       wcp_clone_from_seed_or_remote "${WCP_FREEWINE_REPO}" "${WCP_FREEWINE_REF}" "${seed_dir}" "${WINE_SRC_DIR}" \
         || fail "Unable to clone FreeWine source (${WCP_FREEWINE_REF}) from ${WCP_FREEWINE_REPO}"
+      if [[ -n "${WCP_FREEWINE_COMMIT}" ]]; then
+        if ! git -C "${WINE_SRC_DIR}" rev-parse --verify "${WCP_FREEWINE_COMMIT}^{commit}" >/dev/null 2>&1; then
+          git -C "${WINE_SRC_DIR}" fetch --no-tags --deepen=200 origin "${WCP_FREEWINE_REF}" \
+            || fail "Unable to deepen FreeWine clone for ${WCP_FREEWINE_COMMIT}"
+        fi
+        if ! git -C "${WINE_SRC_DIR}" rev-parse --verify "${WCP_FREEWINE_COMMIT}^{commit}" >/dev/null 2>&1; then
+          git -C "${WINE_SRC_DIR}" fetch --no-tags --unshallow origin "${WCP_FREEWINE_REF}" \
+            || fail "Unable to unshallow FreeWine clone for ${WCP_FREEWINE_COMMIT}"
+        fi
+        git -C "${WINE_SRC_DIR}" checkout -f "${WCP_FREEWINE_COMMIT}" \
+          || fail "Unable to checkout exact FreeWine commit ${WCP_FREEWINE_COMMIT}"
+      fi
       ;;
     *)
       fail "WCP_WINE_SOURCE_MODE must be one of: freewine-local, freewine-git"

@@ -78,6 +78,28 @@ jobs:
 
           echo "AESOLATOR_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
 
+      - name: Resolve latest Aesolator source head
+        run: |
+          set -euo pipefail
+          requested_ref="${AESOLATOR_REF}"
+          requested_commit="${AESOLATOR_COMMIT}"
+          resolved_commit="${requested_commit}"
+
+          if [[ -z "${resolved_commit}" ]]; then
+            resolved_commit="$(git ls-remote "${AESOLATOR_REPO}" "refs/heads/${requested_ref}" | awk 'NR==1 {print $1}')"
+          fi
+          if [[ -z "${resolved_commit}" ]]; then
+            resolved_commit="$(git ls-remote "${AESOLATOR_REPO}" "refs/tags/${requested_ref}" "refs/tags/${requested_ref}^{}" | awk 'NR==1 {print $1}')"
+          fi
+
+          if [[ -z "${resolved_commit}" ]]; then
+            echo "::error::Unable to resolve latest Aesolator commit for ref ${requested_ref}"
+            exit 1
+          fi
+
+          echo "AESOLATOR_COMMIT=${resolved_commit}" >> "${GITHUB_ENV}"
+          echo "AESOLATOR_SOURCE_VERSION=${requested_ref}@${resolved_commit}" >> "${GITHUB_ENV}"
+
       - name: Clone Aesolator source
         run: |
           set -euxo pipefail
@@ -162,6 +184,7 @@ jobs:
           - Runtime source tag: ${RUNTIME_RELEASE_TAG}
           - Source branch: ${source_branch}
           - Source commit: ${source_commit}
+          - Source version: ${AESOLATOR_SOURCE_VERSION}
 
           EN:
           - APK is built from native Aesolator source tree
@@ -169,6 +192,7 @@ jobs:
           - Runtime source tag: ${RUNTIME_RELEASE_TAG}
           - Source branch: ${source_branch}
           - Source commit: ${source_commit}
+          - Source version: ${AESOLATOR_SOURCE_VERSION}
 
           Workflow commit: ${{ github.sha }}
           Workflow run: ${{ github.run_id }}
