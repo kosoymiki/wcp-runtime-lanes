@@ -11,6 +11,18 @@ WCP_ROOT="${ROOT_DIR}/wcp_root"
 WINE_SRC_DIR="${ROOT_DIR}/wine-src"
 HANGOVER_SRC_DIR="${ROOT_DIR}/hangover-src"
 BUILD_WINE_DIR="${ROOT_DIR}/build-wine"
+LOCALDEPS_DIR="${ROOT_DIR}/.localdeps"
+LOCAL_PKGCONFIG_PATHS=()
+
+if [[ -d "${LOCALDEPS_DIR}/libusb/pkgconfig" ]]; then
+  LOCAL_PKGCONFIG_PATHS+=("${LOCALDEPS_DIR}/libusb/pkgconfig")
+fi
+if [[ -d "${LOCALDEPS_DIR}/libusb/root/usr/lib/x86_64-linux-gnu/pkgconfig" ]]; then
+  LOCAL_PKGCONFIG_PATHS+=("${LOCALDEPS_DIR}/libusb/root/usr/lib/x86_64-linux-gnu/pkgconfig")
+fi
+if [[ ${#LOCAL_PKGCONFIG_PATHS[@]} -gt 0 ]]; then
+  export PKG_CONFIG_PATH="$(IFS=:; printf '%s' "${LOCAL_PKGCONFIG_PATHS[*]}")${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}"
+fi
 
 : "${WCP_WINE_SOURCE_MODE:=freewine-local}"
 : "${WCP_FREEWINE_SOURCE_DIR:=/home/mikhail/wcp-sources/freewine11}"
