@@ -194,8 +194,13 @@ fetch_wine_sources() {
             || fail "Unable to deepen FreeWine clone for ${WCP_FREEWINE_COMMIT}"
         fi
         if ! git -C "${WINE_SRC_DIR}" rev-parse --verify "${WCP_FREEWINE_COMMIT}^{commit}" >/dev/null 2>&1; then
-          git -C "${WINE_SRC_DIR}" fetch --no-tags --unshallow origin "${WCP_FREEWINE_REF}" \
-            || fail "Unable to unshallow FreeWine clone for ${WCP_FREEWINE_COMMIT}"
+          if [[ "$(git -C "${WINE_SRC_DIR}" rev-parse --is-shallow-repository 2>/dev/null)" == "true" ]]; then
+            git -C "${WINE_SRC_DIR}" fetch --no-tags --unshallow origin "${WCP_FREEWINE_REF}" \
+              || fail "Unable to unshallow FreeWine clone for ${WCP_FREEWINE_COMMIT}"
+          else
+            git -C "${WINE_SRC_DIR}" fetch --no-tags origin "${WCP_FREEWINE_REF}" \
+              || fail "Unable to refresh FreeWine clone for ${WCP_FREEWINE_COMMIT}"
+          fi
         fi
         git -C "${WINE_SRC_DIR}" checkout -f "${WCP_FREEWINE_COMMIT}" \
           || fail "Unable to checkout exact FreeWine commit ${WCP_FREEWINE_COMMIT}"
