@@ -98,6 +98,17 @@ ensure_llvm_mingw() {
   export LLVM_MINGW_DIR="${TOOLCHAIN_DIR}"
   export PATH="${TOOLCHAIN_DIR}/bin:${PATH}"
 
+  # Some cached llvm-mingw archives may ship a broken llvm-dlltool symlink
+  # (observed pointing to llvm-ar), which breaks PE import library generation.
+  if [[ -L "${TOOLCHAIN_DIR}/bin/llvm-dlltool" ]]; then
+    dlltool_target="$(readlink -f "${TOOLCHAIN_DIR}/bin/llvm-dlltool" || true)"
+    ar_target="$(readlink -f "${TOOLCHAIN_DIR}/bin/llvm-ar" || true)"
+    if [[ -n "${dlltool_target}" && -n "${ar_target}" && "${dlltool_target}" == "${ar_target}" ]] && command -v /usr/bin/llvm-dlltool >/dev/null 2>&1; then
+      ln -sf /usr/bin/llvm-dlltool "${TOOLCHAIN_DIR}/bin/llvm-dlltool"
+      llvm_log "Repaired broken llvm-dlltool symlink in cached toolchain"
+    fi
+  fi
+
   llvm_log "Toolchain clang: $(command -v clang)"
   clang --version | sed -n '1,2p'
 
