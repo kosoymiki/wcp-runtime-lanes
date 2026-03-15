@@ -42,7 +42,7 @@ env:
   APP_RELEASE_REPO: wcp-runtime-lanes
   APP_RELEASE_TAG: aesolator-latest
   APP_RELEASE_TITLE: Aesolator Latest
-  AESOLATOR_REPO_INPUT: ${{ github.event.inputs.aesolator_repo || secrets.AESOLATOR_REPO_URL || 'https://github.com/kosoymiki/aesolator.git' }}
+  AESOLATOR_REPO_INPUT: ${{ github.event.inputs.aesolator_repo || 'https://github.com/kosoymiki/aesolator.git' }}
   AESOLATOR_REF: ${{ github.event.inputs.aesolator_ref || 'main' }}
   AESOLATOR_COMMIT: ${{ github.event.inputs.aesolator_commit || '' }}
   RUNTIME_RELEASE_REPO: kosoymiki/wcp-runtime-lanes
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout WCP Archive
         uses: actions/checkout@v4
 
-      - name: Resolve Aesolator clone URL
+      - name: Resolve Aesolator clone URLs
         env:
           AEO_RELEASE_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN }}
         run: |
@@ -70,13 +70,15 @@ jobs:
           fi
 
           resolved_repo="${input_repo}"
+          resolved_repo_auth="${input_repo}"
           if [[ "${resolved_repo}" =~ ^https://github\.com/[^/]+/[^/]+(\.git)?$ ]] && [[ "${resolved_repo}" != *"x-access-token:"* ]]; then
             if [[ -n "${AEO_RELEASE_TOKEN:-}" ]]; then
-              resolved_repo="$(printf '%s' "${resolved_repo}" | sed "s#https://github.com/#https://x-access-token:${AEO_RELEASE_TOKEN}@github.com/#")"
+              resolved_repo_auth="$(printf '%s' "${resolved_repo}" | sed "s#https://github.com/#https://x-access-token:${AEO_RELEASE_TOKEN}@github.com/#")"
             fi
           fi
 
           echo "AESOLATOR_REPO=${resolved_repo}" >> "${GITHUB_ENV}"
+          echo "AESOLATOR_REPO_AUTH=${resolved_repo_auth}" >> "${GITHUB_ENV}"
 
       - name: Resolve latest Aesolator source head
         run: |
@@ -85,10 +87,25 @@ jobs:
           requested_commit="${AESOLATOR_COMMIT}"
           resolved_commit="${requested_commit}"
 
+          clone_ref() {
+            local repo_url="$1"
+            local dest_dir="$2"
+            git clone --depth 1 --branch "${requested_ref}" "${repo_url}" "${dest_dir}"
+          }
+
           if [[ -z "${resolved_commit}" ]]; then
             tmp_clone="$(mktemp -d)"
             trap 'rm -rf "${tmp_clone}"' EXIT
-            git clone --depth 1 --branch "${requested_ref}" "${AESOLATOR_REPO}" "${tmp_clone}"
+            if ! clone_ref "${AESOLATOR_REPO}" "${tmp_clone}"; then
+              if [[ "${AESOLATOR_REPO_AUTH}" != "${AESOLATOR_REPO}" ]]; then
+                rm -rf "${tmp_clone}"
+                tmp_clone="$(mktemp -d)"
+                trap 'rm -rf "${tmp_clone}"' EXIT
+                clone_ref "${AESOLATOR_REPO_AUTH}" "${tmp_clone}"
+              else
+                exit 1
+              fi
+            fi
             resolved_commit="$(git -C "${tmp_clone}" rev-parse HEAD)"
             rm -rf "${tmp_clone}"
             trap - EXIT
@@ -106,7 +123,14 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf "${GITHUB_WORKSPACE}/aesolator-src"
-          git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO}" "${GITHUB_WORKSPACE}/aesolator-src"
+          if ! git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO}" "${GITHUB_WORKSPACE}/aesolator-src"; then
+            if [[ "${AESOLATOR_REPO_AUTH}" != "${AESOLATOR_REPO}" ]]; then
+              rm -rf "${GITHUB_WORKSPACE}/aesolator-src"
+              git clone --depth 1 --branch "${AESOLATOR_REF}" "${AESOLATOR_REPO_AUTH}" "${GITHUB_WORKSPACE}/aesolator-src"
+            else
+              exit 1
+            fi
+          fi
           if [[ -n "${AESOLATOR_COMMIT}" ]]; then
             if ! git -C "${GITHUB_WORKSPACE}/aesolator-src" rev-parse --verify "${AESOLATOR_COMMIT}^{commit}" >/dev/null 2>&1; then
               # Do not fetch by raw SHA (not always advertised by GitHub); deepen by branch ref.
