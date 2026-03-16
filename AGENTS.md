@@ -12,6 +12,12 @@ This repository is the canonical WCP Archive host for Ae.solator releases.
 - App source-of-truth lives in `aeolator`.
 - Local mirrors such as `wine-src` are scratch build inputs, not documentation
   or source-of-truth.
+- This repo is the canonical CI/release host for heavy shared toolchain lanes
+  such as the Android/Termux host `LLVM 22.1.1` compiler build. If that
+  compiler is built in GitHub Actions and published as a release asset, it
+  belongs here rather than in `aeolator`.
+- Default git posture here is `main`-first. Do not spin normal work into side
+  branches or staged merge branches unless the user explicitly asks for that.
 - For local FreeWine loops, mirror proven runtime fixes from `freewine11` and
   keep using the same `build-wine` tree whenever structurally possible.
 - Do not let `wine-src` become the only place where a learned runtime fix or

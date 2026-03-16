@@ -1,0 +1,92 @@
+name: Build Host LLVM 22.1.1 Toolchain
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/ci-host-llvm-toolchain.yml"
+      - "ci/toolchains/**"
+      - "docs/HOST_LLVM_22_1_1_TOOLCHAIN.md"
+      - "AGENTS.md"
+  workflow_dispatch:
+    inputs:
+      llvm_version:
+        description: "LLVM version"
+        required: false
+        default: "22.1.1"
+      release_tag:
+        description: "Release tag for uploaded host toolchain"
+        required: false
+        default: "host-llvm-22.1.1"
+      android_api:
+        description: "Android API level"
+        required: false
+        default: "24"
+
+concurrency:
+  group: host-llvm-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build_host_llvm_android_arm64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      LLVM_VERSION: ${{ github.event.inputs.llvm_version || '22.1.1' }}
+      ANDROID_API: ${{ github.event.inputs.android_api || '24' }}
+      RELEASE_TAG: ${{ github.event.inputs.release_tag || 'host-llvm-22.1.1' }}
+      ANDROID_NDK_VERSION: "29.0.14206865"
+      JOBS: "6"
+      LINK_JOBS: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install host deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ninja-build cmake curl zstd zip libzstd-dev libedit-dev
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "ndk;${ANDROID_NDK_VERSION}"
+
+      - name: Build LLVM 22.1.1 Android host toolchain
+        env:
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/${{ env.ANDROID_NDK_VERSION }}
+        run: |
+          chmod +x ci/toolchains/build-host-llvm-android.sh
+          ci/toolchains/build-host-llvm-android.sh
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-llvm-${{ env.LLVM_VERSION }}-android-aarch64
+          path: |
+            out/host-llvm/llvm-${{ env.LLVM_VERSION }}-termux-android-aarch64.tar.zst
+            out/host-llvm/llvm-${{ env.LLVM_VERSION }}-termux-android-aarch64.sha256
+          if-no-files-found: error
+
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ secrets.AEO_RELEASE_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          asset="out/host-llvm/llvm-${LLVM_VERSION}-termux-android-aarch64.tar.zst"
+          sha="out/host-llvm/llvm-${LLVM_VERSION}-termux-android-aarch64.sha256"
+
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" "${asset}" "${sha}" --clobber
+          else
+            gh release create "${RELEASE_TAG}" "${asset}" "${sha}" \
+              --title "Host LLVM ${LLVM_VERSION}" \
+              --notes "Source-built Android ARM64 host LLVM toolchain for Ae.solator local/Termux compilation."
+          fi
