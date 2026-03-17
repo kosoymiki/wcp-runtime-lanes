@@ -112,10 +112,17 @@ package_output() {
 }
 
 emit_metadata() {
+  local clang_bin="${PREFIX_DIR}/bin/clang"
+  local strip_bin="${PREFIX_DIR}/bin/llvm-strip"
+
   log "Asset: ${ASSET_PATH}"
   log "SHA256: ${SHA256_PATH}"
-  "${PREFIX_DIR}/bin/clang" --version | sed -n '1,4p'
-  "${PREFIX_DIR}/bin/llvm-strip" --version | sed -n '1,4p'
+  log "clang path: $(readlink -f "${clang_bin}")"
+  log "llvm-strip path: $(readlink -f "${strip_bin}")"
+  file "${clang_bin}" | sed -n '1,2p'
+  file "${strip_bin}" | sed -n '1,2p'
+  readelf -h "${clang_bin}" | sed -n '1,10p'
+  readelf -h "${strip_bin}" | sed -n '1,10p'
 }
 
 main() {
@@ -123,6 +130,8 @@ main() {
   command -v ninja >/dev/null 2>&1 || fail "ninja is required"
   command -v curl >/dev/null 2>&1 || fail "curl is required"
   command -v zstd >/dev/null 2>&1 || fail "zstd is required"
+  command -v file >/dev/null 2>&1 || fail "file is required"
+  command -v readelf >/dev/null 2>&1 || fail "readelf is required"
 
   prepare_dirs
   fetch_source

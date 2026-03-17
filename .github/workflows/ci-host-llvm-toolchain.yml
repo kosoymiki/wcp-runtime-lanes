@@ -17,7 +17,7 @@ on:
       release_tag:
         description: "Release tag for uploaded host toolchain"
         required: false
-        default: "host-llvm-22.1.1"
+        default: "host-llvm-22.1.1-latest"
       android_api:
         description: "Android API level"
         required: false
@@ -37,7 +37,7 @@ jobs:
     env:
       LLVM_VERSION: ${{ github.event.inputs.llvm_version || '22.1.1' }}
       ANDROID_API: ${{ github.event.inputs.android_api || '24' }}
-      RELEASE_TAG: ${{ github.event.inputs.release_tag || 'host-llvm-22.1.1' }}
+      RELEASE_TAG: ${{ github.event.inputs.release_tag || 'host-llvm-22.1.1-latest' }}
       ANDROID_NDK_VERSION: "29.0.14206865"
       JOBS: "6"
       LINK_JOBS: "1"
