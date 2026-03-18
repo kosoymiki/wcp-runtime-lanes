@@ -27,6 +27,7 @@ sync_modified_runtime_sources() {
   local mirror_root="${REPO_ROOT}/wine-src"
   local rel src dst
   local synced=()
+  local prune_name prune_src prune_dst
 
   while IFS= read -r -d '' rel; do
     [[ -n "${rel}" ]] || continue
@@ -41,7 +42,15 @@ sync_modified_runtime_sources() {
 
     src="${source_root}/${rel}"
     dst="${mirror_root}/${rel}"
-    [[ -f "${src}" ]] || continue
+
+    if [[ ! -f "${src}" ]]; then
+      if [[ -e "${dst}" ]]; then
+        rm -f "${dst}"
+        synced+=("${rel}")
+        SYNCED_RUNTIME_FILES+=("${rel}")
+      fi
+      continue
+    fi
 
     if [[ -f "${dst}" ]] && cmp -s "${src}" "${dst}"; then
       continue
@@ -58,6 +67,19 @@ sync_modified_runtime_sources() {
     } | awk -v RS='\0' '!seen[$0]++ { printf "%s%c", $0, 0 }'
   )
 
+  for prune_dst in "${mirror_root}"/libs/winecrt0/arm64_private_*; do
+    [[ -e "${prune_dst}" ]] || continue
+    prune_name="$(basename "${prune_dst}")"
+    prune_src="${source_root}/libs/winecrt0/${prune_name}"
+    if [[ -e "${prune_src}" ]]; then
+      continue
+    fi
+    rm -f "${prune_dst}"
+    rel="libs/winecrt0/${prune_name}"
+    synced+=("${rel}")
+    SYNCED_RUNTIME_FILES+=("${rel}")
+  done
+
   if ((${#synced[@]} == 0)); then
     return
   fi
@@ -70,10 +92,29 @@ invalidate_stale_arm64_shim_outputs() {
   local rel mod arch archdir
   local stale_entries=()
   declare -A touched_modules=()
+  declare -A touched_i386_modules=()
+  local invalidate_all_arm64_consumers=0
+
+  add_all_arm64_consumers() {
+    local root relpath
+    for root in dlls libs; do
+      if [[ ! -d "${mirror_root}/${root}" ]]; then
+        continue
+      fi
+      while IFS= read -r -d '' relpath; do
+        [[ -n "${relpath}" ]] || continue
+        touched_modules["${relpath%/arm64_import_shims.c}"]=1
+      done < <(cd "${mirror_root}" && find "${root}" -name arm64_import_shims.c -print0)
+    done
+  }
 
   for rel in "${SYNCED_RUNTIME_FILES[@]}"; do
     case "${rel}" in
       dlls/*/arm64_import_shims.c)
+        mod="${rel%/arm64_import_shims.c}"
+        touched_modules["${mod}"]=1
+        ;;
+      libs/*/arm64_import_shims.c)
         mod="${rel%/arm64_import_shims.c}"
         touched_modules["${mod}"]=1
         ;;
@@ -83,8 +124,29 @@ invalidate_stale_arm64_shim_outputs() {
           touched_modules["${mod}"]=1
         fi
         ;;
+      libs/*/Makefile.in|libs/*/*.spec)
+        mod="${rel%/*}"
+        if [[ -f "${mirror_root}/${mod}/arm64_import_shims.c" ]]; then
+          touched_modules["${mod}"]=1
+        fi
+        ;;
+      libs/winecrt0/arm64_private_*_imports.c|libs/winecrt0/arm64_import_shims.c)
+        touched_modules["libs/winecrt0"]=1
+        touched_i386_modules["libs/winecrt0"]=1
+        ;;
+      libs/winecrt0/Makefile.in)
+        touched_modules["libs/winecrt0"]=1
+        touched_i386_modules["libs/winecrt0"]=1
+        ;;
+      include/wine/arm64_*_import_shims.inc)
+        invalidate_all_arm64_consumers=1
+        ;;
     esac
   done
+
+  if ((invalidate_all_arm64_consumers)); then
+    add_all_arm64_consumers
+  fi
 
   if ((${#touched_modules[@]} == 0)); then
     return
@@ -97,6 +159,12 @@ invalidate_stale_arm64_shim_outputs() {
         stale_entries+=("${rel}:${arch}")
       fi
     done
+    if [[ -n "${touched_i386_modules[${rel}]:-}" ]]; then
+      archdir="${BUILD_DIR}/${rel}/i386-windows"
+      if [[ -d "${archdir}" ]]; then
+        stale_entries+=("${rel}:i386-windows")
+      fi
+    fi
   done < <(printf '%s\n' "${!touched_modules[@]}" | sort)
 
   if ((${#stale_entries[@]} == 0)); then
