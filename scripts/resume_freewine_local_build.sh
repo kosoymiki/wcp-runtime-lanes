@@ -181,8 +181,38 @@ invalidate_stale_arm64_shim_outputs() {
   done
 }
 
+invalidate_broken_pe_outputs() {
+  local rel
+  declare -A broken_archdirs=()
+
+  while IFS= read -r rel; do
+    [[ -n "${rel}" ]] || continue
+    broken_archdirs["${rel%/*}"]=1
+  done < <(
+    cd "${BUILD_DIR}" && find . \
+      \( -path './*/aarch64-windows/*.o' -o -path './*/arm64ec-windows/*.o' -o -path './*/i386-windows/*.o' -o -path './*/x86_64-windows/*.o' \
+         -o -path './*/aarch64-windows/lib*.a' -o -path './*/arm64ec-windows/lib*.a' -o -path './*/i386-windows/lib*.a' -o -path './*/x86_64-windows/lib*.a' \
+         -o -path './*/aarch64-windows/*.dll' -o -path './*/arm64ec-windows/*.dll' -o -path './*/i386-windows/*.dll' -o -path './*/x86_64-windows/*.dll' \
+         -o -path './*/aarch64-windows/*.res' -o -path './*/arm64ec-windows/*.res' -o -path './*/i386-windows/*.res' -o -path './*/x86_64-windows/*.res' \) \
+      -size 0 -print | sed 's#^\./##'
+  )
+
+  if ((${#broken_archdirs[@]} == 0)); then
+    return
+  fi
+
+  printf '[local] invalidate broken pe outputs (%s)\n' "${#broken_archdirs[@]}" | tee -a "${LOG_FILE}"
+  while IFS= read -r rel; do
+    [[ -n "${rel}" ]] || continue
+    printf '[local] invalidate broken %s\n' "${rel}" | tee -a "${LOG_FILE}"
+    find "${BUILD_DIR}/${rel}" -maxdepth 1 -type f \
+      \( -name '*.o' -o -name 'lib*.a' -o -name '*.dll' -o -name '*.res' \) -delete
+  done < <(printf '%s\n' "${!broken_archdirs[@]}" | sort)
+}
+
 cd "${BUILD_DIR}"
 sync_modified_runtime_sources
 invalidate_stale_arm64_shim_outputs
+invalidate_broken_pe_outputs
 echo "[local] RESUME make -j2 all with llvm-mingw PATH" | tee -a "${LOG_FILE}"
 make -j2 all 2>&1 | tee -a "${LOG_FILE}"
