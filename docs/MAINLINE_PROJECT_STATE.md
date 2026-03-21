@@ -2,6 +2,16 @@
 
 Snapshot date: 2026-03-10
 
+## 2026-03-21 Sync Priority
+
+- A live source-first sync window is active.
+- `freewine11` owns the canonical ARM64 omega/parser/handoff source batch.
+- `wcp-runtime-lanes` must publish only the paired handoff/migration/logging
+  layer that matches that exact `freewine11` source state.
+- Agents entering this repo during this window should read:
+  - `AGENTS.md`
+  - `docs/TODAY_PUSH_SYNC_ROADMAP.md`
+
 ## Scope
 
 - This repo is the canonical **WCP Archive** host.

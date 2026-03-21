@@ -4,6 +4,28 @@
 
 This repository is the canonical WCP Archive host for Ae.solator releases.
 
+## 2026-03-21 Push Priority
+
+- During the active 2026-03-21 sync window, another agent may already be
+  working in this repo. Fetch first and inspect today's remote heads before
+  starting a new local batch.
+- Today's first priority is publishing the source-first omega handoff batch if
+  it is still only local, not opening a new unrelated build/debug pass.
+- The required companion push for this repo includes:
+  - `AGENTS.md`
+  - `scripts/resume_freewine_local_build.sh`
+  - any same-batch workspace migration / live-log docs and scripts that are
+    already coherent and ready for publication
+- This repo must stay aligned with the paired `freewine11` source-of-truth
+  push. Do not publish a handoff story here that points to an older runtime
+  source state.
+- Do not push junk:
+  - `__pycache__`
+  - `.rej`
+  - `.orig`
+  - device-local temp outputs or logs
+- See `docs/TODAY_PUSH_SYNC_ROADMAP.md` before pushing.
+
 ## Rules
 
 - Treat this repo as the archive/release orchestrator, not the primary source
